@@ -1,0 +1,15 @@
+.git
+.gitignore
+.npmignore
+.prettierignore
+.prettierrc
+.vscode
+.npmrc
+demo
+index.html
+mock
+node_modules
+pnpm-lock.yaml
+src
+tsconfig.json
+vite.config.ts
