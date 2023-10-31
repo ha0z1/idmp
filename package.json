@@ -1,0 +1,47 @@
+{
+  "name": "idmp",
+  "version": "1.0.5",
+  "keywords": [
+    "cache response",
+    "swr without hooks",
+    "deduplicate network requests"
+  ],
+  "homepage": "https://github.com/ha0z1/idmp",
+  "bugs": "https://github.com/ha0z1/idmp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ha0z1/idmp.git"
+  },
+  "type": "module",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.umd.cjs"
+  },
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "api": "pnpm vite-node -w mock/api.ts",
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "lint": "prettier . --write",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
+    "@vitejs/plugin-react-swc": "^3.4.1",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0",
+    "vite-node": "^0.34.6",
+    "vite-plugin-dts": "^3.6.3"
+  }
+}
