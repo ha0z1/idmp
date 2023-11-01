@@ -38,6 +38,7 @@ const enum K {
   resError,
   pendingList,
   oneCallPromiseFunc,
+  _sourceStack,
 }
 
 const DEFAULT_MAX_AGE = 3000
@@ -71,6 +72,7 @@ const _globalStore: Record<
     [K.resError]: Error | undefined
     [K.pendingList]: Array<any>
     [K.oneCallPromiseFunc]: any
+    [K._sourceStack]: string
   }
 > = {}
 
@@ -78,13 +80,17 @@ type TGlobalKey = string | number | symbol | false | null | undefined
 
 const flush = (globalKey: TGlobalKey) => {
   if (!globalKey) return
-  if (process.env.NODE_ENV !== 'production') {
-    if (!_globalStore[globalKey]) {
-      console.log(
-        `idmp: The cache for \`${globalKey.toString()}\` does not exist, there is no need to worry. This is just a development message and is considered a normal situation.`,
-      )
-    }
-  }
+  // if (process.env.NODE_ENV !== 'production') {
+  //   if (!_globalStore[globalKey]) {
+  //     console.log(
+  //       `idmp: The cache for \`${globalKey.toString()}\` does not exist, there is no need to worry. This is just a development message and is considered a normal situation.`,
+  //     )
+  //   } else {
+  //     console.log(
+  //       `idmp: The cache for \`${globalKey.toString()}\` has been cleared`,
+  //     )
+  //   }
+  // }
   delete _globalStore[globalKey]
 }
 
@@ -145,16 +151,31 @@ const idmp = <T, A>(
         try {
           throw new Error()
         } catch (err: any) {
-          let errLine = ''
-          try {
-            errLine = err.stack.split('\n')[5].split(' ').pop().slice(0, -2)
-          } catch {}
+          !cache[K._sourceStack] && (cache[K._sourceStack] = err.stack)
 
-          if (
-            cache[K.oneCallPromiseFunc].toString() !== promiseFunc.toString()
-          ) {
+          if (cache[K._sourceStack] !== err.stack) {
+            const getCodeLine = (stack: string) => {
+              try {
+                const arr = (stack as any)
+                  .split('\n')
+                  .filter((o: string) => o.includes(':'))
+                const idx = arr.findLastIndex(
+                  (o: string) =>
+                    o.includes('idmp/') ||
+                    o.includes('idmp\\') ||
+                    o.includes('idmp'),
+                )
+                const line = arr[idx + 1] || stack
+                return line
+              } catch {}
+              return ''
+            }
+
             console.error(
-              `warn: the same key \`${globalKey.toString()}\` may be used multiple times in different functions. ${errLine}`,
+              `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places: \n${[
+                `1.${getCodeLine(cache[K._sourceStack])}`,
+                `2.${getCodeLine(err.stack)}`,
+              ].join('\n')}`,
             )
           }
         }
