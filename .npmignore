@@ -9,6 +9,7 @@ demo
 mock
 src
 docs
+.vite
 node_modules
 index.html
 pnpm-lock.yaml

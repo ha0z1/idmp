@@ -16,20 +16,24 @@ demo <https://ha0z1.github.io/idmp/>
 import idmp from 'idmp'
 
 const getInfo = async () => {
-  const API = `https://google.com/api/your-info`
-  return await fetch(API).then((d) => d.json())
+  const API = `https://haozi.me/?api/your-info`
+  return await fetch(API).then((d) => d.text())
 }
 
 export const getInfoIdmp = () => idmp('/api/your-info', getInfo)
+
+for (let i = 0; i < 10; ++i) {
+  getInfoIdmp().then((d) => {
+    console.log(d)
+  })
+}
 ```
 
 ### Dynamic parameter
 
 ```typescript
-import idmp from 'idmp'
-
 const getInfoById = async (id: string) => {
-  const API = `https://google.com/api/your-info?id=${id}`
+  const API = `https://haozi.me/?api/your-info&id=${id}`
   return await fetch(API).then((d) => d.json())
 }
 
@@ -175,8 +179,8 @@ requestIdmp().then((data) => {
 The function retries internally, caches request data, so it is not suitable for the following scenarios:
 
 - Non-idempotent requests like POST/PATCH. Note: The HTTP protocol is just a semantic specification. In fact, GET can also be implemented as non-idempotent, and POST can be implemented as idempotent. Need to judge by yourself whether it is really idempotent before use.
-
 - Requests that cannot be cached: such as exchanging a new token each time.
+- Data with low latency below 16ms, such as getting precise time from server
 
 Note: Setting maxAge to 0 will still cache data for a short time because JS setTimeout is inaccurate. Setting to 0 will still retry requests.
 

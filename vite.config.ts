@@ -13,6 +13,8 @@ export default defineConfig(({ mode }) => {
       //         drop: ['console', 'debugger'],
       //       }
       //     : null,
+      sourcemap: true,
+
       lib: {
         formats: ['es'],
         entry: './src/index.ts',

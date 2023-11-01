@@ -10,26 +10,30 @@ demo <https://ha0z1.github.io/idmp/>
 
 ## 使用
 
-### 基础
+### 基础用法
 
 ```typescript
 import idmp from 'idmp'
 
 const getInfo = async () => {
-  const API = `https://google.com/api/your-info`
-  return await fetch(API).then((d) => d.json())
+  const API = `https://haozi.me/?api/your-info`
+  return await fetch(API).then((d) => d.text())
 }
 
 export const getInfoIdmp = () => idmp('/api/your-info', getInfo)
+
+for (let i = 0; i < 10; ++i) {
+  getInfoIdmp().then((d) => {
+    console.log(d)
+  })
+}
 ```
 
 ### 动态参数
 
 ```typescript
-import idmp from 'idmp'
-
 const getInfoById = async (id: string) => {
-  const API = `https://google.com/api/your-info?id=${id}`
+  const API = `https://haozi.me/?api/your-info&id=${id}`
   return await fetch(API).then((d) => d.json())
 }
 
@@ -37,7 +41,7 @@ export const getInfoByIdIdmp = (id: string) =>
   idmp(`/api/your-info?${id}`, () => getInfo(id))
 ```
 
-然后使用 `getInfoIdmp` 替换原函数 `getInfo`
+Then use `getInfoIdmp` to replace the original `getInfo` function.
 
 ## Options
 
@@ -171,6 +175,7 @@ requestIdmp().then((data) => {
 
 - 非幂等的请求，如 POST/PATCH。注: HTTP 协议只是语义规范，事实上也可以把 GET 实现成非幂等，POST 实现成幂等，在使用前需要自行判断是否真幂等
 - 不能缓存的请求：如每次都要交换新的 token
+- 短于 16ms 的时效性数据，如获取服务器精准时间
 
 注意：将 maxAge 设为 0 依然会在短时间内缓存数据，因为 js 的 setTimeout 是不精准的，设置成 0 依然会进行请求重试。
 如果想完全不缓存结果，请把第一个参数设置成假值：`'' | false | null | undefined | 0`，这时候会完全退化成原始函数，不做失败重试。

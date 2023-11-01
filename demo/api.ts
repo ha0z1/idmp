@@ -19,3 +19,8 @@ export const getUserDataIdmp = (userId: string) => {
   const key = `getUserData:${userId}`
   return idmp(key, () => getUserData(userId))
 }
+
+export const getUserDataIdmp2 = (userId: string) => {
+  const key = `getUserData:${userId}`
+  return idmp(key, () => getUserData(userId))
+}
