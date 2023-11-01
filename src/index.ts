@@ -14,11 +14,16 @@ export interface IOptions {
    * @param err any
    * @returns void
    */
-  onBeforeretry?: (err: any, retryCont: number) => void
+  onBeforeretry?: (
+    err: any,
+    extra: {
+      globalKey: TGlobalKey
+      retryCont: number
+    },
+  ) => void
 }
 
 type PromiseCR<T, A> = (...args: A[]) => Promise<T>
-
 const enum Status {
   UNSENT = 0,
   OPENING = 1,
@@ -69,8 +74,22 @@ const _globalStore: Record<
   }
 > = {}
 
+type TGlobalKey = string | number | symbol | false | null | undefined
+
+const flush = (globalKey: TGlobalKey) => {
+  if (!globalKey) return
+  if (process.env.NODE_ENV !== 'production') {
+    if (!_globalStore[globalKey]) {
+      console.log(
+        `idmp: The cache for \`${globalKey.toString()}\` does not exist, there is no need to worry. This is just a development message and is considered a normal situation.`,
+      )
+    }
+  }
+  delete _globalStore[globalKey]
+}
+
 const idmp = <T, A>(
-  globalKey: string | number | symbol | false | null | undefined,
+  globalKey: TGlobalKey,
   promiseFunc: PromiseCR<T, A>,
   options?: IOptions,
 ): Promise<T> => {
@@ -92,8 +111,33 @@ const idmp = <T, A>(
   }
   const cache = _globalStore[globalKey]
 
-  const todo: PromiseCR<T, A> = () =>
-    new Promise((resolve, reject) => {
+  const reset = () => {
+    cache[K.status] = Status.UNSENT
+    // cache[K.pendingList] = []
+    cache[K.resData] = udf
+    cache[K.resError] = udf
+  }
+
+  const doResolves = () => {
+    for (let item of cache[K.pendingList]) {
+      item[0](cache[K.resData])
+    }
+    // console.log(111, 'doResolves')
+
+    setTimeout(() => {
+      flush(globalKey)
+    }, maxAge)
+  }
+
+  const doRejects = () => {
+    for (let item of cache[K.pendingList]) {
+      item[1](cache[K.resError])
+    }
+    // console.log(111, 'doRejects')
+    flush(globalKey)
+  }
+  const todo = () =>
+    new Promise<T>((resolve, reject) => {
       !cache[K.oneCallPromiseFunc] &&
         (cache[K.oneCallPromiseFunc] = promiseFunc)
 
@@ -125,36 +169,6 @@ const idmp = <T, A>(
         return
       }
 
-      const reset = (deep?: boolean) => {
-        if (deep) {
-          delete _globalStore[globalKey]
-        } else {
-          cache[K.status] = Status.UNSENT
-          // cache[K.pendingList] = []
-          cache[K.resData] = udf
-          cache[K.resError] = udf
-        }
-      }
-
-      const doResolves = () => {
-        for (let item of cache[K.pendingList]) {
-          item[0](cache[K.resData])
-        }
-        // console.log(111, 'doResolves')
-
-        setTimeout(() => {
-          reset(true)
-        }, maxAge)
-      }
-
-      const doRejects = () => {
-        for (let item of cache[K.pendingList]) {
-          item[1](cache[K.resError])
-        }
-        // console.log(111, 'doRejects')
-        reset(true)
-      }
-
       if (cache[K.status] === Status.UNSENT) {
         cache[K.status] = Status.OPENING
         cache[K.pendingList].push([resolve, reject])
@@ -177,8 +191,11 @@ const idmp = <T, A>(
             if (cache[K.retryCont] > maxRetry) {
               doRejects()
             } else {
-              onBeforeretry(err, cache[K.retryCont])
-              reset(false)
+              onBeforeretry(err, {
+                globalKey: globalKey,
+                retryCont: cache[K.retryCont],
+              })
+              reset()
               setTimeout(() => {
                 todo()
               }, 16)
@@ -194,9 +211,10 @@ const idmp = <T, A>(
     })
 
   const ret = todo()
-
   return ret
 }
+
+idmp.flush = flush
 
 export default idmp
 export { _globalStore as g }

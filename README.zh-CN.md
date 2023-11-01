@@ -42,10 +42,18 @@ export const getInfoByIdIdmp = (id: string) =>
 ## Options
 
 ```typescript
+declare const idmp: {
+  <T, A>(
+    globalKey: TGlobalKey,
+    promiseFunc: Promise<T, A>,
+    options?: IOptions,
+  ): Promise<T>
+  flush: (globalKey: TGlobalKey) => void
+}
 
-declare const idmp: <T, A>(globalKey: string | number | symbol | false | null | undefined, promiseFunc: PromiseCR<T, A>, options?: IOptions) => Promise<T>;
+type TGlobalKey = string | number | symbol | false | null | undefined
 
-  export interface IOptions {
+interface IOptions {
   /**
    * @default: 30 times
    */
@@ -58,17 +66,42 @@ declare const idmp: <T, A>(globalKey: string | number | symbol | false | null | 
   maxAge?: number
   /**
    *
-  onBeforeretry?: (err: any) => void
+   * @param err any
+   * @returns void
+   */
+  onBeforeretry?: (
+    err: any,
+    extra: {
+      globalKey: TGlobalKey
+      retryCont: number
+    },
+  ) => void
 }
+```
+
+## flush
+
+flush 是 `idmp` 的静态方法，会立即清除缓存，使得临近的下一次调用不使用缓存。
+
+flush 接受一个 globalKey，没有返回值，重复调用或者 flush 一个不存在的 globalKey 不会有任何提示
+
+```typescript
+
+const fetchData = () => idmp('key', async () => data)
+
+idmp.flush('key')
+// will skip cache
+fetchData().then(...)
+
 ```
 
 ## 在 React 中去重请求
 
 在 react 共用请求，可以使用 swr 、 Provider 以及更为复杂的专业状态管理库来复用请求。但存在以下几种问题：
 
-1. swr: 需要将所有的请求变更为 hooks，对于已有项目有改造成本
+1. swr: 需要将所有的请求变更为 hooks，不能嵌套和条件分支，对于已有项目有改造成本
 2. Provider 数据共享，需要一个中心化的数据管理。数据中心无法感知到哪些模块会消费数据，需要长期维护这些数据，而不敢及时删除
-3. redux 等状态管理库应该管理的是状态的变化和序列，而非共享数据。idmp 让你更关注于局部状态
+3. redux 等状态管理库应该管理的是状态的变化和序列，而非共享数据。`idmp` 让你更关注于局部状态
 
 查看 demo 和[源码](./demo/)
 
@@ -80,7 +113,7 @@ declare const idmp: <T, A>(globalKey: string | number | symbol | false | null | 
 
 假设一个接口的请求失败率为 10%, 那么通过 3 次尝试后，请求仍失败的可能性将降到 0.1%
 
-使用 idmp 包装的接口，内部会自动在超时或失败后进行重试，这会大大降低异常情况的出现。在每次重试前，你可以通过 `onBeforeretry` 勾子函数监听异常，便于做一些埋点统计(注意，它不会捕获最后一次错误)
+使用 `idmp` 包装的接口，内部会自动在超时或失败后进行重试，这会大大降低异常情况的出现。在每次重试前，你可以通过 `onBeforeretry` 勾子函数监听异常，便于做一些埋点统计(注意，它不会捕获最后一次错误)
 
 ```typescript
 const getUserData = idmp(
@@ -99,7 +132,7 @@ const getUserData = idmp(
 
 ## 优化大计算
 
-虽然 idmp 的第二个参数必须是一个 Promise 函数，但由于同步函数都可以方便地包装成 Promise 对象。故 idmp 除了可以缓存网络请求外，原则上可以缓存任何函数调用。
+虽然 `idmp` 的第二个参数必须是一个 Promise 函数，但由于同步函数都可以方便地包装成 Promise 对象。故 idmp 除了可以缓存网络请求外，原则上可以缓存任何函数调用。
 
 这是一个没有经过任何优化的斐波那契数列的示例, 算到 45 项大约需要 10s:
 
