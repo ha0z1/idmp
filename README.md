@@ -42,30 +42,57 @@ Then use `getInfoIdmp` to replace the original `getInfo` function.
 ## Options
 
 ```typescript
-declare const idmp: (
-  globalKey: string | number | symbol | false | null | undefined,
-  promiseFunc: Promise<T>,
-  options?: IOptions,
-) => Promise<T>
+declare const idmp: {
+  <T, A>(
+    globalKey: TGlobalKey,
+    promiseFunc: Promise<T, A>,
+    options?: IOptions,
+  ): Promise<T>
+  flush: (globalKey: TGlobalKey) => void
+}
+
+type TGlobalKey = string | number | symbol | false | null | undefined
 
 interface IOptions {
   /**
    * @default: 30 times
    */
   maxRetry?: number
-
   /**
    * unit: ms
    * @default: 3000ms
    * @max 604800000ms (7days)
    */
   maxAge?: number
-
   /**
-   * onBeforeretry?: (err: any) => void
+   *
+   * @param err any
+   * @returns void
    */
-  onBeforeretry?: (err: any, retryCount: number) => void
+  onBeforeretry?: (
+    err: any,
+    extra: {
+      globalKey: TGlobalKey
+      retryCont: number
+    },
+  ) => void
 }
+```
+
+## flush
+
+`flush` is a static method of `idmp`, it will immediately clear the cache so that the next call will not use the cache.
+
+`flush` accepts a globalKey, has no return value, and repeated calls or flushing a non-existent globalKey will not have any prompts
+
+```typescript
+
+const fetchData = () => idmp('key', async () => data)
+
+idmp.flush('key') // will skip cache
+
+fetchData().then(...)
+
 ```
 
 ## Deduplicating Requests in React
@@ -88,7 +115,7 @@ Modules A and B have greater independence and can be reused across projects with
 
 Assume the failure rate of an interface request is 10%. Then after 3 retries, the chance of the request still failing will drop to 0.1%.
 
-Using idmp to wrap the interface, it will automatically retry on timeouts or failures internally, which will greatly reduce the occurrence of abnormal situations. Before each retry, you can listen for exceptions through the `onBeforeretry` hook function for some statistical burying (note that it will not capture the last error)
+Using `idmp` to wrap the interface, it will automatically retry on timeouts or failures internally, which will greatly reduce the occurrence of abnormal situations. Before each retry, you can listen for exceptions through the `onBeforeretry` hook function for some statistical burying (note that it will not capture the last error)
 
 ```typescript
 const getUserData = idmp(
@@ -107,7 +134,7 @@ const getUserData = idmp(
 
 ## Optimizing Big Calculations
 
-Although the second parameter of `idmp` must be a Promise function, since synchronous functions can be easily wrapped into Promise objects. In principle, idmp can cache any function call in addition to network requests.
+Although the second parameter of `idmp` must be a Promise function, since synchronous functions can be easily wrapped into Promise objects. In principle, `idmp` can cache any function call in addition to network requests.
 
 This is an unoptimized Fibonacci sequence example that takes about 10s to calculate to item 45:
 
