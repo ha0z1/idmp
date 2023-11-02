@@ -47,16 +47,16 @@ Then use `getInfoIdmp` to replace the original `getInfo` function.
 
 ```typescript
 declare const idmp: {
-  <T, A>(
+  <T>(
     globalKey: TGlobalKey,
-    promiseFunc: Promise<T, A>,
+    promiseFunc: PromiseIdmp<T>,
     options?: IOptions,
   ): Promise<T>
   flush: (globalKey: TGlobalKey) => void
 }
 
+type PromiseIdmp<T> = () => Promise<T>
 type TGlobalKey = string | number | symbol | false | null | undefined
-
 interface IOptions {
   /**
    * @default: 30 times
@@ -131,7 +131,6 @@ const getUserData = idmp(
     onBeforeRetry: (rejectReason) => {
       log(rejectReason)
     },
-    maxRetry: 30, // default
   },
 )
 ```

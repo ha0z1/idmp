@@ -3,12 +3,14 @@ export interface IOptions {
    * @default: 30 times
    */
   maxRetry?: number
+
   /**
    * unit: ms
    * @default: 3000ms
    * @max 604800000ms (7days)
    */
   maxAge?: number
+
   /**
    *
    * @param err any
@@ -78,7 +80,7 @@ const _globalStore: Record<
 
 type TGlobalKey = string | number | symbol | false | null | undefined
 
-const flush = (globalKey?: TGlobalKey) => {
+const flush = (globalKey: TGlobalKey) => {
   if (!globalKey) return
   // if (process.env.NODE_ENV !== 'production') {
   //   if (!_globalStore[globalKey]) {
@@ -149,7 +151,9 @@ const idmp = <T>(
 
       if (process.env.NODE_ENV !== 'production') {
         try {
-          throw new Error()
+          if (cache[K.retryCont] === 0) {
+            throw new Error()
+          }
         } catch (err: any) {
           !cache[K._sourceStack] && (cache[K._sourceStack] = err.stack)
 
@@ -168,7 +172,7 @@ const idmp = <T>(
                 const line = arr[idx + 1] || stack
                 return line
               } catch {}
-              return ''
+              return stack
             }
 
             console.error(
@@ -217,9 +221,13 @@ const idmp = <T>(
                 retryCont: cache[K.retryCont],
               })
               reset()
-              setTimeout(() => {
-                todo()
-              }, 16)
+
+              setTimeout(
+                () => {
+                  todo()
+                },
+                (cache[K.retryCont] - 1) * 50,
+              )
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
