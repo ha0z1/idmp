@@ -7,7 +7,6 @@ interface IProps {
 export default (props: IProps) => {
   const [data, setData] = useState({})
   useEffect(() => {
-    // console.log(111, getUserDataIdmp(props.id).refresh())
     getUserDataIdmp(props.id).then((res) => {
       setData(res)
     })

@@ -14,7 +14,7 @@ export interface IOptions {
    * @param err any
    * @returns void
    */
-  onBeforeretry?: (
+  onBeforeRetry?: (
     err: any,
     extra: {
       globalKey: TGlobalKey
@@ -23,7 +23,7 @@ export interface IOptions {
   ) => void
 }
 
-type PromiseCR<T, A> = (...args: A[]) => Promise<T>
+type PromiseIdmp<T> = () => Promise<T>
 const enum Status {
   UNSENT = 0,
   OPENING = 1,
@@ -78,7 +78,7 @@ const _globalStore: Record<
 
 type TGlobalKey = string | number | symbol | false | null | undefined
 
-const flush = (globalKey: TGlobalKey) => {
+const flush = (globalKey?: TGlobalKey) => {
   if (!globalKey) return
   // if (process.env.NODE_ENV !== 'production') {
   //   if (!_globalStore[globalKey]) {
@@ -94,15 +94,15 @@ const flush = (globalKey: TGlobalKey) => {
   delete _globalStore[globalKey]
 }
 
-const idmp = <T, A>(
+const idmp = <T>(
   globalKey: TGlobalKey,
-  promiseFunc: PromiseCR<T, A>,
+  promiseFunc: PromiseIdmp<T>,
   options?: IOptions,
 ): Promise<T> => {
   const {
     maxRetry = 30,
     maxAge: optionMaxAge,
-    onBeforeretry = noop,
+    onBeforeRetry = noop,
   } = options || {}
   const maxAge = getRange(optionMaxAge ? optionMaxAge : DEFAULT_MAX_AGE)
 
@@ -212,7 +212,7 @@ const idmp = <T, A>(
             if (cache[K.retryCont] > maxRetry) {
               doRejects()
             } else {
-              onBeforeretry(err, {
+              onBeforeRetry(err, {
                 globalKey: globalKey,
                 retryCont: cache[K.retryCont],
               })
