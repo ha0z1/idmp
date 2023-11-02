@@ -73,7 +73,7 @@ interface IOptions {
    * @param err any
    * @returns void
    */
-  onBeforeretry?: (
+  onBeforeRetry?: (
     err: any,
     extra: {
       globalKey: TGlobalKey
@@ -119,7 +119,7 @@ Modules A and B have greater independence and can be reused across projects with
 
 Assume the failure rate of an interface request is 10%. Then after 3 retries, the chance of the request still failing will drop to 0.1%.
 
-Using `idmp` to wrap the interface, it will automatically retry on timeouts or failures internally, which will greatly reduce the occurrence of abnormal situations. Before each retry, you can listen for exceptions through the `onBeforeretry` hook function for some statistical burying (note that it will not capture the last error)
+Using `idmp` to wrap the interface, it will automatically retry on timeouts or failures internally, which will greatly reduce the occurrence of abnormal situations. Before each retry, you can listen for exceptions through the `onBeforeRetry` hook function for some statistical burying (note that it will not capture the last error)
 
 ```typescript
 const getUserData = idmp(
@@ -128,7 +128,7 @@ const getUserData = idmp(
     await fetch(xxx)
   },
   {
-    onBeforeretry: (rejectReason) => {
+    onBeforeRetry: (rejectReason) => {
       log(rejectReason)
     },
     maxRetry: 30, // default
