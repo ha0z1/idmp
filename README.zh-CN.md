@@ -73,7 +73,7 @@ interface IOptions {
    * @param err any
    * @returns void
    */
-  onBeforeretry?: (
+  onBeforeRetry?: (
     err: any,
     extra: {
       globalKey: TGlobalKey
@@ -117,7 +117,7 @@ fetchData().then(...)
 
 假设一个接口的请求失败率为 10%, 那么通过 3 次尝试后，请求仍失败的可能性将降到 0.1%
 
-使用 `idmp` 包装的接口，内部会自动在超时或失败后进行重试，这会大大降低异常情况的出现。在每次重试前，你可以通过 `onBeforeretry` 勾子函数监听异常，便于做一些埋点统计(注意，它不会捕获最后一次错误)
+使用 `idmp` 包装的接口，内部会自动在超时或失败后进行重试，这会大大降低异常情况的出现。在每次重试前，你可以通过 `onBeforeRetry` 勾子函数监听异常，便于做一些埋点统计(注意，它不会捕获最后一次错误)
 
 ```typescript
 const getUserData = idmp(
@@ -126,7 +126,7 @@ const getUserData = idmp(
     await fetch(xxx)
   },
   {
-    onBeforeretry: (rejectReason) => {
+    onBeforeRetry: (rejectReason) => {
       log(rejectReason)
     },
     maxRetry: 30, // default
