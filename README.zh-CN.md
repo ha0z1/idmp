@@ -12,7 +12,7 @@ demo <https://ha0z1.github.io/idmp/>
 
 ### 基础用法
 
-```typescript
+```typescript {7}
 import idmp from 'idmp'
 
 const getInfo = async () => {
@@ -28,6 +28,8 @@ for (let i = 0; i < 10; ++i) {
   })
 }
 ```
+
+查看网络控制台，会发现只有一个网络请求，但正确执行 10 次回调。
 
 ### 动态参数
 
@@ -97,6 +99,24 @@ idmp.flush('key')
 // will skip cache
 fetchData().then(...)
 
+```
+
+## flushAll
+
+flushAll 是`idmp` 的静态方法，会立即清除所有缓存，使得基于 `idmp` 包装的方法的临近的下一次调用不使用缓存。
+flush 没有入参和返回值，重复调用 flushAll 不会有任何提示
+
+```typescript
+
+const fetchData1 = () => idmp('key1', async () => data1)
+const fetchData2 = () => idmp('key2', async () => data2)
+...
+
+idmp.flushAll()
+
+fetchData1().then(...) // will skip cache
+fetchData2().then(...) // will skip cache
+...
 ```
 
 ## 在 React 中去重请求
