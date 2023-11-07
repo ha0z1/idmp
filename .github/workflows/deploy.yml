@@ -29,11 +29,11 @@ jobs:
           node-version: lts/*
 
       - name: Build step
-        run: "npm install && npm run build" # 📝 Update the build command(s) if necessary
+        run: 'npm install && npm run build' # 📝 Update the build command(s) if necessary
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "soft-wolf-45"
-          entrypoint: "https://deno.land/std@0.188.0/http/file_server.ts" # 📝 Update the entrypoint if necessary
-          root: "dist" # 📝 Update the root if necessary
+          project: 'soft-wolf-45'
+          entrypoint: 'https://deno.land/std@0.188.0/http/file_server.ts' # 📝 Update the entrypoint if necessary
+          root: 'dist' # 📝 Update the root if necessary
