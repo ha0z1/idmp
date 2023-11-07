@@ -65,7 +65,7 @@ const getRange = (maxAge: number) => {
   return maxAge
 }
 
-const _globalStore: Record<
+let _globalStore: Record<
   string | symbol,
   {
     [K.retryCont]: number
@@ -94,6 +94,10 @@ const flush = (globalKey: TGlobalKey) => {
   //   }
   // }
   delete _globalStore[globalKey]
+}
+
+const flushAll = () => {
+  _globalStore = {}
 }
 
 const idmp = <T>(
@@ -199,7 +203,7 @@ const idmp = <T>(
         cache[K.pendingList].push([resolve, reject])
 
         cache[K.oneCallPromiseFunc]()
-          .then((data: any) => {
+          .then((data: T) => {
             cache[K.status] = Status.RESOLVED
             if (process.env.NODE_ENV !== 'production') {
               cache[K.resData] = deepFreeze<T>(data)
@@ -222,12 +226,7 @@ const idmp = <T>(
               })
               reset()
 
-              setTimeout(
-                () => {
-                  todo()
-                },
-                (cache[K.retryCont] - 1) * 50,
-              )
+              setTimeout(todo, (cache[K.retryCont] - 1) * 50)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
@@ -244,6 +243,7 @@ const idmp = <T>(
 }
 
 idmp.flush = flush
+idmp.flushAll = flushAll
 
 export default idmp
 export { _globalStore as g }

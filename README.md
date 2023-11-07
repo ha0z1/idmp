@@ -12,7 +12,7 @@ demo <https://ha0z1.github.io/idmp/>
 
 ### Base
 
-```typescript
+```typescript {7}
 import idmp from 'idmp'
 
 const getInfo = async () => {
@@ -28,6 +28,8 @@ for (let i = 0; i < 10; ++i) {
   })
 }
 ```
+
+View the Network Console, you will find there is only one network request, but 10 callbacks are executed correctly.
 
 ### Dynamic parameter
 
@@ -96,6 +98,24 @@ const fetchData = () => idmp('key', async () => data)
 idmp.flush('key') // will skip cache
 
 fetchData().then(...)
+
+```
+
+## flushAll
+
+flushAll is a static method of `idmp`, it will immediately clear all caches, so that the next calls of methods wrapped by `idmp` will not use the cache.
+
+flushAll has no parameters and return value. Repeated calls to flushAll will not have any prompts.
+
+```typescript
+
+const fetchData1 = () => idmp('key1', async () => data1)
+const fetchData2 = () => idmp('key2', async () => data2)
+
+idmp.flushAll()
+
+fetchData1().then(...) // will skip cache
+fetchData2().then(...) // will skip cache
 
 ```
 
