@@ -79,7 +79,7 @@ interface IOptions {
     err: any,
     extra: {
       globalKey: TGlobalKey
-      retryCont: number
+      retryCount: number
     },
   ) => void
 }
