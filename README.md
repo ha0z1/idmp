@@ -51,15 +51,15 @@ Then use `getInfoIdmp` to replace the original `getInfo` function.
 declare const idmp: {
   <T>(
     globalKey: TGlobalKey,
-    promiseFunc: PromiseIdmp<T>,
-    options?: IOptions,
+    promiseFunc: IdmpPromise<T>,
+    options?: IdmpOptions,
   ): Promise<T>
   flush: (globalKey: TGlobalKey) => void
 }
 
-type PromiseIdmp<T> = () => Promise<T>
+type IdmpPromise<T> = () => Promise<T>
 type TGlobalKey = string | number | symbol | false | null | undefined
-interface IOptions {
+interface IdmpOptions {
   /**
    * @default: 30 times
    */
