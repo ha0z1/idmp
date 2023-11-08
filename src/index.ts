@@ -20,7 +20,7 @@ export interface IOptions {
     err: any,
     extra: {
       globalKey: TGlobalKey
-      retryCont: number
+      retryCount: number
     },
   ) => void
 }
@@ -34,7 +34,7 @@ const enum Status {
   RESOLVED = 4,
 }
 const enum K {
-  retryCont = 0,
+  retryCount = 0,
   status,
   resData,
   resError,
@@ -68,7 +68,7 @@ const getRange = (maxAge: number) => {
 let _globalStore: Record<
   string | symbol,
   {
-    [K.retryCont]: number
+    [K.retryCount]: number
     [K.status]: Status
     [K.resData]: any | undefined
     [K.resError]: Error | undefined
@@ -117,7 +117,7 @@ const idmp = <T>(
   }
 
   _globalStore[globalKey] = _globalStore[globalKey] || {
-    [K.retryCont]: 0,
+    [K.retryCount]: 0,
     [K.status]: Status.UNSENT,
     [K.pendingList]: [],
   }
@@ -155,7 +155,7 @@ const idmp = <T>(
 
       if (process.env.NODE_ENV !== 'production') {
         try {
-          if (cache[K.retryCont] === 0) {
+          if (cache[K.retryCount] === 0) {
             throw new Error()
           }
         } catch (err: any) {
@@ -215,18 +215,18 @@ const idmp = <T>(
           .catch((err: any) => {
             cache[K.status] = Status.REJECTED
             cache[K.resError] = err
-            ++cache[K.retryCont]
+            ++cache[K.retryCount]
 
-            if (cache[K.retryCont] > maxRetry) {
+            if (cache[K.retryCount] > maxRetry) {
               doRejects()
             } else {
               onBeforeRetry(err, {
                 globalKey: globalKey,
-                retryCont: cache[K.retryCont],
+                retryCount: cache[K.retryCount],
               })
               reset()
 
-              setTimeout(todo, (cache[K.retryCont] - 1) * 50)
+              setTimeout(todo, (cache[K.retryCount] - 1) * 50)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
