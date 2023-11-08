@@ -1,4 +1,4 @@
-export interface IOptions {
+export interface IdmpOptions {
   /**
    * @default: 30 times
    */
@@ -25,7 +25,7 @@ export interface IOptions {
   ) => void
 }
 
-type PromiseIdmp<T> = () => Promise<T>
+type IdmpPromise<T> = () => Promise<T>
 const enum Status {
   UNSENT = 0,
   OPENING = 1,
@@ -102,15 +102,20 @@ const flushAll = () => {
 
 const idmp = <T>(
   globalKey: TGlobalKey,
-  promiseFunc: PromiseIdmp<T>,
-  options?: IOptions,
+  promiseFunc: IdmpPromise<T>,
+  options?: IdmpOptions,
 ): Promise<T> => {
+  if (process.env.NODE_ENV !== 'production') {
+    options = deepFreeze(options)
+  }
+
   const {
     maxRetry = 30,
-    maxAge: optionMaxAge,
+    maxAge: paramMaxAge = DEFAULT_MAX_AGE,
     onBeforeRetry = noop,
   } = options || {}
-  const maxAge = getRange(optionMaxAge ? optionMaxAge : DEFAULT_MAX_AGE)
+
+  const maxAge = getRange(paramMaxAge)
 
   if (!globalKey) {
     return promiseFunc()
