@@ -9,6 +9,7 @@
     "allowSyntheticDefaultImports": true,
 
     /* Bundler mode */
+    "removeComments": false,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
