@@ -178,18 +178,22 @@ const idmp = <T>(
                     o.includes('idmp\\') ||
                     o.includes('idmp'),
                 )
-                const line = arr[idx + 1] || stack
+                const line = arr[idx + 1] || ''
                 return line
               } catch {}
-              return stack
+              return ''
             }
 
-            console.error(
-              `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places: \n${[
-                `1.${getCodeLine(cache[K._sourceStack])}`,
-                `2.${getCodeLine(err.stack)}`,
-              ].join('\n')}`,
-            )
+            const line1 = getCodeLine(cache[K._sourceStack])
+            const line2 = getCodeLine(err.stack)
+            if (line1 && line2 && line1 !== line2) {
+              console.error(
+                `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places: \n${[
+                  `1.${line1}`,
+                  `2.${line2}`,
+                ].join('\n')}`,
+              )
+            }
           }
         }
       }
