@@ -16,9 +16,9 @@
   "exports": {
     "types": "./dist/index.d.ts",
     "import": "./dist/index.js",
-    "require": "./dist/index.node.js"
+    "require": "./dist/index.node.cjs"
   },
-  "main": "./dist/index.node.js",
+  "main": "./dist/index.node.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -27,9 +27,9 @@
   "scripts": {
     "api": "pnpm vite-node -w mock/api.ts",
     "build": "tsc && vite-node scripts/build.ts",
-    "dev": "vite",
+    "dev": "tsc && pnpm run lint && vite",
     "lint": "prettier . --write",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build && vite-node scripts/clean.ts"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",

@@ -2,7 +2,6 @@ import { build, mergeConfig, type InlineConfig } from 'vite'
 // import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import dts from 'vite-plugin-dts'
-import fs from 'fs-extra'
 
 type DeepPartial<T> = T extends object
   ? {
@@ -97,12 +96,4 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
       },
     }),
   ])
-
-  fs.outputJSONSync('./package.json', {
-    ...fs.readJsonSync('./package.json'),
-    devDependencies: undefined,
-    scripts: undefined
-  }, {
-    spaces: 2
-  })
 })()
