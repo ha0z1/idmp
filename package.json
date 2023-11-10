@@ -16,26 +16,29 @@
   "exports": {
     "types": "./dist/index.d.ts",
     "import": "./dist/index.js",
-    "require": "./dist/index.js"
+    "require": "./dist/index.node.js"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.ts",
+  "main": "./dist/index.node.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "api": "pnpm vite-node -w mock/api.ts",
-    "build": "tsc && vite build",
+    "build": "tsc && vite-node scripts/build.ts",
     "dev": "vite",
     "lint": "prettier . --write",
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
-    "@types/node": "^20.8.10",
-    "@types/react": "^18.2.34",
-    "@types/react-dom": "^18.2.14",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@vitejs/plugin-legacy": "^4.1.1",
     "@vitejs/plugin-react-swc": "^3.4.1",
+    "fs-extra": "^11.1.1",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
