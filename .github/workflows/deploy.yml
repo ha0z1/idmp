@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Deno
         uses: denoland/setup-deno@v1
@@ -24,12 +24,12 @@ jobs:
           deno-version: v1.x
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Build step
-        run: 'npm install && npm run build' # 📝 Update the build command(s) if necessary
+        run: 'npm i -g pnpm && pnpm install && pnpm run prepublishOnly' # 📝 Update the build command(s) if necessary
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
@@ -37,3 +37,8 @@ jobs:
           project: 'idmp'
           entrypoint: 'https://deno.land/std@0.188.0/http/file_server.ts' # 📝 Update the entrypoint if necessary
           root: 'dist' # 📝 Update the root if necessary
+
+      - name: NPM Publish
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.IDMP_NPM_TOKEN }}
