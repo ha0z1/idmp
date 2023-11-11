@@ -13,5 +13,7 @@ docs
 node_modules
 index.html
 pnpm-lock.yaml
+yarn.lock
+package-lock.json
 tsconfig.json
 vite.config.ts
