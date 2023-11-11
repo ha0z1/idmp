@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "keywords": [
     "cache response",
     "swr without hooks",
@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/ha0z1/idmp.git"
   },
+  "license": "MIT",
   "type": "module",
   "exports": {
     "types": "./dist/index.d.ts",
