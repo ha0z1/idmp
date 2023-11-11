@@ -1,12 +1,12 @@
 {
   "name": "idmp",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "keywords": [
     "cache response",
     "swr without hooks",
     "deduplicate network requests"
   ],
-  "homepage": "https://github.com/ha0z1/idmp",
+  "homepage": "https://ha0z1.github.io/idmp/",
   "bugs": "https://github.com/ha0z1/idmp/issues",
   "repository": {
     "type": "git",
