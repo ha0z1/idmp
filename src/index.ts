@@ -1,25 +1,39 @@
+/**
+ * @typedef {Object} IdmpOptions
+ * @property {number} [maxRetry=30] - Maximum number of retry attempts.
+ * @property {number} [maxAge=3000] - Maximum age in milliseconds. The maximum value is 604800000ms (7 days).
+ * @property {function} [onBeforeRetry] - Function to be executed before a retry attempt.
+ */
+
 export interface IdmpOptions {
   /**
-   * @default: 30 times
+   * Maximum number of retry attempts.
+   * @type {number}
+   * @default 30
    */
   maxRetry?: number
 
   /**
-   * unit: ms
-   * @default: 3000ms
-   * @max 604800000ms (7days)
+   * Maximum age in milliseconds. The maximum value is 604800000ms (7 days).
+   * @type {number}
+   * @default 3000
+   * @max 604800000
    */
   maxAge?: number
 
   /**
-   *
-   * @param err any
-   * @returns void
+   * Function to be executed before a retry attempt.
+   * @type {function}
+   * @param {any} err - The error that caused the retry.
+   * @param {Object} extra - Additional parameters.
+   * @param {GlobalKey} extra.globalKey - The global key.
+   * @param {number} extra.retryCount - The current retry count.
+   * @returns {void}
    */
   onBeforeRetry?: (
     err: any,
     extra: {
-      globalKey: TGlobalKey
+      globalKey: GlobalKey
       retryCount: number
     },
   ) => void
@@ -78,9 +92,9 @@ let _globalStore: Record<
   }
 > = {}
 
-type TGlobalKey = string | number | symbol | false | null | undefined
+type GlobalKey = string | number | symbol | false | null | undefined
 
-const flush = (globalKey: TGlobalKey) => {
+const flush = (globalKey: GlobalKey) => {
   if (!globalKey) return
   // if (process.env.NODE_ENV !== 'production') {
   //   if (!_globalStore[globalKey]) {
@@ -101,7 +115,7 @@ const flushAll = () => {
 }
 
 const idmp = <T>(
-  globalKey: TGlobalKey,
+  globalKey: GlobalKey,
   promiseFunc: IdmpPromise<T>,
   options?: IdmpOptions,
 ): Promise<T> => {
