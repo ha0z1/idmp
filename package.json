@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.5.2",
+  "version": "1.6.1",
   "keywords": [
     "cache response",
     "swr without hooks",
@@ -28,9 +28,11 @@
   "scripts": {
     "api": "pnpm vite-node -w mock/api.ts",
     "build": "tsc && vite-node scripts/build.ts",
+    "coverage": "vitest run --coverage.enabled --coverage.provider=istanbul",
     "dev": "tsc && pnpm run lint && vite",
     "lint": "prettier . --write",
-    "prepublishOnly": "pnpm run build && vite-node scripts/clean.ts"
+    "prepublishOnly": "pnpm run build && vite-node scripts/clean.ts",
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -39,13 +41,15 @@
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-legacy": "^4.1.1",
     "@vitejs/plugin-react-swc": "^3.4.1",
+    "@vitest/coverage-istanbul": "^0.34.6",
     "fs-extra": "^11.1.1",
-    "prettier": "^3.0.3",
+    "prettier": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.2.2",
     "vite": "^4.5.0",
     "vite-node": "^0.34.6",
-    "vite-plugin-dts": "^3.6.3"
+    "vite-plugin-dts": "^3.6.3",
+    "vitest": "~0.34"
   }
 }
