@@ -1,8 +1,12 @@
 # idmp
 
----
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/ha0z1/idmp/deploy.yml)](https://github.com/ha0z1/idmp/actions)
+[![npm](https://img.shields.io/npm/v/idmp.svg)](https://www.npmjs.com/package/idmp)
+[![codecov](https://codecov.io/gh/ha0z1/idmp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ha0z1/idmp/blob/main/src%2Findex.ts)
+[![contributors](https://img.shields.io/github/contributors/ha0z1/idmp)](https://github.com/ha0z1/idmp/graphs/contributors)
+[![LICENSE](https://img.shields.io/npm/l/idmp)](https://github.com/ha0z1/idmp/blob/main/LICENSE)
 
-An elegant library to solve duplicate and concurrent calls for idempotent functions, pure function. Less than 200b after Gzip
+An elegant library to solve duplicate and concurrent calls for idempotent functions, pure function. Less than 200 Bytes after Gzip
 
 English | [简体中文](README.zh-CN.md)
 
@@ -40,22 +44,22 @@ const getInfoById = async (id: string) => {
   return await fetch(API).then((d) => d.json())
 }
 
-// Handle params
+// 处理有入参的场景
 export const getInfoByIdIdmp = (id: string) =>
-  idmp(`/api/your-info?${id}`, () => getInfo(id))
+  idmp(`/api/your-info?${id}`, () => getInfoById(id))
 
-// Or a more generic type juggling, for complex params, idmp will infer the return type automatically, keep it consistent with the original function
+// 或者更通用的类型体操写法，用于复杂的入参，idmp 会自动推导返回值类型，与原函数保持一致
 export const getInfoByIdIdmp = (...args: Parameters<typeof getInfoById>) =>
-  idmp(`/api/your-info?${JSON.stringify(args)}`, () => getInfo(...args))
+  idmp(`/api/your-info?${JSON.stringify(args)}`, () => getInfoById(...args))
 
-// More options
+// 增加更多配置项
 export const getInfoByIdIdmp = (id: string) =>
-  idmp(`/api/your-info?${id}`, () => getInfo(id), {
+  idmp(`/api/your-info?${id}`, () => getInfoById(id), {
     maxAge: 86400 * 1000,
   })
 ```
 
-Then replace `getInfo` with `getInfoIdmp`.
+Then replace `getInfoByIdIdmp` with `getInfoById`.
 
 ## Options
 
