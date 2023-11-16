@@ -14,6 +14,11 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   // await sleep(2000)
   const id = new URL(`http://127.0.0.1${req.url}`).searchParams.get('id')
+  if (Math.random() > 0.1) {
+    res.statusCode = 500
+    res.end('error')
+    return
+  }
   res.end(
     JSON.stringify({
       id,
