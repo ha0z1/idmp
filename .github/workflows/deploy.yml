@@ -2,8 +2,6 @@ name: Deploy
 on:
   push:
     branches: main
-  pull_request:
-    branches: main
 
 jobs:
   deploy:
@@ -29,7 +27,7 @@ jobs:
           node-version: lts/*
 
       - name: Build step
-        run: 'npm i -g pnpm && pnpm install && pnpm run prepublishOnly' # 📝 Update the build command(s) if necessary
+        run: 'npm i -g pnpm && pnpm install && pnpm run coverage && pnpm run prepublishOnly' # 📝 Update the build command(s) if necessary
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
