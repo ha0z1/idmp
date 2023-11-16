@@ -1,8 +1,12 @@
 # idmp
 
----
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/ha0z1/idmp/deploy.yml)](https://github.com/ha0z1/idmp/actions)
+[![npm](https://img.shields.io/npm/v/idmp.svg)](https://www.npmjs.com/package/idmp)
+[![codecov](https://codecov.io/gh/ha0z1/idmp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ha0z1/idmp/blob/main/src%2Findex.ts)
+[![contributors](https://img.shields.io/github/contributors/ha0z1/idmp)](https://github.com/ha0z1/idmp/graphs/contributors)
+[![LICENSE](https://img.shields.io/npm/l/idmp)](https://github.com/ha0z1/idmp/blob/main/LICENSE)
 
-一个优雅地解决幂等(idempotent) 函数的重复和并发调用的小库，纯函数，Gzip 后不到 200b
+一个优雅地解决幂等(idempotent) 函数的重复和并发调用的小库，纯函数，Gzip 后不到 200 Bytes
 
 [English](README.md) | 简体中文
 
@@ -42,20 +46,20 @@ const getInfoById = async (id: string) => {
 
 // 处理有入参的场景
 export const getInfoByIdIdmp = (id: string) =>
-  idmp(`/api/your-info?${id}`, () => getInfo(id))
+  idmp(`/api/your-info?${id}`, () => getInfoById(id))
 
 // 或者更通用的类型体操写法，用于复杂的入参，idmp 会自动推导返回值类型，与原函数保持一致
 export const getInfoByIdIdmp = (...args: Parameters<typeof getInfoById>) =>
-  idmp(`/api/your-info?${JSON.stringify(args)}`, () => getInfo(...args))
+  idmp(`/api/your-info?${JSON.stringify(args)}`, () => getInfoById(...args))
 
 // 增加更多配置项
 export const getInfoByIdIdmp = (id: string) =>
-  idmp(`/api/your-info?${id}`, () => getInfo(id), {
+  idmp(`/api/your-info?${id}`, () => getInfoById(id), {
     maxAge: 86400 * 1000,
   })
 ```
 
-然后用 `getInfoIdmp` 替换 `getInfo` 方法。
+然后用 `getInfoByIdIdmp` 替换 `getInfoById` 方法。
 
 ## Options
 
