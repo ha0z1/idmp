@@ -206,7 +206,6 @@ const idmp = <T>(
                 const line = arr[idx + 1] || ''
                 return line
               } catch {}
-              return ''
             }
             const line1 = getCodeLine(cache[K._sourceStack])
             const line2 = getCodeLine(err.stack)
@@ -228,10 +227,10 @@ const idmp = <T>(
         resolve(cache[K.resData])
         return
       }
-      if (cache[K.resError]) {
-        reject(cache[K.resError])
-        return
-      }
+      // if (cache[K.resError]) {
+      //   reject(cache[K.resError])
+      //   return
+      // }
 
       if (cache[K.status] === Status.UNSENT) {
         cache[K.status] = Status.OPENING
@@ -266,11 +265,12 @@ const idmp = <T>(
           })
       } else if (cache[K.status] === Status.OPENING) {
         cache[K.pendingList].push([resolve, reject])
-      } else if (cache[K.status] === Status.RESOLVED) {
-        doResolves()
-      } else if (cache[K.status] === Status.REJECTED) {
-        doRejects()
       }
+      // else if (cache[K.status] === Status.RESOLVED) {
+      //   doResolves()
+      // } else if (cache[K.status] === Status.REJECTED) {
+      //   doRejects()
+      // }
     })
 
   const ret = todo()
