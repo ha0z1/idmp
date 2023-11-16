@@ -5,10 +5,12 @@
 .prettierrc
 .vscode
 .npmrc
+coverage
 demo
 mock
 src
 docs
+test
 .vite
 node_modules
 index.html

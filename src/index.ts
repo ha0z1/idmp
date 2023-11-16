@@ -144,16 +144,16 @@ const idmp = <T>(
 
   const reset = () => {
     cache[K.status] = Status.UNSENT
-    // cache[K.pendingList] = []
     cache[K.resData] = udf
     cache[K.resError] = udf
   }
 
   const doResolves = () => {
-    for (let item of cache[K.pendingList]) {
-      item[0](cache[K.resData])
+    const len = cache[K.pendingList].length
+    for (let i = 0; i < len; ++i) {
+      cache[K.pendingList][i][0](cache[K.resData])
     }
-    // console.log(111, 'doResolves')
+    cache[K.pendingList] = []
 
     setTimeout(() => {
       flush(globalKey)
@@ -161,10 +161,10 @@ const idmp = <T>(
   }
 
   const doRejects = () => {
-    for (let item of cache[K.pendingList]) {
-      item[1](cache[K.resError])
+    const len = cache[K.pendingList].length - maxRetry
+    for (let i = 0; i < len; ++i) {
+      cache[K.pendingList][i][1](cache[K.resError])
     }
-    // console.log(111, 'doRejects')
     flush(globalKey)
   }
   const todo = () =>
@@ -186,24 +186,41 @@ const idmp = <T>(
                 const arr = (stack as any)
                   .split('\n')
                   .filter((o: string) => o.includes(':'))
-                const idx = arr.findLastIndex(
-                  (o: string) =>
-                    o.includes('idmp/') ||
-                    o.includes('idmp\\') ||
-                    o.includes('idmp'),
-                )
+
+                let idx = Infinity
+
+                for (let key of [
+                  'idmp/src/index.ts',
+                  'idmp/',
+                  'idmp\\',
+                  'idmp',
+                ]) {
+                  const _idx = arr.findLastIndex((o: string) => o.includes(key))
+                  if (_idx > -1) {
+                    idx = _idx
+                    break
+                  }
+                }
+                // console.log(idx, 4444444)
+                // const idx = arr.findLastIndex(
+                //   (o: string) =>
+                //     o.includes('idmp/') ||
+                //     o.includes('idmp\\') ||
+                //     o.includes('idmp'),
+                // )
                 const line = arr[idx + 1] || ''
                 return line
               } catch {}
               return ''
             }
-
             const line1 = getCodeLine(cache[K._sourceStack])
             const line2 = getCodeLine(err.stack)
+
             if (line1 && line2 && line1 !== line2) {
               console.error(
                 `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places: \n${[
                   `1.${line1}`,
+                  '------------',
                   `2.${line2}`,
                 ].join('\n')}`,
               )
