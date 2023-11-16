@@ -24,7 +24,7 @@ const getInfo = async () => {
   return await fetch(API).then((d) => d.text())
 }
 
-// Only this line changed
+// Only one line need to change
 export const getInfoIdmp = () => idmp('/api/your-info', getInfo)
 
 for (let i = 0; i < 10; ++i) {
@@ -44,15 +44,15 @@ const getInfoById = async (id: string) => {
   return await fetch(API).then((d) => d.json())
 }
 
-// 处理有入参的场景
+// Handle params
 export const getInfoByIdIdmp = (id: string) =>
   idmp(`/api/your-info?${id}`, () => getInfoById(id))
 
-// 或者更通用的类型体操写法，用于复杂的入参，idmp 会自动推导返回值类型，与原函数保持一致
+// Or a more generic type juggling, for complex params, idmp will infer the return type automatically, keep it consistent with the original function
 export const getInfoByIdIdmp = (...args: Parameters<typeof getInfoById>) =>
   idmp(`/api/your-info?${JSON.stringify(args)}`, () => getInfoById(...args))
 
-// 增加更多配置项
+// More options
 export const getInfoByIdIdmp = (id: string) =>
   idmp(`/api/your-info?${id}`, () => getInfoById(id), {
     maxAge: 86400 * 1000,
