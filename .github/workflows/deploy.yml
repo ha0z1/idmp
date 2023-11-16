@@ -27,16 +27,27 @@ jobs:
           node-version: lts/*
 
       - name: Build step
-        run: 'npm i -g pnpm && pnpm install && pnpm run coverage && pnpm run prepublishOnly' # 📝 Update the build command(s) if necessary
+        run: 'npm i -g pnpm && pnpm install'
 
-      - name: Upload to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: 'idmp'
-          entrypoint: 'https://deno.land/std@0.188.0/http/file_server.ts' # 📝 Update the entrypoint if necessary
-          root: 'dist' # 📝 Update the root if necessary
+      - name: Test
+        run: 'pnpm run build && pnpm run coverage'
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Prepublish
+        run: 'pnpm run prepublishOnly'
 
       - name: NPM Publish
         uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.IDMP_NPM_TOKEN }}
+
+      - name: Upload to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: 'idmp'
+          entrypoint: 'https://deno.land/std@0.188.0/http/file_server.ts'
+          root: 'dist'
