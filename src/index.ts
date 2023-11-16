@@ -188,26 +188,21 @@ const idmp = <T>(
                   .filter((o: string) => o.includes(':'))
 
                 let idx = Infinity
-
-                for (let key of [
+                $0: for (let key of [
                   'idmp/src/index.ts',
                   'idmp/',
                   'idmp\\',
                   'idmp',
                 ]) {
-                  const _idx = arr.findLastIndex((o: string) => o.includes(key))
-                  if (_idx > -1) {
-                    idx = _idx
-                    break
+                  let _idx = arr.length - 1
+                  $1: for (; _idx >= 0; --_idx) {
+                    if (arr[_idx].indexOf(key) > -1) {
+                      idx = _idx
+                      break $0
+                    }
                   }
                 }
-                // console.log(idx, 4444444)
-                // const idx = arr.findLastIndex(
-                //   (o: string) =>
-                //     o.includes('idmp/') ||
-                //     o.includes('idmp\\') ||
-                //     o.includes('idmp'),
-                // )
+
                 const line = arr[idx + 1] || ''
                 return line
               } catch {}
