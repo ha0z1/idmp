@@ -23,7 +23,7 @@ const fetchData = async () => {
   return JSON.parse(JSON.stringify(DEEP_DATA))
 }
 
-it('return data as originFunction', async () => {
+it('should return data as originFunction', async () => {
   const fetchDataIdmp = () => idmp(Symbol(), fetchData)
 
   const [dataOrigin, dataIdmp] = await Promise.all([
@@ -33,7 +33,7 @@ it('return data as originFunction', async () => {
   expect(dataIdmp).toEqual(dataOrigin)
 })
 
-it('originFunction only call once', async () => {
+it('should originFunction only call once', async () => {
   let count = 0
   let task: any[] = []
   const key = Symbol()
@@ -48,6 +48,22 @@ it('originFunction only call once', async () => {
   }
   await Promise.all(task)
   expect(count).toEqual(1)
+})
+
+it('should throw error when change data outside', async () => {
+  process.env.NODE_ENV = 'production'
+  const data = await idmp(Symbol(), fetchData)
+  expect(() => {
+    data.info.name = 'Jack'
+  }).not.toThrowError()
+  process.env.NODE_ENV = 'test'
+})
+
+it('should not throw error when change data outside in production mode', async () => {
+  const data = await idmp(Symbol(), fetchData)
+  expect(() => {
+    data.info.name = 'Jack'
+  }).toThrowError()
 })
 
 it('reusing the same globalKey will cause a failure', async () => {
