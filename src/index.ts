@@ -152,6 +152,16 @@ const idmp = <T>(
     const len = cache[K.pendingList].length
     for (let i = 0; i < len; ++i) {
       cache[K.pendingList][i][0](cache[K.resData])
+      if (process.env.NODE_ENV !== 'production') {
+        if (i === 0) {
+          console.log(`[idmp info] ${globalKey?.toString()} from origin`)
+        } else {
+          console.log(
+            `%c[idmp info] ${globalKey?.toString()} from cache`,
+            'color: gray',
+          )
+        }
+      }
     }
     cache[K.pendingList] = []
 
@@ -224,6 +234,12 @@ const idmp = <T>(
       }
 
       if (cache[K.resData]) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(
+            `%c[idmp info] \`${globalKey?.toString()}\` from cache`,
+            'color: gray',
+          )
+        }
         resolve(cache[K.resData])
         return
       }
@@ -238,13 +254,13 @@ const idmp = <T>(
 
         cache[K.oneCallPromiseFunc]()
           .then((data: T) => {
-            cache[K.status] = Status.RESOLVED
             if (process.env.NODE_ENV !== 'production') {
               cache[K.resData] = deepFreeze<T>(data)
             } else {
               cache[K.resData] = data
             }
             doResolves()
+            cache[K.status] = Status.RESOLVED
           })
           .catch((err: any) => {
             cache[K.status] = Status.REJECTED
