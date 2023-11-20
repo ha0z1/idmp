@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.7.4",
+  "version": "1.8.0",
   "keywords": [
     "cache response",
     "swr without hooks",
