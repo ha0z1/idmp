@@ -142,6 +142,20 @@ const idmp = <T>(
   }
   const cache = _globalStore[globalKey]
 
+  let callStack = ''
+  const printLogs = (...msg: any[]) => {
+    /* istanbul ignore else */
+    if (console.groupCollapsed) {
+      console.groupCollapsed(...msg)
+      console.log('globalKey:', globalKey)
+      console.log('callStack:', callStack)
+      console.log('data:', cache[K.resData])
+      console.groupEnd()
+    } else {
+      console.log(...msg)
+    }
+  }
+
   const reset = () => {
     cache[K.status] = Status.UNSENT
     cache[K.resData] = udf
@@ -154,11 +168,14 @@ const idmp = <T>(
       cache[K.pendingList][i][0](cache[K.resData])
       if (process.env.NODE_ENV !== 'production') {
         if (i === 0) {
-          console.log(`[idmp info] ${globalKey?.toString()} from origin`)
+          printLogs(
+            `%c[idmp info] ${globalKey?.toString()} from origin`,
+            'font-weight: lighter',
+          )
         } else {
-          console.log(
+          printLogs(
             `%c[idmp info] ${globalKey?.toString()} from cache`,
-            'color: gray',
+            'color: gray; font-weight: lighter',
           )
         }
       }
@@ -188,35 +205,38 @@ const idmp = <T>(
             throw new Error()
           }
         } catch (err: any) {
+          const getCodeLine = (stack: string, offset = 0) => {
+            try {
+              let arr = (stack as any)
+                .split('\n')
+                .filter((o: string) => o.includes(':'))
+
+              let idx = Infinity
+              $0: for (let key of [
+                'idmp/src/index.ts',
+                'idmp/',
+                'idmp\\',
+                'idmp',
+              ]) {
+                let _idx = arr.length - 1
+                $1: for (; _idx >= 0; --_idx) {
+                  if (arr[_idx].indexOf(key) > -1) {
+                    idx = _idx
+                    break $0
+                  }
+                }
+              }
+
+              // arr = arr.filter((o: string) => !o.includes('node_modules'))
+              const line = arr[idx + offset + 1] || ''
+              return line
+            } catch {}
+          }
+
+          callStack = getCodeLine(err.stack, 1).split(' ').pop() || ''
           !cache[K._sourceStack] && (cache[K._sourceStack] = err.stack)
 
           if (cache[K._sourceStack] !== err.stack) {
-            const getCodeLine = (stack: string) => {
-              try {
-                const arr = (stack as any)
-                  .split('\n')
-                  .filter((o: string) => o.includes(':'))
-
-                let idx = Infinity
-                $0: for (let key of [
-                  'idmp/src/index.ts',
-                  'idmp/',
-                  'idmp\\',
-                  'idmp',
-                ]) {
-                  let _idx = arr.length - 1
-                  $1: for (; _idx >= 0; --_idx) {
-                    if (arr[_idx].indexOf(key) > -1) {
-                      idx = _idx
-                      break $0
-                    }
-                  }
-                }
-
-                const line = arr[idx + 1] || ''
-                return line
-              } catch {}
-            }
             const line1 = getCodeLine(cache[K._sourceStack])
             const line2 = getCodeLine(err.stack)
 
@@ -235,9 +255,9 @@ const idmp = <T>(
 
       if (cache[K.resData]) {
         if (process.env.NODE_ENV !== 'production') {
-          console.log(
+          printLogs(
             `%c[idmp info] \`${globalKey?.toString()}\` from cache`,
-            'color: gray',
+            'color: gray;font-weight: lighter',
           )
         }
         resolve(cache[K.resData])
