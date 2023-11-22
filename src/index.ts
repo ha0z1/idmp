@@ -169,12 +169,12 @@ const idmp = <T>(
       if (process.env.NODE_ENV !== 'production') {
         if (i === 0) {
           printLogs(
-            `%c[idmp info] ${globalKey?.toString()} from origin`,
+            `%c[idmp debug] ${globalKey?.toString()} from origin`,
             'font-weight: lighter',
           )
         } else {
           printLogs(
-            `%c[idmp info] ${globalKey?.toString()} from cache`,
+            `%c[idmp debug] ${globalKey?.toString()} from cache`,
             'color: gray; font-weight: lighter',
           )
         }
@@ -256,7 +256,7 @@ const idmp = <T>(
       if (cache[K.resData]) {
         if (process.env.NODE_ENV !== 'production') {
           printLogs(
-            `%c[idmp info] \`${globalKey?.toString()}\` from cache`,
+            `%c[idmp debug] \`${globalKey?.toString()}\` from cache`,
             'color: gray;font-weight: lighter',
           )
         }
