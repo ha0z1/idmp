@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "keywords": [
     "cache response",
     "swr without hooks",
@@ -36,20 +36,20 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.9.4",
-    "@types/react": "^18.2.38",
+    "@types/node": "^20.10.3",
+    "@types/react": "^18.2.41",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-legacy": "^5.2.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "@vitest/coverage-istanbul": "^0.34.6",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "^11.2.0",
     "prettier": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.3.2",
-    "vite": "^5.0.2",
+    "vite": "^5.0.5",
     "vite-node": "^0.34.6",
-    "vite-plugin-dts": "^3.6.3",
+    "vite-plugin-dts": "^3.6.4",
     "vitest": "~0.34"
   }
 }
