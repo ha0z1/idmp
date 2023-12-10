@@ -2,6 +2,15 @@ import React, { useState } from 'react'
 import Item from './Item'
 import ItemIdmp from './ItemIdmp'
 // import idmp from '../src'
+// import { getUserDataIdmp } from './api'
+
+// getUserDataIdmp('123').then((d) => {
+//   console.log(123, d)
+//   d.extra.a = {
+//     a: 1,
+//     b: 2,
+//   }
+// })
 
 // const getInfo = async () => {
 //   // const API = `https://haozi.meaa/?api/your-info`
