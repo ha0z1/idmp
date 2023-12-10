@@ -61,16 +61,43 @@ const DEFAULT_MAX_AGE = 3000
 const _7days = 604800000
 const noop = () => {}
 const udf = undefined
-const deepFreeze = /* @__PURE__ */ <T>(obj: any): T => {
-  if (!obj) return obj
-  if (typeof obj !== 'object') return obj
 
-  Object.keys(obj).forEach((property) => {
-    if (typeof obj[property] === 'object' && !Object.isFrozen(obj[property])) {
-      deepFreeze(obj[property])
-    }
+// const deepFreeze = /* @__PURE__ */ <T>(obj: any): T => {
+//   if (!obj) return obj
+//   if (typeof obj !== 'object') return obj
+
+//   Object.keys(obj).forEach((property) => {
+//     if (typeof obj[property] === 'object' && !Object.isFrozen(obj[property])) {
+//       deepFreeze(obj[property])
+//     }
+//   })
+//   return Object.freeze(obj)
+// }
+
+const defineReactive = (obj: any, key: string | symbol, value: any) => {
+  readonly(value)
+  Object.defineProperty(obj, key, {
+    get: () => value,
+    set: (newValue) => {
+      const msg = `[idmp error] The data is read-only, set ${key.toString()}=${JSON.stringify(
+        newValue,
+      )} is not allow`
+      console.error(`%c ${msg}`, 'font-weight: lighter; color: red')
+      throw new Error(msg)
+    },
   })
-  return Object.freeze(obj)
+}
+
+const readonly = <T>(obj: T): T => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj
+  }
+
+  Object.keys(obj).forEach((key) => {
+    defineReactive(obj, key, (obj as any)[key])
+  })
+
+  return obj
 }
 
 const getRange = (maxAge: number) => {
@@ -120,7 +147,7 @@ const idmp = <T>(
   options?: IdmpOptions,
 ): Promise<T> => {
   if (process.env.NODE_ENV !== 'production') {
-    options = deepFreeze(options)
+    options = readonly(options)
   }
 
   const {
@@ -275,7 +302,7 @@ const idmp = <T>(
         cache[K.oneCallPromiseFunc]()
           .then((data: T) => {
             if (process.env.NODE_ENV !== 'production') {
-              cache[K.resData] = deepFreeze<T>(data)
+              cache[K.resData] = readonly<T>(data)
             } else {
               cache[K.resData] = data
             }
