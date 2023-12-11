@@ -45,8 +45,8 @@ devDependencies:
     specifier: ^5.0.5
     version: 5.0.5(@types/node@20.10.4)(terser@5.24.0)
   vite-node:
-    specifier: ^0.34.6
-    version: 0.34.6(@types/node@20.10.4)(terser@5.24.0)
+    specifier: ^1.0.4
+    version: 1.0.4(@types/node@20.10.4)(terser@5.24.0)
   vite-plugin-dts:
     specifier: ^3.6.4
     version: 3.6.4(@types/node@20.10.4)(typescript@5.3.2)(vite@5.0.5)
@@ -2986,6 +2986,27 @@ packages:
       cac: 6.7.14
       debug: 4.3.4
       mlly: 1.4.2
+      pathe: 1.1.1
+      picocolors: 1.0.0
+      vite: 5.0.5(@types/node@20.10.4)(terser@5.24.0)
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vite-node@1.0.4(@types/node@20.10.4)(terser@5.24.0):
+    resolution: {integrity: sha512-9xQQtHdsz5Qn8hqbV7UKqkm8YkJhzT/zr41Dmt5N7AlD8hJXw/Z7y0QiD5I8lnTthV9Rvcvi0QW7PI0Fq83ZPg==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+    dependencies:
+      cac: 6.7.14
+      debug: 4.3.4
       pathe: 1.1.1
       picocolors: 1.0.0
       vite: 5.0.5(@types/node@20.10.4)(terser@5.24.0)
