@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/ha0z1/idmp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ha0z1/idmp/blob/main/src%2Findex.ts)
 [![contributors](https://img.shields.io/github/contributors/ha0z1/idmp)](https://github.com/ha0z1/idmp/graphs/contributors)
 [![LICENSE](https://img.shields.io/npm/l/idmp)](https://github.com/ha0z1/idmp/blob/main/LICENSE)
-[![Size](https://img.shields.io/bundlephobia/minzip/idmp.svg)](https://unpkg.com/idmp/dist/)
+[![Size](https://img.shields.io/bundlephobia/minzip/idmp.svg)](https://cdn.jsdelivr.net/npm/idmp/+esm)
 
 An elegant library to solve duplicate and concurrent calls for idempotent functions, pure function. Less than 1 KB after Gzip
 
