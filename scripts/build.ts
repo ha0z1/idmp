@@ -2,6 +2,8 @@ import { build, mergeConfig, type InlineConfig } from 'vite'
 // import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import dts from 'vite-plugin-dts'
+import banner from 'vite-plugin-banner'
+import { version } from '../package.json'
 
 type DeepPartial<T> = T extends object
   ? {
@@ -12,7 +14,13 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
   await build(
     mergeConfig(
       {
-        plugins: [react(), dts()],
+        plugins: [
+          react(),
+          dts(),
+          banner(
+            `/*! idmp v${version} | (c) github/haozi | MIT */`,
+          ),
+        ],
         build: {
           sourcemap: false,
           // target: "chrome51",

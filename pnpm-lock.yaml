@@ -47,6 +47,9 @@ devDependencies:
   vite-node:
     specifier: ^1.1.0
     version: 1.1.0(@types/node@20.10.5)(terser@5.24.0)
+  vite-plugin-banner:
+    specifier: ^0.7.1
+    version: 0.7.1
   vite-plugin-dts:
     specifier: ^3.6.4
     version: 3.6.4(@types/node@20.10.5)(typescript@5.3.3)(vite@5.0.10)
@@ -3098,6 +3101,10 @@ packages:
       - sugarss
       - supports-color
       - terser
+    dev: true
+
+  /vite-plugin-banner@0.7.1:
+    resolution: {integrity: sha512-Bww2Xd5tOGsZ1yZ9rQiGneryvsL1u86znPrqeQjCsXPsG72pnSdV5lcQA+cy8UNDguMqyTJiCevlNUbLnT85UA==}
     dev: true
 
   /vite-plugin-dts@3.6.4(@types/node@20.10.5)(typescript@5.3.3)(vite@5.0.10):
