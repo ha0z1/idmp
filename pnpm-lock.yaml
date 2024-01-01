@@ -24,8 +24,8 @@ devDependencies:
     specifier: ^3.5.0
     version: 3.5.0(vite@5.0.10)
   '@vitest/coverage-istanbul':
-    specifier: ^1.1.0
-    version: 1.1.0(vitest@1.1.0)
+    specifier: ^1.1.1
+    version: 1.1.1(vitest@1.1.0)
   fs-extra:
     specifier: ^11.2.0
     version: 11.2.0
@@ -1891,8 +1891,8 @@ packages:
       - '@swc/helpers'
     dev: true
 
-  /@vitest/coverage-istanbul@1.1.0(vitest@1.1.0):
-    resolution: {integrity: sha512-sjHGQQu7lkJUYSBMOR3f9AyOlK1LBVr0v7LMar/4i167ltabRWlQ2STBDM4P6Wl659NAcHlZ/RXxrAgJPavDMA==}
+  /@vitest/coverage-istanbul@1.1.1(vitest@1.1.0):
+    resolution: {integrity: sha512-Ikq6k2/KJ3MqEnGJCZBctcgxW1JRPzyVetVz1AYqLxrHNiG/epGFPZ74kIc3AK0HGaf0RsqZkc8riCTmxfH/dQ==}
     peerDependencies:
       vitest: ^1.0.0
     dependencies:
