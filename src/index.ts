@@ -5,7 +5,7 @@
  * @property {function} [onBeforeRetry] - Function to be executed before a retry attempt.
  */
 
-export interface IdmpOptions {
+interface IdmpOptions {
   /**
    * Maximum number of retry attempts.
    * @type {number}
@@ -26,14 +26,14 @@ export interface IdmpOptions {
    * @type {function}
    * @param {any} err - The error that caused the retry.
    * @param {Object} extra - Additional parameters.
-   * @param {GlobalKey} extra.globalKey - The global key.
+   * @param {IdmpGlobalKey} extra.globalKey - The global key.
    * @param {number} extra.retryCount - The current retry count.
    * @returns {void}
    */
   onBeforeRetry?: (
     err: any,
     extra: {
-      globalKey: GlobalKey
+      globalKey: IdmpGlobalKey
       retryCount: number
     },
   ) => void
@@ -119,9 +119,9 @@ let _globalStore: Record<
   }
 > = {}
 
-type GlobalKey = string | number | symbol | false | null | undefined
+type IdmpGlobalKey = string | number | symbol | false | null | undefined
 
-const flush = (globalKey: GlobalKey) => {
+const flush = (globalKey: IdmpGlobalKey) => {
   if (!globalKey) return
   // if (process.env.NODE_ENV !== 'production') {
   //   if (!_globalStore[globalKey]) {
@@ -142,7 +142,7 @@ const flushAll = () => {
 }
 
 const idmp = <T>(
-  globalKey: GlobalKey,
+  globalKey: IdmpGlobalKey,
   promiseFunc: IdmpPromise<T>,
   options?: IdmpOptions,
 ): Promise<T> => {
@@ -318,7 +318,7 @@ const idmp = <T>(
               doRejects()
             } else {
               onBeforeRetry(err, {
-                globalKey: globalKey,
+                globalKey,
                 retryCount: cache[K.retryCount],
               })
               reset()
@@ -343,5 +343,12 @@ const idmp = <T>(
 idmp.flush = flush
 idmp.flushAll = flushAll
 
+type Idmp = typeof idmp
 export default idmp
-export { _globalStore as g }
+export {
+  _globalStore as g,
+  type Idmp,
+  type IdmpGlobalKey,
+  type IdmpOptions,
+  type IdmpPromise
+}

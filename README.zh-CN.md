@@ -67,16 +67,16 @@ export const getInfoByIdIdmp = (id: string) =>
 ```typescript
 declare const idmp: {
   <T>(
-    globalKey: GlobalKey,
+    globalKey: IdmpGlobalKey,
     promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ): Promise<T>
-  flush: (globalKey: GlobalKey) => void
+  flush: (globalKey: IdmpGlobalKey) => void
   flushAll: () => void
 }
 
 type IdmpPromise<T> = () => Promise<T>
-type GlobalKey = string | number | symbol | false | null | undefined
+type IdmpGlobalKey = string | number | symbol | false | null | undefined
 ```
 
 IdmpOptions:
@@ -85,7 +85,7 @@ IdmpOptions:
 | --------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `maxRetry`      | `number`   | `30`    | Maximum number of retry attempts.                                                                                                                                                                                 |
 | `maxAge`        | `number`   | `3000`  | Maximum age in milliseconds. The maximum value is 604800000ms (7 days).                                                                                                                                           |
-| `onBeforeRetry` | `function` | -       | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `GlobalKey` and `retryCount` of type `number`). Returns `void`. |
+| `onBeforeRetry` | `function` | -       | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
 
 ## flush
 
