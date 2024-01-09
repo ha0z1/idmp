@@ -5,6 +5,9 @@
  * @property {function} [onBeforeRetry] - Function to be executed before a retry attempt.
  */
 
+type IdmpGlobalKey = string | number | symbol | false | null | undefined
+
+type IdmpPromise<T> = () => Promise<T>
 interface IdmpOptions {
   /**
    * Maximum number of retry attempts.
@@ -39,7 +42,6 @@ interface IdmpOptions {
   ) => void
 }
 
-type IdmpPromise<T> = () => Promise<T>
 const enum Status {
   UNSENT = 0,
   OPENING = 1,
@@ -119,7 +121,20 @@ let _globalStore: Record<
   }
 > = {}
 
-type IdmpGlobalKey = string | number | symbol | false | null | undefined
+const getOptions = (options?: IdmpOptions) => {
+  const {
+    maxRetry = 30,
+    maxAge: paramMaxAge = DEFAULT_MAX_AGE,
+    onBeforeRetry = noop,
+  } = options || {}
+
+  const maxAge = getRange(paramMaxAge)
+  return {
+    maxRetry,
+    maxAge,
+    onBeforeRetry,
+  }
+}
 
 const flush = (globalKey: IdmpGlobalKey) => {
   if (!globalKey) return
@@ -150,17 +165,11 @@ const idmp = <T>(
     options = readonly(options)
   }
 
-  const {
-    maxRetry = 30,
-    maxAge: paramMaxAge = DEFAULT_MAX_AGE,
-    onBeforeRetry = noop,
-  } = options || {}
-
-  const maxAge = getRange(paramMaxAge)
-
   if (!globalKey) {
     return promiseFunc()
   }
+
+  const { maxRetry, maxAge, onBeforeRetry } = getOptions(options)
 
   _globalStore[globalKey] = _globalStore[globalKey] || {
     [K.retryCount]: 0,
@@ -350,5 +359,5 @@ export {
   type Idmp,
   type IdmpGlobalKey,
   type IdmpOptions,
-  type IdmpPromise
+  type IdmpPromise,
 }
