@@ -356,6 +356,7 @@ type Idmp = typeof idmp
 export default idmp
 export {
   _globalStore as g,
+  getOptions,
   type Idmp,
   type IdmpGlobalKey,
   type IdmpOptions,
