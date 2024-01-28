@@ -1,10 +1,20 @@
 {
   "name": "idmp",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "keywords": [
-    "cache response",
+    "deduplicate network requests",
+    "idempotent function",
+    "duplicate API calls",
     "swr without hooks",
-    "deduplicate network requests"
+    "request deduplication",
+    "network request caching",
+    "API caching",
+    "cache API responses",
+    "concurrent API calls",
+    "eliminate duplicate requests",
+    "retry failed requests",
+    "immutable data",
+    "auto retry"
   ],
   "homepage": "https://ha0z1.github.io/idmp/",
   "bugs": "https://github.com/ha0z1/idmp/issues",
