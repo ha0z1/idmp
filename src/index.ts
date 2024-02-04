@@ -133,6 +133,7 @@ const getOptions = (options?: IdmpOptions) => {
     maxRetry,
     maxAge,
     onBeforeRetry,
+    f: paramMaxAge === 1 / 0, // Infinity
   }
 }
 
@@ -169,7 +170,12 @@ const idmp = <T>(
     return promiseFunc()
   }
 
-  const { maxRetry, maxAge, onBeforeRetry } = getOptions(options)
+  const {
+    maxRetry,
+    maxAge,
+    onBeforeRetry,
+    f: isFiniteParamMaxAge,
+  } = getOptions(options)
 
   _globalStore[globalKey] = _globalStore[globalKey] || {
     [K.retryCount]: 0,
@@ -218,9 +224,11 @@ const idmp = <T>(
     }
     cache[K.pendingList] = []
 
-    setTimeout(() => {
-      flush(globalKey)
-    }, maxAge)
+    if (!isFiniteParamMaxAge) {
+      setTimeout(() => {
+        flush(globalKey)
+      }, maxAge)
+    }
   }
 
   const doRejects = () => {
