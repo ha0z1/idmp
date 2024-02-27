@@ -186,6 +186,7 @@ const idmp = <T>(
 
   let callStack = ''
   const printLogs = (...msg: any[]) => {
+    if (typeof window === 'undefined') return
     /* istanbul ignore else */
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
