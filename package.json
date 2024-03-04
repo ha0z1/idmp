@@ -25,17 +25,15 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.js",
-    "require": "./dist/index.node.cjs",
     ".": "./dist/index.js",
-    "./node-fs": "./plugins/node-fs/index.ts"
+    "./node-fs": "./plugins/node-fs/dist/index.js"
   },
   "main": "./dist/index.node.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "**/dist",
+    "*.d.ts"
   ],
   "scripts": {
     "api": "pnpm vite-node -w mock/api.ts",

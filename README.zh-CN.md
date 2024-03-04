@@ -62,6 +62,18 @@ export const getInfoByIdIdmp = (id: string) =>
 
 然后用 `getInfoByIdIdmp` 替换 `getInfoById` 方法。
 
+## 插件
+
+`idmp` 有一个强大的插件系统。 以下插件是官方维护的，您也可以参考源码创建自己的插件：
+
+与高阶函数的类比优雅地传达了插件可以以非侵入性方式扩展 idmp 的核心功能，类似于数学函数 $g(f)(x)$。 这为插件系统提供了极大的灵活性和可扩展性。
+
+- [使用node-fs进行数据持久化](plugins/node-fs/README.md)（将数据持久化到文件系统）
+- 使用 localStorage 进行数据持久化
+- 使用 sessionStorage 进行数据持久化
+- 使用 indexedDB 进行数据持久化
+- 使用 chrome-extension 实现数据持久化
+
 ## Options
 
 ```typescript
