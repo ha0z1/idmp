@@ -2,8 +2,21 @@
   "name": "idmp-node-fs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "_dev": "vite",
+    "dev": "pnpm vite-node scripts/build.ts",
+    "build": "tsc && pnpm vite-node scripts/build.ts"
+  },
   "dependencies": {
+    "fs-extra": "^11.2.0",
     "idmp": "workspace:*"
   }
 }
