@@ -62,6 +62,18 @@ export const getInfoByIdIdmp = (id: string) =>
 
 Then replace `getInfoByIdIdmp` with `getInfoById`.
 
+## Plugins
+
+`idmp` has a powerful plugin system. The following plugins are officially maintained, and you can also reference the source code to create your own plugins:
+
+The analogy to higher-order functions elegantly conveys that plugins can extend idmp's core functionality in a non-invasive way, similar to mathematical functions $g(f)(x)$. This provides great flexibility and extensibility to the plugin system.
+
+- [Data Persistence with node-fs](plugins/node-fs/README.md) (Persist data to the file system)
+- Data Persistence with localStorage
+- Data Persistence with sessionStorage
+- Data Persistence with indexedDB
+- Data Persistence with chrome-extension
+
 ## Options
 
 ```typescript
