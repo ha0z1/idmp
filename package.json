@@ -27,7 +27,9 @@
   "exports": {
     "types": "./dist/index.d.ts",
     "import": "./dist/index.js",
-    "require": "./dist/index.node.cjs"
+    "require": "./dist/index.node.cjs",
+    ".": "./dist/index.js",
+    "./node-fs": "./plugins/node-fs/index.ts"
   },
   "main": "./dist/index.node.cjs",
   "module": "./dist/index.js",
