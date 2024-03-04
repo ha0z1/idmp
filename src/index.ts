@@ -186,8 +186,9 @@ const idmp = <T>(
 
   let callStack = ''
   const printLogs = (...msg: any[]) => {
+    /* istanbul ignore */
     if (typeof window === 'undefined') return
-    /* istanbul ignore else */
+
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
       console.log('globalKey:', globalKey)
@@ -274,7 +275,8 @@ const idmp = <T>(
 
               // arr = arr.filter((o: string) => !o.includes('node_modules'))
               const line = arr[idx + offset + 1] || ''
-              return line
+              if (line.includes('idmp')) return line
+              return ''
             } catch {}
           }
 
@@ -288,9 +290,9 @@ const idmp = <T>(
             if (line1 && line2 && line1 !== line2) {
               console.error(
                 `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places: \n${[
-                  `1.${line1}`,
+                  `1.${line1} ${cache[K._sourceStack]}`,
                   '------------',
-                  `2.${line2}`,
+                  `2.${line2} ${err.stack}`,
                 ].join('\n')}`,
               )
             }
