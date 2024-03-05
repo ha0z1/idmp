@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.11.5",
+  "version": "1.12.4",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -42,13 +42,17 @@
     "dev": "tsc && pnpm run lint && vite",
     "lint": "prettier . --write",
     "prepublishOnly": "pnpm run build && vite-node scripts/clean.ts",
+    "publish:alpha": "pnpm publish --no-git-checks --registry https://registry.npmjs.org --tag alpha",
     "test": "vitest"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.11.20",
-    "@types/react": "^18.2.60",
-    "@types/react-dom": "^18.2.19",
+    "@types/node": "^20.11.25",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
     "@vitejs/plugin-legacy": "^5.3.1",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "@vitest/coverage-istanbul": "^1.2.2",
@@ -56,10 +60,11 @@
     "prettier": "^3.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.2",
-    "vite-node": "^0.34.6",
-    "vite-plugin-dts": "^3.6.3",
-    "vitest": "~0.34"
+    "typescript": "^5.4.2",
+    "vite": "^5.1.5",
+    "vite-node": "^1.3.1",
+    "vite-plugin-banner": "^0.7.1",
+    "vite-plugin-dts": "^3.7.3",
+    "vitest": "^1.3.1"
   }
 }
