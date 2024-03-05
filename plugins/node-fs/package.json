@@ -12,11 +12,14 @@
   ],
   "scripts": {
     "_dev": "vite",
-    "dev": "pnpm vite-node scripts/build.ts",
-    "build": "tsc && pnpm vite-node scripts/build.ts"
+    "build": "tsc && pnpm vite-node scripts/build.ts",
+    "dev": "pnpm vite-node scripts/build.ts"
   },
   "dependencies": {
     "fs-extra": "^11.2.0",
     "idmp": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4"
   }
 }

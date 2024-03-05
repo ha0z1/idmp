@@ -6,13 +6,13 @@
 .vscode
 .npmrc
 coverage
-**/demo
+demo
 mock
 **/src
 **/docs
 **/test
 .vite
-**/node_modules
+node_modules
 index.html
 pnpm-lock.yaml
 yarn.lock
@@ -24,3 +24,4 @@ plugins/**/scripts/
 plugins/**/src/
 plugins/**/package.json
 plugins/**/tsconfig.json
+plugins/**/node_modules
