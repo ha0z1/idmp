@@ -69,6 +69,10 @@ importers:
       idmp:
         specifier: workspace:*
         version: link:../..
+    devDependencies:
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
 
 packages:
 
