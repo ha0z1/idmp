@@ -69,10 +69,10 @@ Then replace `getInfoByIdIdmp` with `getInfoById`.
 The analogy to higher-order functions elegantly conveys that plugins can extend idmp's core functionality in a non-invasive way, similar to mathematical functions $g(f)(x)$. This provides great flexibility and extensibility to the plugin system.
 
 - [Data Persistence with node-fs](plugins/node-fs/README.md) (Persist data to the file system)
-- Data Persistence with localStorage
-- Data Persistence with sessionStorage
-- Data Persistence with indexedDB
-- Data Persistence with chrome-extension
+- [Data Persistence with localStorage](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- [Data Persistence with sessionStorage](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- Data Persistence with indexedDB // TODO
+- Data Persistence with chrome-extension // TODO
 
 ## Options
 

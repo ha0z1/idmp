@@ -69,10 +69,10 @@ export const getInfoByIdIdmp = (id: string) =>
 与高阶函数的类比优雅地传达了插件可以以非侵入性方式扩展 idmp 的核心功能，类似于数学函数 $g(f)(x)$。 这为插件系统提供了极大的灵活性和可扩展性。
 
 - [使用node-fs进行数据持久化](plugins/node-fs/README.md)（将数据持久化到文件系统）
-- 使用 localStorage 进行数据持久化
-- 使用 sessionStorage 进行数据持久化
-- 使用 indexedDB 进行数据持久化
-- 使用 chrome-extension 实现数据持久化
+- [使用 localStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- [使用 sessionStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- 使用 indexedDB 进行数据持久化 // TODO
+- 使用 chrome-extension 实现数据持久化 // TODO
 
 ## Options
 

@@ -1,5 +1,5 @@
 {
-  "name": "idmp-node-fs",
+  "name": "idmp-browser-storage",
   "version": "1.0.0",
   "private": true,
   "description": "",
@@ -17,10 +17,6 @@
     "dev": "pnpm vite-node scripts/build.ts"
   },
   "dependencies": {
-    "fs-extra": "^11.2.0",
     "idmp": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.4"
   }
 }

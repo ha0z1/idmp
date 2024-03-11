@@ -14,14 +14,13 @@ export const getUserData = async (userId: string) => {
   const res = {
     id: userId,
     val: Math.random(),
-    extra: { a: { b: { c: 111 } } },
   }
   return res
 }
 
 export const getUserDataIdmp = (userId: string) => {
   const key = `getUserData:${userId}`
-  return idmp(key, () => getUserData(userId), { maxAge: 60 * 1000 })
+  return idmp(key, () => getUserData(userId), { maxAge: 5 * 1000 })
 }
 
 export const getUserDataIdmp2 = (userId: string) => {
