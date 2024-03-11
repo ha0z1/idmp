@@ -11,7 +11,7 @@
 
 [English](README.md) | 简体中文
 
-- Demo <https://ha0z1.github.io/idmp/>
+- Demo <https://idmp.vercel.app>
 
 ## 使用
 
@@ -69,10 +69,10 @@ export const getInfoByIdIdmp = (id: string) =>
 与高阶函数的类比优雅地传达了插件可以以非侵入性方式扩展 idmp 的核心功能，类似于数学函数 $g(f)(x)$。 这为插件系统提供了极大的灵活性和可扩展性。
 
 - [使用node-fs进行数据持久化](plugins/node-fs/README.md)（将数据持久化到文件系统）
-- 使用 localStorage 进行数据持久化
-- 使用 sessionStorage 进行数据持久化
-- 使用 indexedDB 进行数据持久化
-- 使用 chrome-extension 实现数据持久化
+- [使用 localStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- [使用 sessionStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- 使用 indexedDB 进行数据持久化 // TODO
+- 使用 chrome-extension 实现数据持久化 // TODO
 
 ## Options
 
@@ -141,7 +141,7 @@ fetchData2().then(...) // will skip cache
 2. Provider 数据共享: 需要一个中心化的数据管理。数据中心无法感知到哪些模块会消费数据，需要长期维护这些数据，而不敢及时删除
 3. Redux 等状态管理库:应该专注的是状态的变化和时序，而非共享数据。`idmp` 让你更关注于局部状态
 
-查看 [demo](https://ha0z1.github.io/idmp/) 和[源码](https://github.com/ha0z1/idmp/tree/main/demo)
+查看 [demo](https://idmp.vercel.app) 和[源码](https://github.com/ha0z1/idmp/tree/main/demo)
 
 这样当模块 A 或者模块 B 的代码删除后，是不需要维护他们的缓存的。
 

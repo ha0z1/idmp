@@ -4,7 +4,7 @@
 
 ```typescript
 import idmp from 'idmp'
-import fsWrap, { cacheDir } from 'idmp/node-fs'
+import fsWrap, { cacheDir, getCachePath } from 'idmp/node-fs'
 const fsIdmp = fsWrap(idmp)
 
 await fsIdmp(
