@@ -11,7 +11,7 @@ An elegant library to solve duplicate and concurrent calls for idempotent functi
 
 English | [简体中文](README.zh-CN.md)
 
-- Demo <https://ha0z1.github.io/idmp/>
+- Demo <https://idmp.vercel.app>
 
 ## Usage
 
@@ -69,10 +69,10 @@ Then replace `getInfoByIdIdmp` with `getInfoById`.
 The analogy to higher-order functions elegantly conveys that plugins can extend idmp's core functionality in a non-invasive way, similar to mathematical functions $g(f)(x)$. This provides great flexibility and extensibility to the plugin system.
 
 - [Data Persistence with node-fs](plugins/node-fs/README.md) (Persist data to the file system)
-- Data Persistence with localStorage
-- Data Persistence with sessionStorage
-- Data Persistence with indexedDB
-- Data Persistence with chrome-extension
+- [Data Persistence with localStorage](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- [Data Persistence with sessionStorage](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- Data Persistence with indexedDB // TODO
+- Data Persistence with chrome-extension // TODO
 
 ## Options
 
@@ -141,7 +141,7 @@ In React, you can share requests using swr, Provider and more complex state mana
 2. Provider: Needs centralized data management. The data center can't perceive which modules will consume the data, need to maintain the data for a long time, and dare not delete it in time
 3. Redux: Should focus on state changes and sequences, not data sharing. `idmp` lets you focus more on local state
 
-See [demo](https://ha0z1.github.io/idmp/) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
+See [demo](https://idmp.vercel.app) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
 
 So when module A or module B's code is deleted, there is no need to maintain their cache.
 

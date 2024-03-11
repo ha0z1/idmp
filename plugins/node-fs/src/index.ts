@@ -75,4 +75,4 @@ const fsIdmpWrap = (_idmp: Idmp) => {
 }
 
 export default fsIdmpWrap
-export { cacheDir }
+export { cacheDir, getCachePath }
