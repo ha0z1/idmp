@@ -218,6 +218,8 @@ Assuming an interface has a 10% failure rate, the probability of still failing a
 
 Using `idmp` to wrap the interface, it will automatically retry on timeouts or failures, which greatly reduces the occurrence of abnormal situations. Before each retry, you can monitor exceptions through the `onBeforeRetry` hook function (note that it will not capture the last error)
 
+`idmp` internally implements an algorithm similar to [Exponential backoff](https://en.m.wikipedia.org/wiki/Exponential_backoff), which dynamically changes the retry time to avoid DDoS to the server.
+
 ```typescript
 const getUserData = idmp(
   'using a deduplicated string as a key',
