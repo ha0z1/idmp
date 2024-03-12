@@ -6,16 +6,24 @@
 import idmp from 'idmp'
 import storageWrap, { getCacheKey } from 'idmp/browser-storage'
 
+const getInfo = async () => {
+  const API = `https://haozi.me/?api/your-info`
+  return await fetch(API).then((d) => d.text())
+}
+
 const lsIdmp = storageWrap(idmp, 'localStorage')
 
-const getUserDataWithLsIdmp = (userId: string) =>
-  lsIdmp(`getUserDataWithLsIdmp${userId}`, () => getUserData(userId), {
-    maxAge: 5000,
+// Only one line need to change
+export const getInfoWithLsIdmp = () =>
+  lsIdmp('/api/your-info', getInfo, {
+    maxAge: 5 * 1000,
   })
 
-getUserDataWithLsIdmp('123').then((data) => {
-  console.log(data)
-})
+for (let i = 0; i < 10; ++i) {
+  getInfoWithLsIdmp().then((d) => {
+    console.log(d)
+  })
+}
 ```
 
 Cache data will be stored in `localStorage / sessionStorage` temporary directory and follow the same cache options as `idmp`.
