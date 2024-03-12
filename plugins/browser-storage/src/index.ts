@@ -76,7 +76,9 @@ const storageIdmpWrap = (
         const localData = storage.get(globalKey)
         if (localData) {
           if (process.env.NODE_ENV !== 'production') {
-            console.log(`[idmp-plugin browser-storage debug] ${globalKey} from ${storageType}["${getCacheKey(globalKey)}"]`)
+            console.log(
+              `[idmp-plugin browser-storage debug] ${globalKey} from ${storageType}["${getCacheKey(globalKey)}"]`,
+            )
           }
           return localData
         }
