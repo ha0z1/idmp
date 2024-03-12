@@ -4,17 +4,17 @@ import React, { useEffect, useState } from 'react'
 import { getUserData } from '../../api'
 import { Link } from 'react-router-dom'
 
-const localStorageIdmp = storageWrap(idmp, 'localStorage')
+const lsIdmp = storageWrap(idmp, 'localStorage')
 
-const getUserDataWithlocalStorageIdmp = (userId: string) =>
-  localStorageIdmp(`getUserData${userId}`, () => getUserData(userId), {
+const getUserDataWithLsIdmp = (userId: string) =>
+  lsIdmp(`getUserDataWithLsIdmp${userId}`, () => getUserData(userId), {
     maxAge: 5000,
   })
 
 export default () => {
   const [data, setData] = useState(null)
   useEffect(() => {
-    getUserDataWithlocalStorageIdmp('123').then((data) => {
+    getUserDataWithLsIdmp('123').then((data) => {
       setData(data)
     })
   }, [])
