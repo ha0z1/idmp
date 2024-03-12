@@ -6,6 +6,7 @@
 .vscode
 .npmrc
 coverage
+public
 **/demo
 **/mock
 **/src
