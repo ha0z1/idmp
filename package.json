@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.14.11",
+  "version": "1.14.12",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -16,7 +16,7 @@
     "immutable data",
     "auto retry"
   ],
-  "homepage": "https://idmp-ha0z1.vercel.app",
+  "homepage": "https://idmp.haozi.me",
   "bugs": "https://github.com/ha0z1/idmp/issues",
   "repository": {
     "type": "git",
