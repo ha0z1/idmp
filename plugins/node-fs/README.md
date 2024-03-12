@@ -1,6 +1,6 @@
 # idmp/node-fs
 
-## Useage
+## Usage
 
 ```typescript
 import idmp from 'idmp'
@@ -19,3 +19,7 @@ await fsIdmp(
 
 Cache data will be stored in the `cacheDir` temporary directory and follow the same cache options as `idmp`.
 If the data is in the memory, it is read from the memory first. If it is not in the memory, it is read from the file system. If the cache validity period expires, it will be read from the remote end.
+
+## Notice
+
+Data persistence only supports string type `globalKey` and data structures that can be serialized by `JSON.stringify`

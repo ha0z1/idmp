@@ -11,7 +11,7 @@ An elegant library to solve duplicate and concurrent calls for idempotent functi
 
 English | [简体中文](README.zh-CN.md)
 
-- Demo <https://idmp.vercel.app>
+- Demo <https://idmp-ha0z1.vercel.app>
 
 ## Usage
 
@@ -141,7 +141,7 @@ In React, you can share requests using swr, Provider and more complex state mana
 2. Provider: Needs centralized data management. The data center can't perceive which modules will consume the data, need to maintain the data for a long time, and dare not delete it in time
 3. Redux: Should focus on state changes and sequences, not data sharing. `idmp` lets you focus more on local state
 
-See [demo](https://idmp.vercel.app) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
+See [demo](https://idmp-ha0z1.vercel.app) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
 
 So when module A or module B's code is deleted, there is no need to maintain their cache.
 
