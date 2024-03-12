@@ -18,7 +18,9 @@ export default () => {
       setData(data)
     })
   }, [])
-  if (!data) return
+
+  if (!data) return <>waiting server's data...</>
+
   return (
     <div>
       Refresh the browser and still use the same data in 5 seconds. No network

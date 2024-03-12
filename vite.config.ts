@@ -6,6 +6,7 @@ import dts from 'vite-plugin-dts'
 
 export default defineConfig(({ mode }) => {
   return {
+    publicDir: false,
     plugins: [react(), dts()],
     build: {
       minify: !false,
