@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.14.6",
+  "version": "1.14.11",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -16,7 +16,7 @@
     "immutable data",
     "auto retry"
   ],
-  "homepage": "https://idmp.vercel.app",
+  "homepage": "https://idmp-ha0z1.vercel.app",
   "bugs": "https://github.com/ha0z1/idmp/issues",
   "repository": {
     "type": "git",
@@ -26,15 +26,12 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
-    "./node-fs": "./plugins/node-fs/dist/index.js"
+    "./node-fs": "./plugins/node-fs/dist/index.js",
+    "./browser-storage": "./plugins/browser-storage/dist/index.js"
   },
   "main": "./dist/index.node.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "**/dist",
-    "*.d.ts"
-  ],
   "scripts": {
     "api": "pnpm vite-node -w mock/api.ts",
     "build": "tsc && vite-node scripts/build.ts && pnpm run -r build",
