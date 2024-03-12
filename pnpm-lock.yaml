@@ -70,8 +70,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 1.14.4
-        version: 1.14.4
+        specifier: 1.14.8
+        version: link:..
 
   plugins/browser-storage:
     dependencies:
@@ -2730,12 +2730,6 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
     dev: true
-
-  /idmp@1.14.4:
-    resolution: {integrity: sha512-iC5J/tpwuSdYhqeD3iDER9yQbilptnA3s1zLAs+/fVfS60brF7KzQVHvchS0pvK+vsfSxB41054JOlsP0CvSAw==}
-    dependencies:
-      fs-extra: 11.2.0
-    dev: false
 
   /import-lazy@4.0.0:
     resolution: {integrity: sha512-rKtvo6a868b5Hu3heneU+L4yEQ4jYKLtjpnPeUdK7h0yzXGmyBTypknlkCvHFBqfX9YlorEiMM6Dnq/5atfHkw==}
