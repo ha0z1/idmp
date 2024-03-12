@@ -64,11 +64,11 @@ export const getInfoByIdIdmp = (id: string) =>
 
 ## 插件
 
-`idmp` 有一个强大的插件系统。 以下插件是官方维护的，您也可以参考源码创建自己的插件：
+`idmp` 有一个强大的插件系统。 以下是官方维护的插件列表，您也可以参考源码创建自己的插件：
 
-与高阶函数的类比优雅地传达了插件可以以非侵入性方式扩展 idmp 的核心功能，类似于数学函数 $g(f)(x)$。 这为插件系统提供了极大的灵活性和可扩展性。
+插件可以以非侵入性方式扩展 `idmp` 的核心功能，类似于数学函数 $g(f)(x)$。 这种优雅的设计为插件系统提供了极大的灵活性和可扩展性。
 
-- [使用node-fs进行数据持久化](plugins/node-fs/README.md)（将数据持久化到文件系统）
+- [使用 node-fs 进行数据持久化](plugins/node-fs/README.md)（将数据持久化到文件系统）
 - [使用 localStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
 - [使用 sessionStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
 - 使用 indexedDB 进行数据持久化 // TODO
@@ -212,7 +212,7 @@ $$
 
 当哪天页面不需要直接消费 dataA 的数据时，直接删除请求 dataA 的代码就好了，没有任何心智负担。
 
-## 健壮性
+## 鲁棒性
 
 假设一个接口的请求失败率为 10%, 那么通过 3 次尝试后，请求仍失败的可能性将降到 0.1%
 
@@ -232,6 +232,8 @@ const getUserData = idmp(
   },
 )
 ```
+
+idmp 内部实现了类似 [指数退避](https://en.m.wikipedia.org/wiki/Exponential_backoff)的算法，会动态改变重试时间，避免对服务器造成 DDoS。
 
 ## 优化大计算
 

@@ -7,10 +7,14 @@ import idmp, { g } from '../src'
 //   return res
 // }
 
+const sleep = (delay: number) =>
+  new Promise((resolve) => setTimeout(resolve, delay))
+
 export const getUserData = async (userId: string) => {
   const API = `https://haozi.me/?id=${userId}&t=${Math.random()}`
   await fetch(API).then((d) => d.text())
 
+  await sleep(2000)
   const res = {
     id: userId,
     val: Math.random(),
