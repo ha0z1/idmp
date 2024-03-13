@@ -2,6 +2,10 @@ import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
 import os from 'node:os'
 import path from 'node:path'
 import fs from 'fs-extra'
+import serialize from 'serialize-javascript'
+
+const deSerialize = <T = any>(data: string) =>
+  new Function(`return ${data}`)() as T
 
 const udf = undefined
 const encode = encodeURIComponent
@@ -14,18 +18,25 @@ const setData = async <T = any>(key: string, data: T, maxAge: number) => {
   if (!key) return
   const cachePath = getCachePath(key)
   fs.ensureFileSync(cachePath)
-  fs.outputJSONSync(cachePath, {
-    t: Date.now(),
-    a: maxAge,
-    d: data,
-  })
+  fs.outputFileSync(
+    cachePath,
+    serialize({
+      t: Date.now(),
+      a: maxAge,
+      d: data,
+    }),
+  )
 }
 
 const getData = async <T = any>(key: string) => {
   if (!key) return udf
   const cachePath = getCachePath(key)
 
-  const localData = fs.readJsonSync(cachePath, { throws: false }) ?? udf
+  let localData
+  try {
+    localData = deSerialize(fs.readFileSync(cachePath, 'utf-8'))
+  } catch {}
+
   if (localData === udf) return udf
 
   const { t, a: maxAge, d: data } = localData

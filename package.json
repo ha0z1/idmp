@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.14.12",
+  "version": "1.15.0",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -45,7 +45,8 @@
     "www-dev": "pnpm run build && pnpm vite build -c vite.demo.config.ts"
   },
   "dependencies": {
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "serialize-javascript": "^6.0.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
