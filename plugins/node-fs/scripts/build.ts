@@ -3,7 +3,7 @@ import { build, mergeConfig, type InlineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import dts from 'vite-plugin-dts'
 import banner from 'vite-plugin-banner'
-import { version } from '../package.json'
+import { version, dependencies } from '../package.json'
 
 type DeepPartial<T> = T extends object
   ? {
@@ -24,9 +24,8 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           // target: "chrome51",
 
           target: 'node18',
-          externals: ['idmp'],
           rollupOptions: {
-            external: [/^node:.*/, 'os', 'fs', 'idmp', 'fs-extra'],
+            external: [/^node:.*/, 'os', 'fs', ...Object.keys(dependencies)],
           },
           lib: {
             formats: ['es'],
