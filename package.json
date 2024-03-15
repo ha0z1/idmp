@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.15.3",
+  "version": "1.15.4",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
