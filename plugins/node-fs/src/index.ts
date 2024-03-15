@@ -50,12 +50,13 @@ const getData = async <T = any>(key: string) => {
 
 type NonVoid<T> = T extends void ? never : T
 
-const fsIdmpWrap = (_idmp: Idmp) => {
+const fsIdmpWrap = (_idmp: Idmp, namespace = '') => {
   const newIdmp = <T>(
     globalKey: string,
     promiseFunc: IdmpPromise<NonVoid<T>>,
     options?: IdmpOptions,
   ) => {
+    globalKey = `${namespace}_${globalKey}`
     const finalOptions = getOptions(options)
     return _idmp(
       globalKey,
