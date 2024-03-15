@@ -48,12 +48,12 @@ const getData = async <T = any>(key: string) => {
   return data as T
 }
 
-type NonVoid<T> = T extends void ? never : T
+// type NonVoid<T> = T extends void ? never : T
 
 const fsIdmpWrap = (_idmp: Idmp, namespace = '') => {
   const newIdmp = <T>(
     globalKey: string,
-    promiseFunc: IdmpPromise<NonVoid<T>>,
+    promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ) => {
     globalKey = `${namespace}_${globalKey}`
