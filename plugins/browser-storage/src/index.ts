@@ -68,7 +68,7 @@ const storageIdmpWrap = (
   const storage = initStorage(storageType)
   const newIdmp = <T>(
     globalKey: string,
-    promiseFunc: IdmpPromise<NonVoid<T>>,
+    promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ) => {
     const finalOptions = getOptions(options)

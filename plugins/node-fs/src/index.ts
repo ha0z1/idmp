@@ -53,7 +53,7 @@ type NonVoid<T> = T extends void ? never : T
 const fsIdmpWrap = (_idmp: Idmp, namespace = '') => {
   const newIdmp = <T>(
     globalKey: string,
-    promiseFunc: IdmpPromise<NonVoid<T>>,
+    promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ) => {
     globalKey = `${namespace}_${globalKey}`
