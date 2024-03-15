@@ -31,4 +31,5 @@ If the data is in the memory, it is read from the memory first. If it is not in 
 
 ## Notice
 
-Data persistence only supports string type `globalKey` and data structures that can be serialized by `JSON.stringify`
+- Data persistence only supports string type `globalKey` and data structures that can be serialized by `JSON.stringify`
+- If return value is `undefined` it will not be cached, you must return `null`
