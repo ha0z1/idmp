@@ -74,7 +74,7 @@ const storageIdmpWrap = (
       globalKey,
       async () => {
         const localData = storage.get(globalKey)
-        if (localData) {
+        if (localData !== udf) {
           if (process.env.NODE_ENV !== 'production') {
             console.log(
               `[idmp-plugin browser-storage debug] ${globalKey} from ${storageType}["${getCacheKey(globalKey)}"]`,
@@ -84,7 +84,7 @@ const storageIdmpWrap = (
         }
 
         const memoryData = await promiseFunc()
-        if (memoryData) {
+        if (memoryData !== udf) {
           // console.log('from memoryData')s a
           storage.set(globalKey, memoryData, finalOptions.maxAge) // no need wait
         }
