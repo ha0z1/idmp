@@ -59,13 +59,13 @@ const fsIdmpWrap = (_idmp: Idmp) => {
       globalKey,
       async () => {
         const localData = await getData(globalKey)
-        if (localData) {
+        if (localData !== udf) {
           // console.log('from localData')
           return localData
         }
 
         const memoryData = await promiseFunc()
-        if (memoryData) {
+        if (memoryData !== udf) {
           // console.log('from memoryData')s a
           setData(globalKey, memoryData, finalOptions.maxAge) // no need wait
         }
