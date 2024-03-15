@@ -3,7 +3,7 @@ import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
 const udf = undefined
 
 type StorageType = 'localStorage' | 'sessionStorage'
-type NonVoid<T> = T extends void ? never : T
+// type NonVoid<T> = T extends void ? never : T
 
 const getCacheKey = (globalKey: string) => `@idmp/v1/${globalKey}`
 
@@ -68,7 +68,7 @@ const storageIdmpWrap = (
   const storage = initStorage(storageType)
   const newIdmp = <T>(
     globalKey: string,
-    promiseFunc: IdmpPromise<NonVoid<T>>,
+    promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ) => {
     const finalOptions = getOptions(options)
