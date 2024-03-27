@@ -25,7 +25,12 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": "./dist/index.js",
+     ".": {
+            "default": {
+                "require": "./dist/index.node.cjs",
+                "default": "./dist/index.js"
+            }
+        },
     "./node-fs": "./plugins/node-fs/dist/index.js",
     "./browser-storage": "./plugins/browser-storage/dist/index.js"
   },
