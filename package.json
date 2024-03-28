@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "1.15.4",
+  "version": "1.16.0",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -25,12 +25,12 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-     ".": {
-            "default": {
-                "require": "./dist/index.node.cjs",
-                "default": "./dist/index.js"
-            }
-        },
+    ".": {
+      "default": {
+        "require": "./dist/index.node.cjs",
+        "default": "./dist/index.js"
+      }
+    },
     "./node-fs": "./plugins/node-fs/dist/index.js",
     "./browser-storage": "./plugins/browser-storage/dist/index.js"
   },
