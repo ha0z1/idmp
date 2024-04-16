@@ -55,8 +55,8 @@ importers:
         specifier: ^5.2.8
         version: 5.2.8(@types/node@20.12.7)(terser@5.30.3)
       vite-node:
-        specifier: ^1.4.0
-        version: 1.4.0(@types/node@20.12.7)(terser@5.30.3)
+        specifier: ^1.5.0
+        version: 1.5.0(@types/node@20.12.7)(terser@5.30.3)
       vite-plugin-banner:
         specifier: ^0.7.1
         version: 0.7.1
@@ -3643,6 +3643,27 @@ packages:
 
   /vite-node@1.4.0(@types/node@20.12.7)(terser@5.30.3):
     resolution: {integrity: sha512-VZDAseqjrHgNd4Kh8icYHWzTKSCZMhia7GyHfhtzLW33fZlG9SwsB6CEhgyVOWkJfJ2pFLrp/Gj1FSfAiqH9Lw==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+    dependencies:
+      cac: 6.7.14
+      debug: 4.3.4
+      pathe: 1.1.2
+      picocolors: 1.0.0
+      vite: 5.2.8(@types/node@20.12.7)(terser@5.30.3)
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vite-node@1.5.0(@types/node@20.12.7)(terser@5.30.3):
+    resolution: {integrity: sha512-tV8h6gMj6vPzVCa7l+VGq9lwoJjW8Y79vst8QZZGiuRAfijU+EEWuc0kFpmndQrWhMMhet1jdSF+40KSZUqIIw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     dependencies:
