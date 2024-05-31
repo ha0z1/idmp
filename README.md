@@ -13,6 +13,10 @@ English | [简体中文](README.zh-CN.md)
 
 - Demo <https://idmp.haozi.me>
 
+## Break change
+
+After v2.x version: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
+
 ## Usage
 
 ### Basic Usage
