@@ -6,6 +6,7 @@ import fs from 'fs-extra'
       ...fs.readJsonSync('./package.json'),
       devDependencies: undefined,
       scripts: undefined,
+      type: undefined,
     },
     {
       spaces: 2,
