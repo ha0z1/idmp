@@ -91,12 +91,19 @@ const defineReactive = (obj: any, key: string | symbol, value: any) => {
 }
 
 const readonly = <T>(obj: T): T => {
-  if (obj === null || typeof obj !== 'object') {
-    return obj
-  }
+  if (obj == null || typeof obj !== 'object') return obj
+
+  const protoType = Object.prototype.toString.call(obj)
+  if (!['[object Object]', '[object Array]'].includes(protoType)) return obj
+
+  const isImmerDraft = (obj: any) => !!obj[Symbol.for('immer-state')]
+  if (isImmerDraft(obj)) return obj
 
   Object.keys(obj).forEach((key) => {
-    defineReactive(obj, key, (obj as any)[key])
+    const configurable = Object.getOwnPropertyDescriptor(obj, key)?.configurable
+    if (configurable === udf || configurable === true) {
+      defineReactive(obj, key, (obj as any)[key])
+    }
   })
 
   return obj
@@ -119,7 +126,7 @@ let _globalStore: Record<
     [K.oneCallPromiseFunc]: any
     [K._sourceStack]: string
   }
-> = {}
+> = {} // Object.create(null)
 
 const getOptions = (options?: IdmpOptions) => {
   const {
@@ -138,19 +145,20 @@ const getOptions = (options?: IdmpOptions) => {
 }
 
 const flush = (globalKey: IdmpGlobalKey) => {
-  if (!globalKey) return
-  // if (process.env.NODE_ENV !== 'production') {
-  //   if (!_globalStore[globalKey]) {
-  //     console.log(
-  //       `idmp: The cache for \`${globalKey.toString()}\` does not exist, there is no need to worry. This is just a development message and is considered a normal situation.`,
-  //     )
-  //   } else {
-  //     console.log(
-  //       `idmp: The cache for \`${globalKey.toString()}\` has been cleared`,
-  //     )
-  //   }
-  // }
-  delete _globalStore[globalKey]
+  if (!globalKey)
+    return // if (process.env.NODE_ENV !== 'production') {
+    //   if (!_globalStore[globalKey]) {
+    //     console.log(
+    //       `idmp: The cache for \`${globalKey.toString()}\` does not exist, there is no need to worry. This is just a development message and is considered a normal situation.`,
+    //     )
+    //   } else {
+    //     console.log(
+    //       `idmp: The cache for \`${globalKey.toString()}\` has been cleared`,
+    //     )
+    //   }
+    // }
+  ;(_globalStore[globalKey] as any) = udf
+  // delete _globalStore[globalKey]
 }
 
 const flushAll = () => {
@@ -251,7 +259,8 @@ const idmp = <T>(
             throw new Error()
           }
         } catch (err: any) {
-          const getCodeLine = (stack: string, offset = 0) => {
+          const getCodeLine = (stack: string, offset = 0): string => {
+            if (typeof globalKey === 'symbol') return ''
             try {
               let arr = (stack as any)
                 .split('\n')
@@ -277,7 +286,9 @@ const idmp = <T>(
               const line = arr[idx + offset + 1] || ''
               if (line.includes('idmp')) return line
               return ''
-            } catch {}
+            } catch {
+              return ''
+            }
           }
 
           callStack = getCodeLine(err.stack, 1).split(' ').pop() || ''
@@ -289,7 +300,7 @@ const idmp = <T>(
 
             if (line1 && line2 && line1 !== line2) {
               console.error(
-                `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places: \n${[
+                `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places\n(It may be a misjudgment and can be ignored):\nsee https://github.com/ha0z1/idmp?tab=readme-ov-file#implementation \n${[
                   `1.${line1} ${cache[K._sourceStack]}`,
                   '------------',
                   `2.${line2} ${err.stack}`,
