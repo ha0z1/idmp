@@ -77,7 +77,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.0",
     "typescript": "^5.5.2",
-    "vite": "^5.3.1",
+    "vite": "^5.4.2",
     "vite-node": "^1.6.0",
     "vite-plugin-banner": "^0.7.1",
     "vite-plugin-dts": "^3.9.1",
