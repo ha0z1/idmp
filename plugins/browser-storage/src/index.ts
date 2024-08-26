@@ -87,7 +87,7 @@ const storageIdmpWrap = (
 
         const memoryData = await promiseFunc()
         if (memoryData !== udf) {
-          // console.log('from memoryData')s a
+          // console.log('from memoryData')
           storage.set(globalKey, memoryData, finalOptions.maxAge) // no need wait
         }
         return memoryData
