@@ -1,4 +1,5 @@
-import { expect, it } from 'vitest'
+import { createDraft, finishDraft } from 'immer'
+import { describe, expect, it } from 'vitest'
 import idmp, { type IdmpOptions } from '../src/index'
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -130,6 +131,92 @@ it(`should skip all cache when flushAll`, async () => {
   const data23 = await getData2()
   expect(data13).not.toEqual(data11)
   expect(data23).not.toEqual(data21)
+})
+
+it('Support Uint[8|16|32]Array', async () => {
+  const uint8Array = new Uint8Array(100)
+  const getUint8Array = () => idmp('Uint8Array', async () => uint8Array)
+  expect(await getUint8Array()).toBe(uint8Array)
+
+  const uint16Array = new Uint8Array(100)
+  const getUint16Array = () => idmp('Uint16Array', async () => uint16Array)
+  expect(await getUint16Array()).toBe(uint16Array)
+
+  const uint32Array = new Uint8Array(100)
+  const getUint32Array = () => idmp('Uint32Array', async () => uint32Array)
+  expect(await getUint32Array()).toBe(uint32Array)
+})
+
+it('Support immer draft data', async () => {
+  const origin = { hello: 'world1' }
+  const draft = createDraft(origin)
+
+  try {
+    const res = await idmp(Symbol(), async () => draft)
+    res.hello = 'world2'
+  } catch (e) {
+    console.error(e)
+  }
+  expect(origin.hello).toBe('world1')
+  expect(draft.hello).toBe('world2')
+  const finishData = finishDraft(draft)
+  expect(finishData.hello).toBe('world2')
+})
+
+describe('Do not defineReactive un-configurable value', () => {
+  it('1', async () => {
+    const origin = { hello: 'world1' }
+    const data = Object.defineProperty(origin, 'hello', {
+      value: 'world2',
+      writable: true,
+      enumerable: true,
+      configurable: false,
+    })
+    expect(data.hello).toBe('world2')
+
+    const res = await idmp(Symbol(), async () => data)
+    res.hello = 'world3'
+    // it's not a bug, the origin has been rewritten, see next test
+    expect(res.hello).toBe('world3')
+    expect(data.hello).toBe('world3')
+    expect(origin.hello).toBe('world3')
+    expect(res).toBe(data)
+  })
+
+  it('2', async () => {
+    const origin = { hello: 'world1' }
+    const data = Object.defineProperty(origin, 'hello', {
+      value: 'world2',
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    })
+    expect(data.hello).toBe('world2')
+
+    const res = await idmp(Symbol(), async () => data)
+    expect(() => {
+      res.hello = 'world3'
+    }).toThrowError()
+
+    expect(res.hello).toBe('world2')
+    expect(data.hello).toBe('world2')
+    expect(origin.hello).toBe('world2')
+  })
+
+  it('3', async () => {
+    const origin = { hello: 'world1' }
+    const data = origin
+    expect(data.hello).toBe('world1')
+
+    const res = await idmp(Symbol(), async () => data)
+    expect(() => {
+      res.hello = 'world3'
+    }).toThrowError()
+
+    expect(res.hello).toBe('world1')
+    expect(data.hello).toBe('world1')
+    expect(origin.hello).toBe('world1')
+  })
 })
 
 it(`should fallback to originFunction when key is falsy`, async () => {
