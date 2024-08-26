@@ -20,6 +20,9 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           banner(`/*! idmp v${version} | (c) github/haozi | MIT */`),
         ],
         build: {
+          // rollupOptions: {
+          //   external: ['immer'],
+          // },
           sourcemap: false,
           // target: "chrome51",
           target: 'es6',
