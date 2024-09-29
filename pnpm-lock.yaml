@@ -76,8 +76,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 2.1.1
-        version: 2.1.1
+        specifier: 2.1.2
+        version: 2.1.2
 
   plugins/browser-storage:
     dependencies:
@@ -1547,8 +1547,8 @@ packages:
     engines: {node: '>=12'}
     hasBin: true
 
-  idmp@2.1.1:
-    resolution: {integrity: sha512-vTXOrzF4iimi+MDSGLIS3DM987buIClTZODhFb7wk8wf7/rjcGty7bwVCsrXf+QnMHXq96fiFqFjgrb+7B61Rg==}
+  idmp@2.1.2:
+    resolution: {integrity: sha512-zD3S45vnHCaJk1ngGg+kLmIF9E0/fk7P1R3Gsehmmp7nOjIbUkWWNYCj+vthtjDAiS7cw7PyuOTwf+Dhcmd+pw==}
 
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
@@ -3754,7 +3754,7 @@ snapshots:
       relateurl: 0.2.7
       terser: 5.34.1
 
-  idmp@2.1.1:
+  idmp@2.1.2:
     dependencies:
       fs-extra: 11.2.0
       serialize-javascript: 6.0.2
