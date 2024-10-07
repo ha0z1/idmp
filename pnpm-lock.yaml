@@ -58,8 +58,8 @@ importers:
         specifier: ^5.4.8
         version: 5.4.8(@types/node@22.7.4)(terser@5.34.1)
       vite-node:
-        specifier: ^2.1.1
-        version: 2.1.1(@types/node@22.7.4)(terser@5.34.1)
+        specifier: ^2.1.2
+        version: 2.1.2(@types/node@22.7.4)(terser@5.34.1)
       vite-plugin-banner:
         specifier: ^0.8.0
         version: 0.8.0
@@ -2055,6 +2055,11 @@ packages:
 
   vite-node@2.1.1:
     resolution: {integrity: sha512-N/mGckI1suG/5wQI35XeR9rsMsPqKXzq1CdUndzVstBj/HvyxxGctwnK6WX43NGt5L3Z5tcRf83g4TITKJhPrA==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+
+  vite-node@2.1.2:
+    resolution: {integrity: sha512-HPcGNN5g/7I2OtPjLqgOtCRu/qhVvBxTUD3qzitmL0SrG1cWFzxzhMDWussxSbrRYWqnKf8P2jiNhPMSN+ymsQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -4236,6 +4241,23 @@ snapshots:
       punycode: 2.3.1
 
   vite-node@2.1.1(@types/node@22.7.4)(terser@5.34.1):
+    dependencies:
+      cac: 6.7.14
+      debug: 4.3.7
+      pathe: 1.1.2
+      vite: 5.4.8(@types/node@22.7.4)(terser@5.34.1)
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+
+  vite-node@2.1.2(@types/node@22.7.4)(terser@5.34.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.7
