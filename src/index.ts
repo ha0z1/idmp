@@ -194,9 +194,10 @@ const idmp = <T>(
 
   let callStack = ''
   const printLogs = (...msg: any[]) => {
-    /* istanbul ignore */
+    /* istanbul ignore next */
     if (typeof window === 'undefined') return
 
+    /* istanbul ignore next */
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
       console.log('globalKey:', globalKey)
@@ -285,8 +286,10 @@ const idmp = <T>(
               // arr = arr.filter((o: string) => !o.includes('node_modules'))
               const line = arr[idx + offset + 1] || ''
               if (line.includes('idmp')) return line
+              /* istanbul ignore next */
               return ''
             } catch {
+              /* istanbul ignore next */
               return ''
             }
           }
