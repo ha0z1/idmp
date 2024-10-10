@@ -76,8 +76,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 2.1.2
-        version: 2.1.2
+        specifier: 2.1.4
+        version: 2.1.4
 
   plugins/browser-storage:
     dependencies:
@@ -1547,8 +1547,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  idmp@2.1.2:
-    resolution: {integrity: sha512-zD3S45vnHCaJk1ngGg+kLmIF9E0/fk7P1R3Gsehmmp7nOjIbUkWWNYCj+vthtjDAiS7cw7PyuOTwf+Dhcmd+pw==}
+  idmp@2.1.4:
+    resolution: {integrity: sha512-m1JGeJZzEX4nnVRMMmc3QXZm+1ETicbYa4MrR1zYE0o1EX3wU/wMRWksSS/NNQWUUqXAYB274Eumd7tVX5BKRg==}
 
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
@@ -3796,7 +3796,7 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  idmp@2.1.2:
+  idmp@2.1.4:
     dependencies:
       fs-extra: 11.2.0
       serialize-javascript: 6.0.2
