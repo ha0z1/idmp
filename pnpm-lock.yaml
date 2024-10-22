@@ -76,8 +76,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 2.0.1
-        version: 2.0.1
+        specifier: 2.1.6
+        version: link:..
 
   plugins/browser-storage:
     dependencies:
@@ -2706,13 +2706,6 @@ packages:
       relateurl: 0.2.7
       terser: 5.36.0
     dev: true
-
-  /idmp@2.0.1:
-    resolution: {integrity: sha512-XIcGcRZn1Elt1VMGawkh0SFzZ3wvCkf3BY1AhIBL70CCmHH6qApCJTseboWebnfB/33qJ5FE+u/jYx2UvvgY1Q==}
-    dependencies:
-      fs-extra: 11.2.0
-      serialize-javascript: 6.0.2
-    dev: false
 
   /immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
