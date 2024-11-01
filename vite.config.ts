@@ -37,6 +37,11 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       testTimeout: 60 * 1000,
+      coverage: {
+        provider: 'istanbul',
+        clean: true,
+        include: ['src/**/*.ts?(x)'],
+      },
     },
   }
 })
