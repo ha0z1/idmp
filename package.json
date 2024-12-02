@@ -79,7 +79,7 @@
     "react-router-dom": "^7.0.1",
     "typescript": "^5.7.2",
     "vite": "^6.0.2",
-    "vite-node": "^2.1.6",
+    "vite-node": "^2.1.7",
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-dts": "^4.3.0",
     "vite-plugin-html": "^3.2.2",
