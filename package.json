@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -65,24 +65,24 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.10.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-legacy": "^6.0.0",
     "@vitejs/plugin-react-swc": "^3.7.2",
-    "@vitest/coverage-istanbul": "^2.1.6",
+    "@vitest/coverage-istanbul": "^2.1.8",
     "fs-extra": "^11.2.0",
     "immer": "^10.1.1",
-    "prettier": "^3.4.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.0.1",
+    "prettier": "^3.4.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.2",
     "typescript": "^5.7.2",
-    "vite": "^6.0.0",
-    "vite-node": "^2.1.6",
+    "vite": "^6.0.3",
+    "vite-node": "^2.1.8",
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-dts": "^4.3.0",
     "vite-plugin-html": "^3.2.2",
-    "vitest": "^2.1.6"
+    "vitest": "^2.1.8"
   }
 }
