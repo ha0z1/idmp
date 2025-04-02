@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "2.1.2025",
+  "version": "2.2.0",
   "keywords": [
     "deduplicate network requests",
     "idempotent function",
@@ -65,9 +65,9 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.13.17",
+    "@types/node": "^22.14.0",
     "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.0",
+    "@types/react-dom": "^19.1.1",
     "@vitejs/plugin-legacy": "^6.0.2",
     "@vitejs/plugin-react-swc": "^3.8.1",
     "@vitest/coverage-istanbul": "^3.1.1",
@@ -76,9 +76,9 @@
     "prettier": "^3.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.4.1",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.4",
+    "react-router-dom": "^7.5.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.2.5",
     "vite-node": "^3.1.1",
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-dts": "^4.5.3",
