@@ -24,6 +24,11 @@ export default defineConfig(({ mode }) => {
         name: 'idmp',
         fileName: 'index',
       },
+      rollupOptions: {
+        output: {
+          exports: 'named',
+        },
+      },
     },
     // resolve: {
     //   alias:{
@@ -37,6 +42,11 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       testTimeout: 60 * 1000,
+      coverage: {
+        provider: 'istanbul',
+        clean: true,
+        include: ['src/**/*.ts?(x)'],
+      },
     },
   }
 })
