@@ -100,6 +100,7 @@ IdmpOptions:
 | Property        | Type       | Default | Description                                                                                                                                                                                                           |
 | --------------- | ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `maxRetry`      | `number`   | `30`    | Maximum number of retry attempts.                                                                                                                                                                                     |
+| `minRetryDelay` | `number`   | `50`    | Minimum retry interval in milliseconds. The default value is 50 ms.                                                                                                                                                   |
 | `maxAge`        | `number`   | `3000`  | Maximum age in milliseconds. The maximum value is 604800000ms (7 days).                                                                                                                                               |
 | `onBeforeRetry` | `function` | -       | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
 
