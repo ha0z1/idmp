@@ -17,6 +17,13 @@ interface IdmpOptions {
   maxRetry?: number
 
   /**
+   * Minimum retry interval in milliseconds. The default value is 50 ms
+   * @type {number}
+   * @default 50 ms
+   */
+  minRetryDelay?: number
+
+  /**
    * Maximum age in milliseconds. The maximum value is 604800000ms (7 days).
    * @type {number}
    * @default 3000
@@ -133,11 +140,13 @@ const getOptions = (options?: IdmpOptions) => {
     maxRetry = 30,
     maxAge: paramMaxAge = DEFAULT_MAX_AGE,
     onBeforeRetry = noop,
+    minRetryDelay = 50,
   } = options || {}
 
   const maxAge = getRange(paramMaxAge)
   return {
     maxRetry,
+    minRetryDelay,
     maxAge,
     onBeforeRetry,
     f: paramMaxAge === 1 / 0, // Infinity
@@ -180,6 +189,7 @@ const idmp = <T>(
 
   const {
     maxRetry,
+    minRetryDelay,
     maxAge,
     onBeforeRetry,
     f: isFiniteParamMaxAge,
@@ -357,7 +367,7 @@ const idmp = <T>(
               })
               reset()
 
-              setTimeout(todo, (cache[K.retryCount] - 1) * 50)
+              setTimeout(todo, (cache[K.retryCount] - 1) * minRetryDelay)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
