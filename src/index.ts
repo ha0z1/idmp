@@ -166,8 +166,8 @@ const flush = (globalKey: IdmpGlobalKey) => {
     //     )
     //   }
     // }
-  ;(_globalStore[globalKey] as any) = udf
-  // delete _globalStore[globalKey]
+  // ;(_globalStore[globalKey] as any) = udf
+  delete _globalStore[globalKey]
 }
 
 const flushAll = () => {
