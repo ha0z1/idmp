@@ -1,3 +1,7 @@
 packages:
   - ./plugins/*
   - ./demo
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild
