@@ -1,44 +1,44 @@
 /**
- * @typedef {Object} IdmpOptions
- * @property {number} [maxRetry=30] - Maximum number of retry attempts.
- * @property {number} [maxAge=3000] - Maximum age in milliseconds. The maximum value is 604800000ms (7 days).
- * @property {function} [onBeforeRetry] - Function to be executed before a retry attempt.
+ * IdmpGlobalKey type - Represents the key used to identify and store promises globally
+ * Can be a string, number, symbol, or falsy value (false, null, undefined)
  */
-
 type IdmpGlobalKey = string | number | symbol | false | null | undefined
 
+/**
+ * IdmpPromise type - Function that returns a Promise of generic type T
+ */
 type IdmpPromise<T> = () => Promise<T>
+
+/**
+ * Configuration options for IDMP (Intelligent Deduplication of Multiple Promises)
+ */
 interface IdmpOptions {
   /**
-   * Maximum number of retry attempts.
-   * @type {number}
+   * Maximum number of retry attempts for failed promises
    * @default 30
    */
   maxRetry?: number
 
   /**
-   * Minimum retry interval in milliseconds. The default value is 50 ms
-   * @type {number}
-   * @default 50 ms
+   * Minimum delay between retry attempts in milliseconds
+   * @default 50
    */
   minRetryDelay?: number
 
   /**
-   * Maximum age in milliseconds. The maximum value is 604800000ms (7 days).
-   * @type {number}
+   * Maximum cache age in milliseconds
+   * After this period, the cached promise result will be cleared
    * @default 3000
-   * @max 604800000
+   * @max 604800000 (7 days)
    */
   maxAge?: number
 
   /**
-   * Function to be executed before a retry attempt.
-   * @type {function}
-   * @param {any} err - The error that caused the retry.
-   * @param {Object} extra - Additional parameters.
-   * @param {IdmpGlobalKey} extra.globalKey - The global key.
-   * @param {number} extra.retryCount - The current retry count.
-   * @returns {void}
+   * Function executed before each retry attempt
+   * @param err - The error object that caused the retry
+   * @param extra - Additional context information
+   * @param extra.globalKey - The key identifying this promise in the global store
+   * @param extra.retryCount - Current retry attempt number
    */
   onBeforeRetry?: (
     err: any,
@@ -49,13 +49,25 @@ interface IdmpOptions {
   ) => void
 }
 
+/**
+ * Internal status enum for promise states
+ */
 const enum Status {
+  /** Promise hasn't been initiated yet */
   UNSENT = 0,
+  /** Promise is in progress */
   OPENING = 1,
-  ABORTED = 2, // TODO
+  /** Promise was aborted (reserved for future use) */
+  ABORTED = 2,
+  /** Promise was rejected */
   REJECTED = 3,
+  /** Promise was resolved successfully */
   RESOLVED = 4,
 }
+
+/**
+ * Internal keys enum for accessing cache store properties
+ */
 const enum K {
   retryCount = 0,
   status,
@@ -66,23 +78,18 @@ const enum K {
   _sourceStack,
 }
 
+// Constants
 const DEFAULT_MAX_AGE = 3000
 const _7days = 604800000
 const noop = () => {}
 const udf = undefined
 
-// const deepFreeze = /* @__PURE__ */ <T>(obj: any): T => {
-//   if (!obj) return obj
-//   if (typeof obj !== 'object') return obj
-
-//   Object.keys(obj).forEach((property) => {
-//     if (typeof obj[property] === 'object' && !Object.isFrozen(obj[property])) {
-//       deepFreeze(obj[property])
-//     }
-//   })
-//   return Object.freeze(obj)
-// }
-
+/**
+ * Makes an object's properties read-only to prevent mutation
+ * @param obj - Object to make read-only
+ * @param key - Property key to make read-only
+ * @param value - Value to assign to the property
+ */
 const defineReactive = (obj: any, key: string | symbol, value: any) => {
   readonly(value)
   Object.defineProperty(obj, key, {
@@ -97,6 +104,11 @@ const defineReactive = (obj: any, key: string | symbol, value: any) => {
   })
 }
 
+/**
+ * Recursively makes an object and its properties read-only
+ * @param obj - Object to make read-only
+ * @returns The read-only object
+ */
 const readonly = <T>(obj: T): T => {
   if (obj == null || typeof obj !== 'object') return obj
 
@@ -116,12 +128,21 @@ const readonly = <T>(obj: T): T => {
   return obj
 }
 
+/**
+ * Ensures maxAge is within valid range (0 to 7 days)
+ * @param maxAge - The requested max age in milliseconds
+ * @returns A valid max age value
+ */
 const getRange = (maxAge: number) => {
   if (maxAge < 0) return 0
   if (maxAge > _7days) return _7days
   return maxAge
 }
 
+/**
+ * Global store for caching promises and their results
+ * Contains tracking information for each promise identified by globalKey
+ */
 let _globalStore: Record<
   string | symbol,
   {
@@ -133,8 +154,13 @@ let _globalStore: Record<
     [K.oneCallPromiseFunc]: any
     [K._sourceStack]: string
   }
-> = {} // Object.create(null)
+> = {}
 
+/**
+ * Normalizes options, applying defaults as needed
+ * @param options - User-provided options
+ * @returns Normalized options object
+ */
 const getOptions = (options?: IdmpOptions) => {
   const {
     maxRetry = 30,
@@ -153,27 +179,47 @@ const getOptions = (options?: IdmpOptions) => {
   }
 }
 
+/**
+ * Clears the cached result for a specific key
+ * @param globalKey - The key to clear from cache
+ */
 const flush = (globalKey: IdmpGlobalKey) => {
-  if (!globalKey)
-    return // if (process.env.NODE_ENV !== 'production') {
-    //   if (!_globalStore[globalKey]) {
-    //     console.log(
-    //       `idmp: The cache for \`${globalKey.toString()}\` does not exist, there is no need to worry. This is just a development message and is considered a normal situation.`,
-    //     )
-    //   } else {
-    //     console.log(
-    //       `idmp: The cache for \`${globalKey.toString()}\` has been cleared`,
-    //     )
-    //   }
-    // }
-  // ;(_globalStore[globalKey] as any) = udf
+  if (!globalKey) return
   delete _globalStore[globalKey]
 }
 
+/**
+ * Clears all cached results
+ */
 const flushAll = () => {
   _globalStore = {}
 }
 
+/**
+ * Main IDMP function - Intelligent Deduplication of Multiple Promises
+ *
+ * Ensures that multiple calls to the same asynchronous operation (identified by globalKey)
+ * will reuse the same promise, avoiding duplicate network requests or operations.
+ * Includes automatic retry logic, caching, and request deduplication.
+ *
+ * @param globalKey - Unique identifier for this promise operation
+ * @param promiseFunc - Function that returns the promise to execute
+ * @param options - Configuration options
+ * @returns Promise resolving to the result of promiseFunc
+ *
+ * @example
+ * ```typescript
+ * // Basic usage
+ * const data = await idmp('user-123', () => fetchUserData(123));
+ *
+ * // With options
+ * const data = await idmp('user-123', () => fetchUserData(123), {
+ *   maxRetry: 5,
+ *   maxAge: 60000, // 1 minute cache
+ *   onBeforeRetry: (err, {retryCount}) => console.log(`Retry #${retryCount}`)
+ * });
+ * ```
+ */
 const idmp = <T>(
   globalKey: IdmpGlobalKey,
   promiseFunc: IdmpPromise<T>,
@@ -219,12 +265,18 @@ const idmp = <T>(
     }
   }
 
+  /**
+   * Resets the promise state for retrying
+   */
   const reset = () => {
     cache[K.status] = Status.UNSENT
     cache[K.resData] = udf
     cache[K.resError] = udf
   }
 
+  /**
+   * Resolves all pending promises with the cached result
+   */
   const doResolves = () => {
     const len = cache[K.pendingList].length
     for (let i = 0; i < len; ++i) {
@@ -252,6 +304,9 @@ const idmp = <T>(
     }
   }
 
+  /**
+   * Rejects all pending promises with the cached error
+   */
   const doRejects = () => {
     const len = cache[K.pendingList].length - maxRetry
     for (let i = 0; i < len; ++i) {
@@ -259,6 +314,10 @@ const idmp = <T>(
     }
     flush(globalKey)
   }
+
+  /**
+   * Creates and manages the actual promise execution
+   */
   const todo = () =>
     new Promise<T>((resolve, reject) => {
       !cache[K.oneCallPromiseFunc] &&
@@ -293,7 +352,6 @@ const idmp = <T>(
                 }
               }
 
-              // arr = arr.filter((o: string) => !o.includes('node_modules'))
               const line = arr[idx + offset + 1] || ''
               if (line.includes('idmp')) return line
               /* istanbul ignore next */
@@ -334,10 +392,6 @@ const idmp = <T>(
         resolve(cache[K.resData])
         return
       }
-      // if (cache[K.resError]) {
-      //   reject(cache[K.resError])
-      //   return
-      // }
 
       if (cache[K.status] === Status.UNSENT) {
         cache[K.status] = Status.OPENING
@@ -373,23 +427,30 @@ const idmp = <T>(
       } else if (cache[K.status] === Status.OPENING) {
         cache[K.pendingList].push([resolve, reject])
       }
-      // else if (cache[K.status] === Status.RESOLVED) {
-      //   doResolves()
-      // } else if (cache[K.status] === Status.REJECTED) {
-      //   doRejects()
-      // }
     })
 
   const ret = todo()
   return ret
 }
 
+/**
+ * Clear the cached result for a specific key
+ */
 idmp.flush = flush
+
+/**
+ * Clear all cached results
+ */
 idmp.flushAll = flushAll
 
+/**
+ * Type definition for the idmp function including its methods
+ */
 type Idmp = typeof idmp
+
 export default idmp
 export {
+  idmp,
   _globalStore as g,
   getOptions,
   type Idmp,
