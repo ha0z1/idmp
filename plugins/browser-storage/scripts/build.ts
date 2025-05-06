@@ -1,8 +1,8 @@
 import { build, mergeConfig, type InlineConfig } from 'vite'
 // import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import dts from 'vite-plugin-dts'
 import banner from 'vite-plugin-banner'
+import dts from 'vite-plugin-dts'
 import { version } from '../package.json'
 
 type DeepPartial<T> = T extends object
