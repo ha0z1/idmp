@@ -1,7 +1,7 @@
+import fs from 'fs-extra'
 import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
 import os from 'node:os'
 import path from 'node:path'
-import fs from 'fs-extra'
 import serialize from 'serialize-javascript'
 
 const deSerialize = <T = any>(data: string) =>

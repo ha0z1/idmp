@@ -1,8 +1,8 @@
 import idmp from 'idmp'
-import storageWrap, { getCacheKey } from 'idmp/browser-storage'
+import storageWrap from 'idmp/browser-storage'
 import React, { useEffect, useState } from 'react'
-import { getUserData } from '../../api'
 import { Link } from 'react-router-dom'
+import { getUserData } from '../../api'
 
 const lsIdmp = storageWrap(idmp, 'localStorage')
 

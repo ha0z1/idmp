@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import idmp, { type IdmpOptions } from '../src/index'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import idmp from '../src/index'
 
 describe('idmp', () => {
   beforeEach(() => {
