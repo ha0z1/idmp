@@ -83,6 +83,7 @@ const DEFAULT_MAX_AGE = 3000
 const _7days = 604800000
 const noop = () => {}
 const udf = undefined
+const $timeout = setTimeout
 
 /**
  * Makes an object's properties read-only to prevent mutation
@@ -270,8 +271,7 @@ const idmp = <T>(
    */
   const reset = () => {
     cache[K.status] = Status.UNSENT
-    cache[K.resData] = udf
-    cache[K.resError] = udf
+    cache[K.resData] = cache[K.resError] = udf
   }
 
   /**
@@ -298,7 +298,7 @@ const idmp = <T>(
     cache[K.pendingList] = []
 
     if (!isFiniteParamMaxAge) {
-      setTimeout(() => {
+      $timeout(() => {
         flush(globalKey)
       }, maxAge)
     }
@@ -421,7 +421,7 @@ const idmp = <T>(
               })
               reset()
 
-              setTimeout(todo, (cache[K.retryCount] - 1) * minRetryDelay)
+              $timeout(todo, (cache[K.retryCount] - 1) * minRetryDelay)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
