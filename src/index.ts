@@ -71,18 +71,18 @@ const enum Status {
 const enum K {
   retryCount = 0,
   status,
-  resData,
-  resError,
+  resolvedData,
+  rejectionError,
   pendingList,
-  oneCallPromiseFunc,
-  _sourceStack,
+  cachedPromiseFunc,
+  _originalErrorStack,
 }
 
 // Constants
 const DEFAULT_MAX_AGE = 3000
 const _7days = 604800000
 const noop = () => {}
-const udf = undefined
+const UNDEFINED = undefined
 const $timeout = setTimeout
 
 /**
@@ -121,7 +121,7 @@ const readonly = <T>(obj: T): T => {
 
   Object.keys(obj).forEach((key) => {
     const configurable = Object.getOwnPropertyDescriptor(obj, key)?.configurable
-    if (configurable === udf || configurable === true) {
+    if (configurable === UNDEFINED || configurable === true) {
       defineReactive(obj, key, (obj as any)[key])
     }
   })
@@ -149,11 +149,11 @@ let _globalStore: Record<
   {
     [K.retryCount]: number
     [K.status]: Status
-    [K.resData]: any | undefined
-    [K.resError]: Error | undefined
+    [K.resolvedData]: any | undefined
+    [K.rejectionError]: Error | undefined
     [K.pendingList]: Array<any>
-    [K.oneCallPromiseFunc]: any
-    [K._sourceStack]: string
+    [K.cachedPromiseFunc]: any
+    [K._originalErrorStack]: string
   }
 > = {}
 
@@ -249,7 +249,7 @@ const idmp = <T>(
   }
   const cache = _globalStore[globalKey]
 
-  let callStack = ''
+  let callStackLocation = ''
   const printLogs = (...msg: any[]) => {
     /* istanbul ignore next */
     if (typeof window === 'undefined') return
@@ -258,8 +258,8 @@ const idmp = <T>(
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
       console.log('globalKey:', globalKey)
-      console.log('callStack:', callStack)
-      console.log('data:', cache[K.resData])
+      console.log('callStackLocation:', callStackLocation)
+      console.log('data:', cache[K.resolvedData])
       console.groupEnd()
     } else {
       console.log(...msg)
@@ -271,7 +271,7 @@ const idmp = <T>(
    */
   const reset = () => {
     cache[K.status] = Status.UNSENT
-    cache[K.resData] = cache[K.resError] = udf
+    cache[K.resolvedData] = cache[K.rejectionError] = UNDEFINED
   }
 
   /**
@@ -280,7 +280,7 @@ const idmp = <T>(
   const doResolves = () => {
     const len = cache[K.pendingList].length
     for (let i = 0; i < len; ++i) {
-      cache[K.pendingList][i][0](cache[K.resData])
+      cache[K.pendingList][i][0](cache[K.resolvedData])
       if (process.env.NODE_ENV !== 'production') {
         if (i === 0) {
           printLogs(
@@ -310,7 +310,7 @@ const idmp = <T>(
   const doRejects = () => {
     const len = cache[K.pendingList].length - maxRetry
     for (let i = 0; i < len; ++i) {
-      cache[K.pendingList][i][1](cache[K.resError])
+      cache[K.pendingList][i][1](cache[K.rejectionError])
     }
     flush(globalKey)
   }
@@ -320,8 +320,7 @@ const idmp = <T>(
    */
   const executePromise = () =>
     new Promise<T>((resolve, reject) => {
-      !cache[K.oneCallPromiseFunc] &&
-        (cache[K.oneCallPromiseFunc] = promiseFunc)
+      !cache[K.cachedPromiseFunc] && (cache[K.cachedPromiseFunc] = promiseFunc)
 
       if (process.env.NODE_ENV !== 'production') {
         try {
@@ -362,17 +361,18 @@ const idmp = <T>(
             }
           }
 
-          callStack = getCodeLine(err.stack, 1).split(' ').pop() || ''
-          !cache[K._sourceStack] && (cache[K._sourceStack] = err.stack)
+          callStackLocation = getCodeLine(err.stack, 1).split(' ').pop() || ''
+          !cache[K._originalErrorStack] &&
+            (cache[K._originalErrorStack] = err.stack)
 
-          if (cache[K._sourceStack] !== err.stack) {
-            const line1 = getCodeLine(cache[K._sourceStack])
+          if (cache[K._originalErrorStack] !== err.stack) {
+            const line1 = getCodeLine(cache[K._originalErrorStack])
             const line2 = getCodeLine(err.stack)
 
             if (line1 && line2 && line1 !== line2) {
               console.error(
                 `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places\n(It may be a misjudgment and can be ignored):\nsee https://github.com/ha0z1/idmp?tab=readme-ov-file#implementation \n${[
-                  `1.${line1} ${cache[K._sourceStack]}`,
+                  `1.${line1} ${cache[K._originalErrorStack]}`,
                   '------------',
                   `2.${line2} ${err.stack}`,
                 ].join('\n')}`,
@@ -382,14 +382,14 @@ const idmp = <T>(
         }
       }
 
-      if (cache[K.resData]) {
+      if (cache[K.resolvedData]) {
         if (process.env.NODE_ENV !== 'production') {
           printLogs(
             `%c[idmp debug] \`${globalKey?.toString()}\` from cache`,
             'color: gray;font-weight: lighter',
           )
         }
-        resolve(cache[K.resData])
+        resolve(cache[K.resolvedData])
         return
       }
 
@@ -397,19 +397,19 @@ const idmp = <T>(
         cache[K.status] = Status.OPENING
         cache[K.pendingList].push([resolve, reject])
 
-        cache[K.oneCallPromiseFunc]()
+        cache[K.cachedPromiseFunc]()
           .then((data: T) => {
             if (process.env.NODE_ENV !== 'production') {
-              cache[K.resData] = readonly<T>(data)
+              cache[K.resolvedData] = readonly<T>(data)
             } else {
-              cache[K.resData] = data
+              cache[K.resolvedData] = data
             }
             doResolves()
             cache[K.status] = Status.RESOLVED
           })
           .catch((err: any) => {
             cache[K.status] = Status.REJECTED
-            cache[K.resError] = err
+            cache[K.rejectionError] = err
             ++cache[K.retryCount]
 
             if (cache[K.retryCount] > maxRetry) {
@@ -421,7 +421,10 @@ const idmp = <T>(
               })
               reset()
 
-              $timeout(executePromise, (cache[K.retryCount] - 1) * minRetryDelay)
+              $timeout(
+                executePromise,
+                (cache[K.retryCount] - 1) * minRetryDelay,
+              )
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
