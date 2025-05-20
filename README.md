@@ -13,9 +13,9 @@ English | [简体中文](README.zh-CN.md)
 
 - Demo <https://idmp.haozi.me>
 
-## Break change
+## Breaking Changes
 
-After v2.x version: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
+- After v2.x version: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
 
 ## Usage
 
@@ -140,9 +140,9 @@ You can do some works with flush or flushAll, for example, auto refresh list aft
 
 ## Deduplication in React
 
-In React, you can share requests using swr, Provider and more complex state management libraries. But there are some problems:
+In React, you can share requests using SWR, Provider and more complex state management libraries. But there are some problems:
 
-1. swr: Need to convert all requests to hooks, can't be nested and have conditional branches, has migration costs for existing projects, and more complex scenarios below.
+1. SWR: Need to convert all requests to hooks, can't be nested and have conditional branches, has migration costs for existing projects, and more complex scenarios below.
 2. Provider: Needs centralized data management. The data center can't perceive which modules will consume the data, need to maintain the data for a long time, and dare not delete it in time
 3. Redux: Should focus on state changes and sequences, not data sharing. `idmp` lets you focus more on local state
 
@@ -166,7 +166,7 @@ function Profile() {
 }
 ```
 
-The example on swr's homepage is very elegant, but in practice a view is likely to come from more than one data source. Because Hooks [can't be nested and have conditional branches](https://legacy.reactjs.org/docs/hooks-rules.html). Assume there are two interfaces, B depends on the result of A as params, the code will quickly deteriorate to the following form:
+The example on SWR's homepage is very elegant, but in practice a view is likely to come from more than one data source. Because Hooks [can't be nested and have conditional branches](https://legacy.reactjs.org/docs/hooks-rules.html). Assume there are two interfaces, B depends on the result of A as params, the code will quickly deteriorate to the following form:
 
 ```typescript
 ...
@@ -183,10 +183,10 @@ $$
 
 There are several optimization forms:
 
-1. Abandon swr and use request in useEffect, so the benefits of swr are lost, and there may still be duplicate requests issues even if passing empty array as the second param of useEffect, see https://github.com/ha0z1/idmp/blob/main/demo/Item.tsx#L10
+1. Abandon SWR and use request in useEffect, so the benefits of SWR are lost, and there may still be duplicate requests issues even if passing empty array as the second param of useEffect, see https://github.com/ha0z1/idmp/blob/main/demo/Item.tsx#L10
 2. Wrap fetchAB method to request sequentially and return at one time. In Hooks just call the single fetchAB. Here the views that only rely on dataA have to wait for completion before rendering. In addition, dataA is often some common data that may need to handle scenarios like fetchAC, fetchABC, which will cause multiple requests for dataA
 
-Since `idmp` is a pure function, it can be called outside Hooks and works well with swr. We can naively wrap the two interfaces fetchAIdmp and fetchBIdmp:
+Since `idmp` is a pure function, it can be called outside Hooks and works well with SWR. We can naively wrap the two interfaces fetchAIdmp and fetchBIdmp:
 
 ```typescript
 const fetchAIdmp = () => idmp('/api/a', fetchA)
@@ -200,7 +200,7 @@ const fetchBIdmp = async () => {
 }
 ```
 
-Then use swr to synchronously call these two "no-dependent" fetchers in Hooks:
+Then use SWR to synchronously call these two "no-dependent" fetchers in Hooks:
 
 ```typescript
 ...
@@ -345,4 +345,4 @@ export const getInfoIdmp = (options) =>
 
 In the dev environment, there is a built-in check warning if the same KEY is used in different places. Assigning the same KEY to different Promises may lead to unexpected results.
 
-If you have more complex network requirements like auto refresh, local and remote data contention, etc, `idmp` cannot implement related functions as pure function, you can try [swr](https://swr.vercel.app/) and [swrv](https://docs-swrv.netlify.app/).
+If you have more complex network requirements like auto refresh, local and remote data contention, etc, `idmp` cannot implement related functions as pure function, you can try [SWR](https://swr.vercel.app/) and [swrv](https://docs-swrv.netlify.app/).

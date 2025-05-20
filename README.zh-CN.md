@@ -13,7 +13,7 @@
 
 - Demo <https://idmp.haozi.me>
 
-## Break change
+## Breaking Changes
 
 - v2.x 版本后: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
 
@@ -39,7 +39,7 @@ for (let i = 0; i < 10; ++i) {
 }
 ```
 
-查看网络控制台，会发现只有 1 个网络请求，但会正确触发 10 次回调。
+查看浏览器的网络控制台，会发现只有 1 个网络请求，但会正确触发 10 次回调。
 
 ### 高级使用
 
@@ -140,10 +140,10 @@ fetchData2().then(...) // will skip cache
 
 ## 在 React 中去重请求
 
-在 React 共用请求，可以使用 swr 、 Provider 以及更为复杂的专业状态管理库来复用数据。但存在以下几种问题：
+在 React 共用请求，可以使用 SWR 、 Provider 以及更为复杂的专业状态管理库来复用数据。但存在以下几种问题：
 
-1. swr: 需要将所有的请求变更为 hooks，不能嵌套和条件分支，对于已有项目有改造成本，下文还会提到更复杂的场景。
-2. Provider 数据共享: 需要一个中心化的数据管理。数据中心无法感知到哪些模块会消费数据，需要长期维护这些数据，而不敢及时删除
+1. SWR: 需要将所有的请求变更为 hooks，不能嵌套和条件分支，对于已有项目有改造成本，下文还会提到更复杂的场景。
+2. Provider 数据共享: 需要一个中心化的数据管理。数据中心无法感知哪些模块会消费哪些数据，需要长期维护这些数据，而不敢及时删除
 3. Redux 等状态管理库:应该专注的是状态的变化和时序，而非共享数据。`idmp` 让你更关注于局部状态
 
 查看 [demo](https://idmp.haozi.me) 和[源码](https://github.com/ha0z1/idmp/tree/main/demo)
@@ -166,7 +166,7 @@ function Profile() {
 }
 ```
 
-swr 的官网示例很优雅，然而实际中一个视图展示很可能并非只来自一个数据源。由于 Hooks [无法嵌套和条件分支](https://legacy.reactjs.org/docs/hooks-rules.html)。假设有两个接口，B 依赖 A 的结果为入参，代码将迅速劣化成下面形式：
+SWR 的官网示例很优雅，然而实际中一个视图展示很可能并非只来自一个数据源。由于 Hooks [无法嵌套和条件分支](https://legacy.reactjs.org/docs/hooks-rules.html)。假设有两个接口，B 依赖 A 的结果为入参，代码将迅速劣化成下面形式：
 
 ```typescript
 ...
@@ -183,10 +183,10 @@ $$
 
 这里有几种优化形式：
 
-1. 放弃 swr, 改用在 useEffect 中请求，这样 swr 带来的收益就没有了，并且即使 useEffect 的第二个参数传空数组，依然可能出现重复请求的问题，详见https://github.com/ha0z1/idmp/blob/main/demo/Item.tsx#L10
+1. 放弃 SWR, 改用在 useEffect 中请求，这样 SWR 带来的收益就没有了，并且即使 useEffect 的第二个参数传空数组，依然可能出现重复请求的问题，详见https://github.com/ha0z1/idmp/blob/main/demo/Item.tsx#L10
 2. 封装 fetchAB 方法，串行请求后一次性返回，在 Hooks 里只调用一个 fetchAB。这里将会造成只依赖 dataA 的视图要等待串行完成后才能展示。另外，一般 dataA 数据很可能是一些公用数据，可能还要封装 fetchAC、fetchABC 等场景，这里面将造成 dataA 的数据请求发生多次
 
-由于 `idmp` 是纯函数，可以在 Hooks 之外调用，可以很好地配合 swr 完成这样的工作。我们无脑封装两个接口 fetchAIdmp 和 fetchBIdmp:
+由于 `idmp` 是纯函数，可以在 Hooks 之外调用，可以很好地配合 SWR 完成这样的工作。我们无脑封装两个接口 fetchAIdmp 和 fetchBIdmp:
 
 ```typescript
 const fetchAIdmp = () => idmp('/api/a', fetchA)
@@ -200,7 +200,7 @@ const fetchBIdmp = async () => {
 }
 ```
 
-然后在 Hooks 里用 swr 同步调用这两个“无依赖”的 fetcher 就好了
+然后在 Hooks 里用 SWR 同步调用这两个“无依赖”的 fetcher 就好了
 
 ```typescript
 ...
@@ -343,4 +343,4 @@ export const getInfoIdmp = (options) =>
 
 在开发态环境下，内置了一个检查，警告在不同地方使用了相同的 KEY。如果不同的 Promise 分配了相同的 KEY，可能造成不符合预期的结果。
 
-如果你有更复杂的网络需求，如自动刷新、本地与远端数据竞选等，`idmp` 由于是纯函数，无法实现相关功能，可以尝试 [swr](https://swr.vercel.app/) 和 [swrv](https://docs-swrv.netlify.app/)
+如果你有更复杂的网络需求，如自动刷新、本地与远端数据竞选等，`idmp` 由于是纯函数，无法实现相关功能，可以尝试 [SWR](https://swr.vercel.app/) 和 [swrv](https://docs-swrv.netlify.app/)
