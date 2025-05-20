@@ -318,7 +318,7 @@ const idmp = <T>(
   /**
    * Creates and manages the actual promise execution
    */
-  const todo = () =>
+  const executePromise = () =>
     new Promise<T>((resolve, reject) => {
       !cache[K.oneCallPromiseFunc] &&
         (cache[K.oneCallPromiseFunc] = promiseFunc)
@@ -421,7 +421,7 @@ const idmp = <T>(
               })
               reset()
 
-              $timeout(todo, (cache[K.retryCount] - 1) * minRetryDelay)
+              $timeout(executePromise, (cache[K.retryCount] - 1) * minRetryDelay)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
@@ -429,8 +429,7 @@ const idmp = <T>(
       }
     })
 
-  const ret = todo()
-  return ret
+  return executePromise()
 }
 
 /**
