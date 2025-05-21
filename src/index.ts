@@ -166,15 +166,15 @@ const getOptions = (options?: IdmpOptions) => {
   const {
     maxRetry = 30,
     maxAge: paramMaxAge = DEFAULT_MAX_AGE,
-    onBeforeRetry = noop,
     minRetryDelay = 50,
+    onBeforeRetry = noop,
   } = options || {}
 
   const maxAge = getRange(paramMaxAge)
   return {
     maxRetry,
-    minRetryDelay,
     maxAge,
+    minRetryDelay,
     onBeforeRetry,
     f: paramMaxAge === 1 / 0, // Infinity
   }
