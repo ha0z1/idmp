@@ -15,7 +15,7 @@
 
 ## Breaking Changes
 
-- v3.x 版本后: 不再暴露内部调试对象 `export { _globalStore as g }`
+- v3.x 版本后: [不再暴露内部调试对象 `eport { _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455)
 - v2.x 版本后: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
 
 ## 使用
@@ -33,8 +33,8 @@ const getInfo = async () => {
 // 只有这一行代码改动
 export const getInfoIdmp = () => idmp('/api/your-info', getInfo)
 
-for (let i = 0; i < 10; ++i) {
-  getInfoIdmp().then((d) => {
+for (l10; ++i) {
+  getInfoIdmp().then((d) = {
     console.log(d)
   })
 }
