@@ -5,7 +5,8 @@ const udf = undefined
 type StorageType = 'localStorage' | 'sessionStorage'
 // type NonVoid<T> = T extends void ? never : T
 
-const getCacheKey = (globalKey: string) => `@idmp/v1/${globalKey}`
+const PREFIX = '@idmp/v1/'
+const getCacheKey = (globalKey: string) => `${PREFIX}${globalKey}`
 
 const initStorage = (storageType: StorageType) => {
   let storage: Storage
@@ -13,51 +14,61 @@ const initStorage = (storageType: StorageType) => {
     storage = window[storageType]
   } catch {}
 
-  return {
-    get: <T = any>(key: string) => {
-      if (!key) return
+  const remove = (key: string) => {
+    if (!key) return
+    try {
       const cacheKey = getCacheKey(key)
-      let localData
-      try {
-        localData = JSON.parse(storage[cacheKey])
+      storage.removeItem(cacheKey)
+    } catch {}
+  }
 
-        if (localData === udf) return
+  const get = <T = any>(key: string) => {
+    if (!key) return
+    const cacheKey = getCacheKey(key)
+    let localData
+    try {
+      localData = JSON.parse(storage[cacheKey])
 
-        const { t, a: maxAge, d: data } = localData
+      if (localData === udf) return
 
-        if (Date.now() - t > maxAge) {
-          storage.removeItem(cacheKey)
-          return
+      const { t, a: maxAge, d: data } = localData
+
+      if (Date.now() - t > maxAge) {
+        remove(cacheKey)
+        return
+      }
+      return data as T
+    } catch {}
+  }
+
+  const set = <T = any>(key: string, data: T, maxAge: number) => {
+    if (!key) return
+    const cacheKey = getCacheKey(key)
+    try {
+      storage[cacheKey] = JSON.stringify({
+        t: Date.now(),
+        a: maxAge,
+        d: data,
+      })
+    } catch {}
+  }
+
+  const clear = () => {
+    try {
+      for (let i = storage.length - 1; i >= 0; i--) {
+        const key = storage.key(i)
+        if (key && key.startsWith(PREFIX)) {
+          remove(key)
         }
-        return data as T
-      } catch {}
-    },
+      }
+    } catch {}
+  }
 
-    set: <T = any>(key: string, data: T, maxAge: number) => {
-      if (!key) return
-      const cacheKey = getCacheKey(key)
-      try {
-        storage[cacheKey] = JSON.stringify({
-          t: Date.now(),
-          a: maxAge,
-          d: data,
-        })
-      } catch {}
-    },
-
-    remove: (key: string) => {
-      if (!key) return
-      try {
-        const cacheKey = getCacheKey(key)
-        storage.removeItem(cacheKey)
-      } catch {}
-    },
-
-    clear: () => {
-      try {
-        storage.clear()
-      } catch {}
-    },
+  return {
+    get,
+    set,
+    remove,
+    clear,
   }
 }
 
