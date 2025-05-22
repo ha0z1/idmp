@@ -71,9 +71,9 @@ const enum Status {
 const enum K {
   retryCount = 0,
   status,
+  pendingList,
   resolvedData,
   rejectionError,
-  pendingList,
   cachedPromiseFunc,
   _originalErrorStack,
 }
@@ -146,15 +146,15 @@ const getRange = (maxAge: number) => {
  */
 let _globalStore: Record<
   string | symbol,
-  {
-    [K.retryCount]: number
-    [K.status]: Status
-    [K.resolvedData]: any | undefined
-    [K.rejectionError]: Error | undefined
-    [K.pendingList]: Array<any>
-    [K.cachedPromiseFunc]: any
-    [K._originalErrorStack]: string
-  }
+  [
+    number, // [K.retryCount]: number
+    Status, // [K.status]: Status
+    Array<any>, // [K.pendingList]: Array<any>
+    any | undefined, // [K.resolvedData]: any | undefined
+    Error | undefined, // [K.rejectionError]: Error | undefined
+    any, // [K.cachedPromiseFunc]: any
+    string, // [K._originalErrorStack]: string
+  ]
 > = {}
 
 /**
@@ -242,11 +242,12 @@ const idmp = <T>(
     f: isFiniteParamMaxAge,
   } = getOptions(options)
 
-  _globalStore[globalKey] = _globalStore[globalKey] || {
-    [K.retryCount]: 0,
-    [K.status]: Status.UNSENT,
-    [K.pendingList]: [],
-  }
+  _globalStore[globalKey] = _globalStore[globalKey] || [
+    0, // [K.retryCount]: number
+    Status.UNSENT, // [K.status]: Status
+    [], // [K.pendingList]: Array<any>
+  ]
+
   const cache = _globalStore[globalKey]
 
   let callStackLocation = ''
@@ -452,7 +453,6 @@ type Idmp = typeof idmp
 
 export default idmp
 export {
-  _globalStore as g,
   getOptions,
   idmp,
   type Idmp,
