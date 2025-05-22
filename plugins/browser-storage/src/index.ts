@@ -70,12 +70,12 @@ const storageIdmpWrap = (
     globalKey: string,
     promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
-  ) => {
+  ): Promise<T> => {
     const finalOptions = getOptions(options)
     return _idmp(
       globalKey,
       async () => {
-        const localData = storage.get(globalKey)
+        const localData = storage.get<T>(globalKey)
         if (localData !== udf) {
           if (process.env.NODE_ENV !== 'production') {
             console.log(
