@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A lightweight TypeScript library for deduplicating and caching async function calls with automatic retries, designed for idempotent network requests in React and Node.js.",
   "keywords": [
     "deduplicate network requests",
@@ -75,6 +75,7 @@
     "@vitest/coverage-istanbul": "^3.1.4",
     "fs-extra": "^11.3.0",
     "immer": "^10.1.1",
+    "jsdom": "^26.1.0",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "react": "^19.1.0",
