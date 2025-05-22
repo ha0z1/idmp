@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "idmp": "2.5.3"
+    "idmp": "3.0.0"
   },
   "_dependencies": {
     "idmp": "1.13.0-alpha.5"
