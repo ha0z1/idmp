@@ -15,6 +15,7 @@
 
 ## Breaking Changes
 
+- v3.x 版本后: 不再暴露内部调试对象 `export { _globalStore as g }`
 - v2.x 版本后: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
 
 ## 使用
