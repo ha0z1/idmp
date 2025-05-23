@@ -27,7 +27,7 @@ const initStorage = (storageType: StorageType) => {
     const cacheKey = getCacheKey(key)
     let localData
     try {
-      localData = JSON.parse(storage[cacheKey])
+      localData = JSON.parse(storage.getItem(cacheKey) || '')
 
       if (localData === udf) return
 
@@ -45,11 +45,11 @@ const initStorage = (storageType: StorageType) => {
     if (!key) return
     const cacheKey = getCacheKey(key)
     try {
-      storage[cacheKey] = JSON.stringify({
+      storage.setItem(cacheKey, JSON.stringify({
         t: Date.now(),
         a: maxAge,
         d: data,
-      })
+      }))
     } catch {}
   }
 
