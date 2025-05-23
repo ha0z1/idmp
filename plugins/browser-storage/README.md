@@ -1,5 +1,7 @@
 # idmp/browser-storage
 
+English | [简体中文](README.zh-CN.md)
+
 ## Usage
 
 ```typescript
@@ -11,7 +13,7 @@ const getInfo = async () => {
   return await fetch(API).then((d) => d.text())
 }
 
-const lsIdmp = storageWrap(idmp, 'localStorage')
+const lsIdmp = storageWrap(idmp, 'localStorage') // default is sessionStorage
 
 // Only one line need to change
 export const getInfoWithLsIdmp = () =>
