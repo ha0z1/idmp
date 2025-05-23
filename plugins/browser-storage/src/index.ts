@@ -1,6 +1,6 @@
 import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
 
-const udf = undefined
+const UNDEFINED = undefined
 
 type StorageType = 'localStorage' | 'sessionStorage'
 // type NonVoid<T> = T extends void ? never : T
@@ -29,7 +29,7 @@ const initStorage = (storageType: StorageType) => {
     try {
       localData = JSON.parse(storage.getItem(cacheKey) || '')
 
-      if (localData === udf) return
+      if (localData === UNDEFINED) return
 
       const { t, a: maxAge, d: data } = localData
 
@@ -87,7 +87,7 @@ const storageIdmpWrap = (
       globalKey,
       async () => {
         const localData = storage.get<T>(globalKey)
-        if (localData !== udf) {
+        if (localData !== UNDEFINED) {
           if (process.env.NODE_ENV !== 'production') {
             console.log(
               `[idmp-plugin browser-storage debug] ${globalKey} from ${storageType}["${getCacheKey(globalKey)}"]`,
@@ -97,7 +97,7 @@ const storageIdmpWrap = (
         }
 
         const memoryData = await promiseFunc()
-        if (memoryData !== udf) {
+        if (memoryData !== UNDEFINED) {
           // console.log('from memoryData')
           storage.set(globalKey, memoryData, finalOptions.maxAge) // no need wait
         }
