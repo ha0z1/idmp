@@ -6,14 +6,24 @@ type StorageType = 'localStorage' | 'sessionStorage'
 // type NonVoid<T> = T extends void ? never : T
 
 const PREFIX = '@idmp/v1/'
+
+// Returns the full cache key used for storage
 const getCacheKey = (globalKey: string) => `${PREFIX}${globalKey}`
 
+/**
+ * Initialize a safe storage utility (localStorage or sessionStorage) with get/set/remove/clear methods
+ * @param storageType - Either 'localStorage' or 'sessionStorage'
+ */
 const initStorage = (storageType: StorageType) => {
   let storage: Storage
   try {
     storage = window[storageType]
   } catch {}
 
+  /**
+   * Remove a cached item by key
+   * @param key - Global cache key
+   */
   const remove = (key: string) => {
     if (!key) return
     try {
@@ -22,6 +32,11 @@ const initStorage = (storageType: StorageType) => {
     } catch {}
   }
 
+  /**
+   * Retrieve cached data if available and not expired
+   * @param key - Global cache key
+   * @returns Cached data or undefined if not found or expired
+   */
   const get = <T = any>(key: string) => {
     if (!key) return
     const cacheKey = getCacheKey(key)
@@ -41,18 +56,30 @@ const initStorage = (storageType: StorageType) => {
     } catch {}
   }
 
+  /**
+   * Set data into storage with expiration
+   * @param key - Global cache key
+   * @param data - Data to cache
+   * @param maxAge - Time in milliseconds before expiration
+   */
   const set = <T = any>(key: string, data: T, maxAge: number) => {
     if (!key) return
     const cacheKey = getCacheKey(key)
     try {
-      storage.setItem(cacheKey, JSON.stringify({
-        t: Date.now(),
-        a: maxAge,
-        d: data,
-      }))
+      storage.setItem(
+        cacheKey,
+        JSON.stringify({
+          t: Date.now(), // timestamp
+          a: maxAge, // age (ttl)
+          d: data, // data
+        }),
+      )
     } catch {}
   }
 
+  /**
+   * Clear all cached entries in the current storage matching the specific prefix
+   */
   const clear = () => {
     try {
       for (let i = storage.length - 1; i >= 0; i--) {
@@ -72,17 +99,25 @@ const initStorage = (storageType: StorageType) => {
   }
 }
 
+/**
+ * Wrap an idmp instance with browser storage (localStorage or sessionStorage) for persistent caching
+ * @param _idmp - Original idmp instance
+ * @param storageType - Storage type to use, default is 'sessionStorage'
+ * @returns Wrapped idmp instance with persistent caching
+ */
 const storageIdmpWrap = (
   _idmp: Idmp,
   storageType: StorageType = 'sessionStorage',
 ) => {
   const storage = initStorage(storageType)
+
   const newIdmp = <T>(
     globalKey: string,
     promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ): Promise<T> => {
     const finalOptions = getOptions(options)
+
     return _idmp(
       globalKey,
       async () => {
@@ -106,14 +141,24 @@ const storageIdmpWrap = (
       options,
     )
   }
+
+  /**
+   * Flush both idmp memory and browser storage cache for a specific key
+   * @param globalKey - Global cache key
+   */
   newIdmp.flush = (globalKey: string) => {
     _idmp.flush(globalKey)
     storage.remove(globalKey)
   }
+
+  /**
+   * Flush all idmp memory and browser storage cache
+   */
   newIdmp.flushAll = () => {
     _idmp.flushAll()
     storage.clear()
   }
+
   return newIdmp
 }
 
