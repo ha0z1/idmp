@@ -15,9 +15,9 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
     mergeConfig(
       {
         plugins: [
+          banner(`/*! idmp v${version} | (c) github/haozi | MIT */`),
           react(),
           dts(),
-          banner(`/*! idmp v${version} | (c) github/haozi | MIT */`),
         ],
         build: {
           // rollupOptions: {
