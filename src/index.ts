@@ -151,7 +151,7 @@ let _globalStore: Record<
     Status, // [K.status]: Status
     Array<any>, // [K.pendingList]: Array<any>
     any | undefined, // [K.resolvedData]: any | undefined
-    Error | undefined, // [K.rejectionError]: Error | undefined
+    any | undefined, // [K.rejectionError]: any | undefined
     any, // [K.cachedPromiseFunc]: any
     string, // [K._originalErrorStack]: string
   ]
