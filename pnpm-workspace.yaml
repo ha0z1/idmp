@@ -3,4 +3,5 @@ packages:
   - ./demo
 onlyBuiltDependencies:
   - '@swc/core'
+  - core-js
   - esbuild
