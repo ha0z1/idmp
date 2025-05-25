@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "A lightweight TypeScript library for deduplicating and caching async function calls with automatic retries, designed for idempotent network requests in React and Node.js.",
   "keywords": [
     "deduplicate network requests",
@@ -51,9 +51,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "api": "pnpm vite-node -w mock/api.ts",
-    "build": "tsc && vite-node scripts/build.ts",
-    "coverage": "vitest run --coverage.enabled --coverage.provider=istanbul",
-    "dev": "tsc && pnpm run lint && vite",
+    "build": "tsc && vite-node scripts/build.ts && pnpm run -r build",
+    "coverage": "pnpm run build && vitest run --coverage",
+    "dev": "tsc && pnpm run lint && vite & pnpm run -r dev",
     "lint": "prettier . --write",
     "prepublishOnly": "pnpm run build && vite-node scripts/clean.ts",
     "publish:alpha": "pnpm publish --no-git-checks --registry https://registry.npmjs.org --tag alpha",
@@ -71,8 +71,8 @@
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-legacy": "^6.1.1",
-    "@vitejs/plugin-react-swc": "^3.9.0",
-    "@vitest/coverage-istanbul": "^3.1.2",
+    "@vitejs/plugin-react-swc": "^3.10.0",
+    "@vitest/coverage-istanbul": "^3.1.4",
     "fs-extra": "^11.3.0",
     "immer": "^10.1.1",
     "jsdom": "^26.1.0",
@@ -80,13 +80,13 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.2",
+    "react-router-dom": "^7.6.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.3",
-    "vite-node": "^3.1.2",
+    "vite": "^6.3.5",
+    "vite-node": "^3.1.4",
     "vite-plugin-banner": "^0.8.1",
-    "vite-plugin-dts": "^4.5.3",
+    "vite-plugin-dts": "^4.5.4",
     "vite-plugin-html": "^3.2.2",
-    "vitest": "^3.1.2"
+    "vitest": "^3.1.4"
   }
 }
