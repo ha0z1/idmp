@@ -252,10 +252,8 @@ const idmp = <T>(
 
   let callStackLocation = ''
   const printLogs = (...msg: any[]) => {
-    /* istanbul ignore next */
     if (typeof window === 'undefined') return
 
-    /* istanbul ignore next */
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
       console.log('globalKey:', globalKey)
