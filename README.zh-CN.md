@@ -15,8 +15,10 @@
 
 ## Breaking Changes
 
-- v3.x 版本后: [不再暴露内部调试对象 `eport { _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455)
-- v2.x 版本后: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
+> 以下是在最近的主要版本中引入的不兼容变更。如果您是从旧版本升级，请务必查看这些变更。
+
+- **v3.x**: [不再暴露内部调试对象 `eport { _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455)
+- **v2.x**: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
 
 ## 使用
 
@@ -33,7 +35,7 @@ const getInfo = async () => {
 // 只有这一行代码改动
 export const getInfoIdmp = () => idmp('/api/your-info', getInfo)
 
-for (l10; ++i) {
+for (let i = 0; i < 10; ++i) {
   getInfoIdmp().then((d) = {
     console.log(d)
   })
@@ -98,12 +100,12 @@ type IdmpGlobalKey = string | number | symbol | false | null | undefined
 
 IdmpOptions:
 
-| Property        | Type       | Default | Description                                                                                                                                                                                                           |
-| --------------- | ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `maxRetry`      | `number`   | `30`    | Maximum number of retry attempts.                                                                                                                                                                                     |
-| `minRetryDelay` | `number`   | `50`    | Minimum retry interval in milliseconds. The default value is 50 ms.                                                                                                                                                   |
-| `maxAge`        | `number`   | `3000`  | Maximum age in milliseconds. The maximum value is 604800000ms (7 days).                                                                                                                                               |
-| `onBeforeRetry` | `function` | -       | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
+| Property        | Type       | Default      | Description                                                                                                                                                                              |
+| --------------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `maxRetry`      | `number`   | `30`         | 最大重试次数                                                                                                                                                                             |
+| `minRetryDelay` | `number`   | `50`(毫秒)   | 最小重试间隔，默认 50 毫秒 ,内部实现了类指数退避的算法，会动态改变重试时间，避免对服务器造成 DDoS                                                                                        |
+| `maxAge`        | `number`   | `3000`(毫秒) | 最大缓存时间，默认 3000 毫秒，最大 7 天                                                                                                                                                  |
+| `onBeforeRetry` | `function` | -            | 在重试尝试之前执行的函数。该函数接收两个参数：err（任意类型）和 extra（一个对象，包含属性 globalKey（类型为 IdmpGlobalKey）和 retryCount（类型为 number））。返回值为 void（无返回值）。 |
 
 ## flush
 
