@@ -7,7 +7,7 @@
 [![LICENSE](https://img.shields.io/npm/l/idmp)](https://github.com/ha0z1/idmp/blob/main/LICENSE)
 [![Size](https://img.shields.io/bundlephobia/minzip/idmp.svg)](https://cdn.jsdelivr.net/npm/idmp/+esm)
 
-An elegant library to solve duplicate and concurrent calls for idempotent functions, pure function. Less than 1 KB after Gzip
+An elegant, lightweight (~1KB gzipped) utility to deduplicate concurrent calls to the same async function, providing idempotent behavior for network and async requests.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -15,8 +15,10 @@ English | [简体中文](README.zh-CN.md)
 
 ## Breaking Changes
 
-- After v3.x version: [not export `{ _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455) any more
-- After v2.x version: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
+> The following breaking changes are introduced in recent major versions. Please review if you're upgrading from older versions.
+
+- **v3.x**: [not export `{ _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455) any more
+- **v2.x**:: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
 
 ## Usage
 
@@ -98,12 +100,12 @@ type IdmpGlobalKey = string | number | symbol | false | null | undefined
 
 IdmpOptions:
 
-| Property        | Type       | Default | Description                                                                                                                                                                                                           |
-| --------------- | ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `maxRetry`      | `number`   | `30`    | Maximum number of retry attempts.                                                                                                                                                                                     |
-| `minRetryDelay` | `number`   | `50`    | Minimum retry interval in milliseconds. The default value is 50 ms.                                                                                                                                                   |
-| `maxAge`        | `number`   | `3000`  | Maximum age in milliseconds. The maximum value is 604800000 ms (7 days).                                                                                                                                              |
-| `onBeforeRetry` | `function` | -       | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
+| Property        | Type       | Default    | Description                                                                                                                                                                                                           |
+| --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `maxRetry`      | `number`   | `30`       | Maximum number of retry attempts.                                                                                                                                                                                     |
+| `minRetryDelay` | `number`   | `50`(ms)   | Minimum retry interval in milliseconds. The default value is 50 ms.                                                                                                                                                   |
+| `maxAge`        | `number`   | `3000`(ms) | Maximum age in milliseconds. The maximum value is 604800000 ms (7 days).                                                                                                                                              |
+| `onBeforeRetry` | `function` | -          | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
 
 ## flush
 
@@ -112,6 +114,7 @@ IdmpOptions:
 `flush` takes a `globalKey` as parameter, has no return value. Calling it repeatedly or with a non-existing globalKey will not have any prompts.
 
 ```typescript
+
 const fetchData = () => idmp('key', async () => data)
 
 idmp.flush('key')
@@ -143,9 +146,9 @@ You can do some works with flush or flushAll, for example, auto refresh list aft
 
 In React, you can share requests using SWR, Provider and more complex state management libraries. But there are some problems:
 
-1. SWR: Need to convert all requests to hooks, can't be nested and have conditional branches, has migration costs for existing projects, and more complex scenarios below.
-2. Provider: Needs centralized data management. The data center can't perceive which modules will consume the data, need to maintain the data for a long time, and dare not delete it in time
-3. Redux: Should focus on state changes and sequences, not data sharing. `idmp` lets you focus more on local state
+1. **SWR**: Requires requests to be encapsulated in hooks, which may limit conditional or nested usage patterns. Migrating legacy codebases can be non-trivial in some cases.
+2. **Provider**: Needs centralized data management. The data center can't perceive which modules will consume the data, need to maintain the data for a long time, and dare not delete it in time
+3. **Redux**: Should focus on state changes and sequences, not data sharing. `idmp` lets you focus more on local state
 
 See [demo](https://idmp.haozi.me) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
 
