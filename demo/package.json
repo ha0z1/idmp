@@ -1,6 +1,6 @@
 {
   "private": true,
   "dependencies": {
-    "idmp": "3.2.2"
+    "idmp": "3.3.0"
   }
 }
