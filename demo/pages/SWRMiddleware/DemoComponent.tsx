@@ -1,24 +1,32 @@
+import idmp from 'idmp'
 import useSWR from 'swr'
 
 const getDataA = async () => {
-  await fetch(`https://haozi.me/?id=123&t=${Math.random()}`).then((d) =>
+  await fetch(`https://haozi.me/?id=dataA&t=${Math.random()}`).then((d) =>
     d.text(),
   )
-  return 'dataA'
+  return { data: 'dataA' }
 }
 
 const getDataB = async () => {
-  return 'dataB'
+  const dataA = await getDataAIdmp()
+  await fetch(`https://haozi.me/?id=dataB&t=${Math.random()}`).then((d) =>
+    d.text(),
+  )
+  return { ...{ dataA }, data: 'dataB' }
 }
 
+const getDataAIdmp = () => idmp('getDataAIdmp', getDataA)
+const getDataBIdmp = () => idmp('getDataBIdmp', getDataB)
+
 export default () => {
-  const { data: dataA } = useSWR('dataA', getDataA)
-  const { data: dataB } = useSWR('dataB', getDataA)
+  const { data: dataA } = useSWR('dataA', getDataAIdmp)
+  const { data: dataB } = useSWR('dataB', getDataBIdmp)
   return (
     <div>
-      dataA: {dataA}
+      dataA: {dataA?.data}
       <br />
-      {/* dataB: {dataB} */}
+      dataB: {dataB?.data}
     </div>
   )
 }

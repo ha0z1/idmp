@@ -9,9 +9,11 @@ export const idmpSWRMiddleware: Middleware = (useSWRNext) => {
 
     const wrappedFetcher = async (...args: any[]) => {
       const idmpKey = typeof key === 'function' ? key() : key
-      const uniqueKey = JSON.stringify(idmpKey)
-
-      return idmp(uniqueKey, async () => await fetcher(...args))
+      const uniqueKey = JSON.stringify(idmpKey) + '//' + JSON.stringify(args)
+      console.log(2222, uniqueKey, args)
+      return idmp(uniqueKey, async () => await fetcher(...args), {
+        maxAge: 30000,
+      })
     }
 
     return useSWRNext(key, wrappedFetcher, config)
