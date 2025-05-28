@@ -12,4 +12,6 @@ import fs from 'fs-extra'
       spaces: 2,
     },
   )
+  fs.removeSync('./plugins/browser-storage/package.json')
+  fs.removeSync('./plugins/node-fs/package.json')
 })()
