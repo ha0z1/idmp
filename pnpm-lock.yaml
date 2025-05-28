@@ -82,8 +82,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 3.2.2
-        version: 3.2.2
+        specifier: 3.3.0
+        version: 3.3.0
 
   plugins/browser-storage:
     dependencies:
@@ -1472,8 +1472,8 @@ packages:
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
 
-  fdir@6.4.4:
-    resolution: {integrity: sha512-1NZP+GK4GfuAv3PqKvxQRDMjdSRZjnkq7KfhlNrCNNlZ0ygQFpebfrnfnq/W7fpUnAv9aGWmY1zKx7FYL3gwhg==}
+  fdir@6.4.5:
+    resolution: {integrity: sha512-4BG7puHpVsIYxZUbiUE3RqGloLaSSwzYie5jvasC4LWuBWzZawynvYouhjbQKw2JuIGYdm0DzIxl8iVidKlUEw==}
     peerDependencies:
       picomatch: ^3 || ^4
     peerDependenciesMeta:
@@ -1562,8 +1562,9 @@ packages:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
-  idmp@3.2.2:
-    resolution: {integrity: sha512-hHhs90gosELoO8ATjqsCaZI43UEx2zCZLfzNGNJNrl+h7olQht7BsCED9pRSEsqECuj6OEp+bsMznEgxn5Oc8w==}
+  idmp@3.3.0:
+    resolution: {integrity: sha512-kufUgpsrq0gRNCqXco82GsxdHMGlO+OXDSRxMPf/QJaAXu+pu6WukbkC7d9vKT3aEsD1yNrmS8d05+qGtz7rTw==}
+    engines: {node: '>=18'}
 
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
@@ -3727,7 +3728,7 @@ snapshots:
     dependencies:
       reusify: 1.1.0
 
-  fdir@6.4.4(picomatch@4.0.2):
+  fdir@6.4.5(picomatch@4.0.2):
     optionalDependencies:
       picomatch: 4.0.2
 
@@ -3822,7 +3823,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  idmp@3.2.2:
+  idmp@3.3.0:
     dependencies:
       fs-extra: 11.3.0
       serialize-javascript: 6.0.2
@@ -4304,7 +4305,7 @@ snapshots:
 
   tinyglobby@0.2.13:
     dependencies:
-      fdir: 6.4.4(picomatch@4.0.2)
+      fdir: 6.4.5(picomatch@4.0.2)
       picomatch: 4.0.2
 
   tinypool@1.0.2: {}
@@ -4425,7 +4426,7 @@ snapshots:
   vite@6.3.5(@types/node@22.15.23)(terser@5.40.0):
     dependencies:
       esbuild: 0.25.5
-      fdir: 6.4.4(picomatch@4.0.2)
+      fdir: 6.4.5(picomatch@4.0.2)
       picomatch: 4.0.2
       postcss: 8.5.3
       rollup: 4.41.1
