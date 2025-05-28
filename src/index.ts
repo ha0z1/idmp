@@ -26,12 +26,20 @@ interface IdmpOptions {
   minRetryDelay?: number
 
   /**
+   * Maximum delay between retry attempts in milliseconds
+   * @default 5000
+   */
+  maxRetryDelay?: number
+
+  /**
    * Maximum cache age in milliseconds
    * After this period, the cached promise result will be cleared
    * @default 3000
    * @max 604800000 (7 days)
    */
   maxAge?: number
+
+  signal?: AbortSignal
 
   /**
    * Function executed before each retry attempt
@@ -84,6 +92,14 @@ const _7days = 604800000
 const noop = () => {}
 const UNDEFINED = undefined
 const $timeout = setTimeout
+
+const getMax = (a: number, b: number): number => {
+  return a > b ? a : b
+}
+
+const getMin = (a: number, b: number): number => {
+  return a < b ? a : b
+}
 
 /**
  * Makes an object's properties read-only to prevent mutation
@@ -167,7 +183,9 @@ const getOptions = (options?: IdmpOptions) => {
     maxRetry = 30,
     maxAge: paramMaxAge = DEFAULT_MAX_AGE,
     minRetryDelay = 50,
+    maxRetryDelay = 5000,
     onBeforeRetry = noop,
+    signal,
   } = options || {}
 
   const maxAge = getRange(paramMaxAge)
@@ -175,8 +193,10 @@ const getOptions = (options?: IdmpOptions) => {
     maxRetry,
     maxAge,
     minRetryDelay,
+    maxRetryDelay,
     onBeforeRetry,
     f: paramMaxAge === 1 / 0, // Infinity
+    signal,
   }
 }
 
@@ -237,9 +257,11 @@ const idmp = <T>(
   const {
     maxRetry,
     minRetryDelay,
+    maxRetryDelay,
     maxAge,
     onBeforeRetry,
     f: isFiniteParamMaxAge,
+    signal,
   } = getOptions(options)
 
   _globalStore[globalKey] = _globalStore[globalKey] || [
@@ -307,8 +329,15 @@ const idmp = <T>(
    * Rejects all pending promises with the cached error
    */
   const doRejects = () => {
-    const len = cache[K.pendingList].length - maxRetry
-    for (let i = 0; i < len; ++i) {
+    const len = cache[K.pendingList].length
+    let maxLen
+    maxLen = len - maxRetry
+
+    if (maxLen < 0 || !isFinite(len)) {
+      maxLen = getMax(1, cache[K.pendingList].length - 3)
+    }
+
+    for (let i = 0; i < maxLen; ++i) {
       cache[K.pendingList][i][1](cache[K.rejectionError])
     }
     flush(globalKey)
@@ -392,6 +421,19 @@ const idmp = <T>(
         return
       }
 
+      if (signal) {
+        if (signal.aborted) return
+
+        signal.addEventListener('abort', () => {
+          reset()
+          cache[K.rejectionError] = new DOMException(
+            signal.reason,
+            'AbortError',
+          )
+          doRejects()
+        })
+      }
+
       if (cache[K.status] === Status.UNSENT) {
         cache[K.status] = Status.OPENING
         cache[K.pendingList].push([resolve, reject])
@@ -419,11 +461,13 @@ const idmp = <T>(
                 retryCount: cache[K.retryCount],
               })
               reset()
-
-              $timeout(
-                executePromise,
-                (cache[K.retryCount] - 1) * minRetryDelay,
+              // Exponential Backoff Algorithm
+              const delay = getMin(
+                maxRetryDelay,
+                minRetryDelay * 2 ** (cache[K.retryCount] - 1),
               )
+
+              $timeout(executePromise, delay)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
