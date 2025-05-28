@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "idmp": "3.2.2",
+    "idmp": "workspace:*",
     "swr": "^2.3.3"
   },
   "scripts": {

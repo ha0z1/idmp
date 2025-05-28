@@ -1,6 +1,7 @@
 import idmpSWRMiddleware from 'idmp/swr'
 import { SWRConfig } from 'swr'
 import DemoComponent from './DemoComponent'
+
 function App() {
   return (
     <SWRConfig value={{ use: [idmpSWRMiddleware] }}>
@@ -8,3 +9,5 @@ function App() {
     </SWRConfig>
   )
 }
+
+export default App

@@ -85,8 +85,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 3.2.2
-        version: 3.2.2
+        specifier: workspace:*
+        version: link:..
       swr:
         specifier: ^2.3.3
         version: 2.3.3(react@19.1.0)
@@ -1568,9 +1568,6 @@ packages:
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
-
-  idmp@3.2.2:
-    resolution: {integrity: sha512-hHhs90gosELoO8ATjqsCaZI43UEx2zCZLfzNGNJNrl+h7olQht7BsCED9pRSEsqECuj6OEp+bsMznEgxn5Oc8w==}
 
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
@@ -3841,11 +3838,6 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
-
-  idmp@3.2.2:
-    dependencies:
-      fs-extra: 11.3.0
-      serialize-javascript: 6.0.2
 
   immer@10.1.1: {}
 
