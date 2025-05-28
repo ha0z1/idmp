@@ -59,7 +59,7 @@
     "publish:alpha": "pnpm publish --no-git-checks --registry https://registry.npmjs.org --tag alpha",
     "test": "vitest",
     "www": "pnpm run build && NODE_ENV=development pnpm vite build -c vite.demo.config.ts",
-    "www-dev": "pnpm run build && pnpm vite build -c vite.demo.config.ts"
+    "www-dev": "pnpm run build && pnpm vite build -c vite.demo.config.ts -w"
   },
   "dependencies": {
     "fs-extra": "^11.3.0",

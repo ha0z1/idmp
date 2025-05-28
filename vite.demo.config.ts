@@ -4,6 +4,7 @@ import { createHtmlPlugin } from 'vite-plugin-html'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  publicDir: 'demo/public',
   plugins: [react(), createHtmlPlugin()],
   define: {
     // __DEV__: "process.env.NODE_ENV !== 'production'",

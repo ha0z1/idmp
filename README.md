@@ -28,7 +28,7 @@ English | [简体中文](README.zh-CN.md)
 import idmp from 'idmp'
 
 const getInfo = async () => {
-  const API = `https://haozi.me/?api/your-info`
+  const API = `https://idmp.haozi.me/api?/your-info`
   return await fetch(API).then((d) => d.text())
 }
 
@@ -48,7 +48,7 @@ Check the network console, there will be only 1 network request, but 10 callback
 
 ```typescript
 const getInfoById = async (id: string) => {
-  const API = `https://haozi.me/?api/your-info&id=${id}`
+  const API = `https://idmp.haozi.me/api?/your-info&id=${id}`
   return await fetch(API).then((d) => d.json())
 }
 
@@ -349,4 +349,4 @@ export const getInfoIdmp = (options) =>
 
 In the dev environment, there is a built-in check warning if the same KEY is used in different places. Assigning the same KEY to different Promises may lead to unexpected results.
 
-If you have more complex network requirements like auto refresh, local and remote data contention, etc, `idmp` cannot implement related functions as pure function, you can try [SWR](https://swr.vercel.app/) and [swrv](https://docs-swrv.netlify.app/).
+If you have more complex network requirements like auto refresh, local and remote data contention, etc, `idmp` cannot implement related functions as pure function, you can try with [SWR](https://swr.vercel.app/) and [swrv](https://docs-swrv.netlify.app/).
