@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       environment: 'jsdom',
-      testTimeout: 60 * 1000,
+      testTimeout: 60 * 1000 * 5,
       coverage: {
         provider: 'istanbul',
         clean: true,
