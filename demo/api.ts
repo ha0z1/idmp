@@ -11,7 +11,7 @@ const sleep = (delay: number) =>
   new Promise((resolve) => setTimeout(resolve, delay))
 
 export const getUserData = async (userId: string) => {
-  const API = `https://haozi.me/?id=${userId}&t=${Math.random()}`
+  const API = `https://idmp.haozi.me/api?id=${userId}&t=${Math.random()}`
   await fetch(API).then((d) => d.text())
 
   await sleep(2000)
