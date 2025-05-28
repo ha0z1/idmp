@@ -61,6 +61,9 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           fileName: () => 'index.browser.umd.js',
         },
       },
+      esbuild: {
+        drop: ['console', 'debugger'],
+      },
       define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
       },
@@ -74,6 +77,9 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           formats: ['es'],
           fileName: () => 'index.browser.esm.js',
         },
+      },
+      esbuild: {
+        drop: ['console', 'debugger'],
       },
       define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
@@ -99,6 +105,9 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           formats: ['es'],
           fileName: () => 'index.deno.js',
         },
+      },
+      esbuild: {
+        drop: ['console', 'debugger'],
       },
       define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
