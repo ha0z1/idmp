@@ -28,7 +28,7 @@
 import idmp from 'idmp'
 
 const getInfo = async () => {
-  const API = `https://haozi.me/?api/your-info`
+  const API = `https://idmp.haozi.me/api?/your-info`
   return await fetch(API).then((d) => d.text())
 }
 
@@ -48,7 +48,7 @@ for (let i = 0; i < 10; ++i) {
 
 ```typescript
 const getInfoById = async (id: string) => {
-  const API = `https://haozi.me/?api/your-info&id=${id}`
+  const API = `https://idmp.haozi.me/api?/your-info&id=${id}`
   return await fetch(API).then((d) => d.json())
 }
 
@@ -346,4 +346,4 @@ export const getInfoIdmp = (options) =>
 
 在开发态环境下，内置了一个检查，警告在不同地方使用了相同的 KEY。如果不同的 Promise 分配了相同的 KEY，可能造成不符合预期的结果。
 
-如果你有更复杂的网络需求，如自动刷新、本地与远端数据竞选等，`idmp` 由于是纯函数，无法实现相关功能，可以尝试 [SWR](https://swr.vercel.app/) 和 [swrv](https://docs-swrv.netlify.app/)
+如果你有更复杂的网络需求，如自动刷新、本地与远端数据竞选等，`idmp` 由于是纯函数，无法实现相关功能，可以尝试和 [SWR](https://swr.vercel.app/) 和 [swrv](https://docs-swrv.netlify.app/) 结合使用。

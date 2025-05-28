@@ -9,7 +9,7 @@ import idmp from 'idmp'
 import storageWrap, { getCacheKey } from 'idmp/browser-storage'
 
 const getInfo = async () => {
-  const API = `https://haozi.me/?api/your-info`
+  const API = `https://idmp.haozi.me/api?/your-info`
   return await fetch(API).then((d) => d.text())
 }
 
