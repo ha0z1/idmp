@@ -1,7 +1,11 @@
 {
   "private": true,
   "dependencies": {
-    "idmp": "3.2.2"
+    "idmp": "3.2.2",
+    "swr": "^2.3.3"
+  },
+  "scripts": {
+    "lint": "cd .. && pnpm lint && cd -"
   },
   "_dependencies": {
     "idmp": "1.13.0-alpha.5"

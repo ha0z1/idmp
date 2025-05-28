@@ -1,5 +1,5 @@
 {
-  "name": "idmp-browser-storage",
+  "name": "idmp-swr",
   "version": "0.0.0",
   "private": true,
   "exports": {
@@ -11,9 +11,9 @@
     "dist"
   ],
   "scripts": {
-    "_dev": "vite",
     "build": "tsc && pnpm vite-node scripts/build.ts",
-    "dev": "pnpm vite-node scripts/build.ts"
+    "dev": "pnpm vite-node scripts/build.ts",
+    "lint": "cd .. && pnpm lint && cd -"
   },
   "dependencies": {
     "idmp": "workspace:*"

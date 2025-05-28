@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import Home from './pages/Home'
 import Storage from './pages/Storage'
+import SWRMiddleware from './pages/SWRMiddleware'
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: 'storage',
     element: <Storage />,
+  },
+  {
+    path: 'swr-middleware',
+    element: <SWRMiddleware />,
   },
 ])
 

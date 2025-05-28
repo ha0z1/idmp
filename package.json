@@ -44,6 +44,12 @@
         "require": "./plugins/browser-storage/dist/index.node.cjs",
         "default": "./plugins/browser-storage/dist/index.js"
       }
+    },
+    "./swr": {
+      "default": {
+        "require": "./plugins/swr/dist/index.node.cjs",
+        "default": "./plugins/swr/dist/index.js"
+      }
     }
   },
   "main": "./dist/index.node.cjs",
@@ -59,11 +65,12 @@
     "publish:alpha": "pnpm publish --no-git-checks --registry https://registry.npmjs.org --tag alpha",
     "test": "vitest",
     "www": "pnpm run build && NODE_ENV=development pnpm vite build -c vite.demo.config.ts",
-    "www-dev": "pnpm run build && pnpm vite build -c vite.demo.config.ts"
+    "www-dev": "pnpm run build && pnpm vite dev -c vite.demo.config.ts"
   },
   "dependencies": {
     "fs-extra": "^11.3.0",
-    "serialize-javascript": "^6.0.2"
+    "serialize-javascript": "^6.0.2",
+    "swr": "^2.3.3"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
