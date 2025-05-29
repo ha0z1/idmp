@@ -25,7 +25,7 @@ const fetchData = async () => {
 }
 
 describe('idmp', () => {
-  it('should return data as originFunction', async () => {
+  it('returns data identical to the original function', async () => {
     const fetchDataIdmp = () => idmp(Symbol(), fetchData)
 
     const [dataOrigin, dataIdmp] = await Promise.all([
@@ -35,7 +35,7 @@ describe('idmp', () => {
     expect(dataIdmp).toEqual(dataOrigin)
   })
 
-  it('should originFunction only call once', async () => {
+  it('calls the original function only once when deduplicated', async () => {
     let count = 0
     let task: any[] = []
     const key = Symbol()
@@ -52,7 +52,7 @@ describe('idmp', () => {
     expect(count).toEqual(1)
   })
 
-  it('should throw error when change data outside', async () => {
+  it('throws an error if data is mutated in test mode', async () => {
     process.env.NODE_ENV = 'production'
     const data = await idmp(Symbol(), fetchData)
     expect(() => {
@@ -61,14 +61,14 @@ describe('idmp', () => {
     process.env.NODE_ENV = 'test'
   })
 
-  it('should not throw error when change data outside in production mode', async () => {
+  it('does not throw if data is mutated in production mode', async () => {
     const data = await idmp(Symbol(), fetchData)
     expect(() => {
       data.info.name = 'Jack'
     }).toThrowError()
   })
 
-  it('reusing the same globalKey will cause a failure', async () => {
+  it('throws when reusing the same globalKey', async () => {
     const key = Math.random()
     console.error = (...msg: any[]) => {
       throw new Error(`console.error:  ${msg.join(', ')}`)
@@ -81,13 +81,13 @@ describe('idmp', () => {
     console.error = originConsoleError
   })
 
-  it('should use default values for options if not provided', async () => {
+  it('applies default options if none are provided', async () => {
     const msg = `${Math.random()}`
     const result = await idmp(Math.random(), () => Promise.resolve(msg))
     expect(result).toBe(msg)
   })
 
-  it('should respect the maxAge parameter', async () => {
+  it('respects the maxAge option', async () => {
     const maxAge = 100 // 100ms for test
     const options: IdmpOptions = { maxAge }
     const startTime = Date.now()
@@ -96,7 +96,7 @@ describe('idmp', () => {
     expect(endTime - startTime).toBeLessThan(maxAge)
   })
 
-  it(`should skip cache when flush`, async () => {
+  it('bypasses cache when flush is called', async () => {
     const key = Symbol()
     const getData = () => idmp(key, async () => Symbol(), { maxAge: Infinity })
 
@@ -113,7 +113,7 @@ describe('idmp', () => {
     expect(data3).not.toBe(data1)
   })
 
-  it(`should skip all cache when flushAll`, async () => {
+  it('clears all cache when flushAll is called', async () => {
     const key1 = Symbol()
     const key2 = Symbol()
     const getData1 = () =>
@@ -136,7 +136,7 @@ describe('idmp', () => {
     expect(data23).not.toEqual(data21)
   })
 
-  it('Support Uint[8|16|32]Array', async () => {
+  it('handles Uint[8|16|32]Array correctly', async () => {
     const uint8Array = new Uint8Array(100)
     const getUint8Array = () => idmp('Uint8Array', async () => uint8Array)
     expect(await getUint8Array()).toBe(uint8Array)
@@ -150,7 +150,7 @@ describe('idmp', () => {
     expect(await getUint32Array()).toBe(uint32Array)
   })
 
-  it('Support immer draft data', async () => {
+  it('handles immer draft data correctly', async () => {
     const origin = { hello: 'world1' }
     const draft = createDraft(origin)
 
@@ -167,7 +167,7 @@ describe('idmp', () => {
   })
 
   describe('Do not defineReactive un-configurable value', () => {
-    it('1', async () => {
+    it('handles unconfigurable property correctly', async () => {
       const origin = { hello: 'world1' }
       const data = Object.defineProperty(origin, 'hello', {
         value: 'world2',
@@ -186,7 +186,7 @@ describe('idmp', () => {
       expect(res).toBe(data)
     })
 
-    it('2', async () => {
+    it('throws on changing configurable property after caching', async () => {
       const origin = { hello: 'world1' }
       const data = Object.defineProperty(origin, 'hello', {
         value: 'world2',
@@ -206,7 +206,7 @@ describe('idmp', () => {
       expect(origin.hello).toBe('world2')
     })
 
-    it('3', async () => {
+    it('throws on modifying plain object after caching', async () => {
       const origin = { hello: 'world1' }
       const data = origin
       expect(data.hello).toBe('world1')
@@ -222,7 +222,7 @@ describe('idmp', () => {
     })
   })
 
-  it(`should fallback to originFunction when key is falsy`, async () => {
+  it('falls back to origin function when key is falsy', async () => {
     const originFunction = async () => Math.random()
     let arr: number[] = []
     for (let i = 0; i < 100; ++i) {
