@@ -1,8 +1,10 @@
 name: Deploy
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     name: Deploy
@@ -10,82 +12,104 @@ jobs:
     permissions:
       id-token: write
       contents: write
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: latest
+
       - name: Install dependencies
         run: pnpm install
+
       - name: Build and test
         run: |
           pnpm run build
           pnpm run coverage
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
+
       - name: Prepublish
         run: pnpm run prepublishOnly
+
       - name: NPM Publish
         uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.IDMP_NPM_TOKEN }}
+
       - name: Configure Git user identity
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global commit.gpgSign false
           git config --global tag.gpgSign false
+
       - name: Create Git Tag (with overwrite)
         run: |
           git reset --hard HEAD
-
           VERSION=$(node -p "require('./package.json').version")
           TAG_NAME="v$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-          echo "Package version: $VERSION"
-          echo "Tag name: $TAG_NAME"
 
           if git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME$"; then
-            echo "Tag $TAG_NAME already exists in remote repository"
-            echo "Deleting existing remote tag..."
-            git push --delete origin "$TAG_NAME" || echo "Failed to delete remote tag, continuing..."
-            echo "Deleting existing local tag if exists..."
+            git push --delete origin "$TAG_NAME" || echo "Failed to delete remote tag"
             git tag -d "$TAG_NAME" 2>/dev/null || echo "Local tag does not exist"
           fi
 
-          echo "Creating new tag $TAG_NAME"
           git tag "$TAG_NAME" -m "Release version $VERSION"
           git push origin "$TAG_NAME"
           echo "NEED_RELEASE=true" >> $GITHUB_ENV
+
+      - name: Get Previous Git Tag
+        run: |
+          PREV_TAG=$(git tag --sort=-creatordate | grep -v "$TAG_NAME" | head -n 1)
+          echo "Previous tag: $PREV_TAG"
+          echo "PREV_TAG=$PREV_TAG" >> $GITHUB_ENV
+
+      - name: Generate Changelog and Compare Link
+        run: |
+          echo "Generating changelog from commits between $PREV_TAG and $TAG_NAME"
+          echo "### Changes Since $PREV_TAG" > CHANGELOG.md
+          git log "$PREV_TAG..HEAD" --pretty=format:"%s" --no-merges | sort | uniq | sed 's/^/- /' >> CHANGELOG.md
+
+          COMPARE_URL="https://github.com/${{ github.repository }}/compare/$PREV_TAG...$TAG_NAME"
+          echo "" >> CHANGELOG.md
+          echo "**Full Changelog**: $COMPARE_URL" >> CHANGELOG.md
+
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          cat CHANGELOG.md >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Delete existing GitHub Release (if exists)
         run: |
           RELEASE_ID=$(gh release view "${{ env.TAG_NAME }}" --json id --jq '.id' 2>/dev/null || echo "")
           if [ -n "$RELEASE_ID" ]; then
-            echo "Found existing release with ID: $RELEASE_ID"
-            echo "Deleting existing release..."
-            gh release delete "${{ env.TAG_NAME }}" --yes || echo "Failed to delete release, continuing..."
-          else
-            echo "No existing release found for tag ${{ env.TAG_NAME }}"
+            gh release delete "${{ env.TAG_NAME }}" --yes || echo "Failed to delete release"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create GitHub Release
         if: env.NEED_RELEASE == 'true'
         uses: softprops/action-gh-release@v2
@@ -94,16 +118,14 @@ jobs:
           name: Release ${{ env.TAG_NAME }}
           body: |
             ## Release ${{ env.VERSION }}
-            ### What's Changed
-            - Automated release for version ${{ env.VERSION }}
-            - Built from commit: ${{ github.sha }}
-            **Full Changelog**: https://github.com/${{ github.repository }}/compare/...${TAG_NAME}
+            ${{ env.CHANGELOG }}
           files: |
             dist/*
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
