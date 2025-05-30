@@ -84,6 +84,7 @@ const enum K {
   rejectionError,
   cachedPromiseFunc,
   _originalErrorStack,
+  abortController,
 }
 
 // Constants
@@ -92,14 +93,10 @@ const _7days = 604800000
 const noop = () => {}
 const UNDEFINED = undefined
 const $timeout = setTimeout
+const $clearTimeout = clearTimeout
 
-const getMax = (a: number, b: number): number => {
-  return a > b ? a : b
-}
-
-const getMin = (a: number, b: number): number => {
-  return a < b ? a : b
-}
+const getMax = (a: number, b: number): number => (a > b ? a : b)
+const getMin = (a: number, b: number): number => (a < b ? a : b)
 
 /**
  * Makes an object's properties read-only to prevent mutation
@@ -170,6 +167,7 @@ let _globalStore: Record<
     any | undefined, // [K.rejectionError]: any | undefined
     any, // [K.cachedPromiseFunc]: any
     string, // [K._originalErrorStack]: string
+    AbortController | undefined, // [K.abortController]: AbortController | undefined
   ]
 > = {}
 
@@ -180,14 +178,14 @@ let _globalStore: Record<
  */
 const getOptions = (options?: IdmpOptions) => {
   const {
-    maxRetry = 30,
+    maxRetry: paramMaxRetry = 30,
     maxAge: paramMaxAge = DEFAULT_MAX_AGE,
     minRetryDelay = 50,
     maxRetryDelay = 5000,
     onBeforeRetry = noop,
     signal,
   } = options || {}
-
+  const maxRetry = getMax(0, paramMaxRetry)
   const maxAge = getRange(paramMaxAge)
   return {
     maxRetry,
@@ -206,6 +204,10 @@ const getOptions = (options?: IdmpOptions) => {
  */
 const flush = (globalKey: IdmpGlobalKey) => {
   if (!globalKey) return
+  const cache = _globalStore[globalKey]
+  if (cache && cache[K.abortController]) {
+    cache[K.abortController].abort()
+  }
   delete _globalStore[globalKey]
 }
 
@@ -213,6 +215,14 @@ const flush = (globalKey: IdmpGlobalKey) => {
  * Clears all cached results
  */
 const flushAll = () => {
+  for (const key in _globalStore) {
+    if (_globalStore.hasOwnProperty(key)) {
+      const cache = _globalStore[key]
+      if (cache && cache[K.abortController]) {
+        cache[K.abortController].abort()
+      }
+    }
+  }
   _globalStore = {}
 }
 
@@ -268,6 +278,11 @@ const idmp = <T>(
     0, // [K.retryCount]: number
     Status.UNSENT, // [K.status]: Status
     [], // [K.pendingList]: Array<any>
+    // UNDEFINED, // [K.resolvedData]: any | undefined
+    // UNDEFINED, // [K.rejectionError]: any | undefined
+    // UNDEFINED, // [K.cachedPromiseFunc]: any
+    // '', // [K._originalErrorStack]: string
+    // UNDEFINED, // [K.abortController]: AbortController | undefined
   ]
 
   const cache = _globalStore[globalKey]
@@ -293,6 +308,10 @@ const idmp = <T>(
   const reset = () => {
     cache[K.status] = Status.UNSENT
     cache[K.resolvedData] = cache[K.rejectionError] = UNDEFINED
+    if (cache[K.abortController]) {
+      cache[K.abortController].abort()
+      cache[K.abortController] = UNDEFINED
+    }
   }
 
   /**
@@ -330,11 +349,10 @@ const idmp = <T>(
    */
   const doRejects = () => {
     const len = cache[K.pendingList].length
-    let maxLen
-    maxLen = len - maxRetry
+    let maxLen = len - maxRetry
 
-    if (maxLen < 0 || !isFinite(len)) {
-      maxLen = getMax(1, cache[K.pendingList].length - 3)
+    if (maxLen < 0 || !isFinite(maxLen)) {
+      maxLen = getMax(1, len - 3)
     }
 
     for (let i = 0; i < maxLen; ++i) {
@@ -342,6 +360,8 @@ const idmp = <T>(
     }
     flush(globalKey)
   }
+
+  let retryTimeoutId: NodeJS.Timeout | number | undefined
 
   /**
    * Creates and manages the actual promise execution
@@ -421,17 +441,32 @@ const idmp = <T>(
         return
       }
 
+      // Handle external abort signal
       if (signal) {
-        if (signal.aborted) return
+        if (signal.aborted) {
+          reject(
+            new DOMException(
+              signal.reason || 'The operation was aborted',
+              'AbortError',
+            ),
+          )
+          return
+        }
 
-        signal.addEventListener('abort', () => {
+        const handleAbort = () => {
+          if (retryTimeoutId) {
+            $clearTimeout(retryTimeoutId)
+          }
           reset()
+          cache[K.status] = Status.ABORTED
           cache[K.rejectionError] = new DOMException(
-            signal.reason,
+            signal.reason || 'The operation was aborted',
             'AbortError',
           )
           doRejects()
-        })
+        }
+
+        signal.addEventListener('abort', handleAbort, { once: true })
       }
 
       if (cache[K.status] === Status.UNSENT) {
@@ -440,6 +475,8 @@ const idmp = <T>(
 
         cache[K.cachedPromiseFunc]()
           .then((data: T) => {
+            if (cache[K.status] === Status.ABORTED) return
+
             if (process.env.NODE_ENV !== 'production') {
               cache[K.resolvedData] = readonly<T>(data)
             } else {
@@ -449,6 +486,8 @@ const idmp = <T>(
             cache[K.status] = Status.RESOLVED
           })
           .catch((err: any) => {
+            if (cache[K.status] === Status.ABORTED) return
+
             cache[K.status] = Status.REJECTED
             cache[K.rejectionError] = err
             ++cache[K.retryCount]
@@ -467,11 +506,17 @@ const idmp = <T>(
                 minRetryDelay * 2 ** (cache[K.retryCount] - 1),
               )
 
-              $timeout(executePromise, delay)
+              retryTimeoutId = $timeout(() => {
+                if (cache[K.status] !== Status.ABORTED) {
+                  executePromise()
+                }
+              }, delay)
             }
           })
       } else if (cache[K.status] === Status.OPENING) {
         cache[K.pendingList].push([resolve, reject])
+      } else if (cache[K.status] === Status.ABORTED) {
+        reject(cache[K.rejectionError])
       }
     })
 
@@ -502,3 +547,4 @@ export {
   type IdmpOptions,
   type IdmpPromise,
 }
+;(globalThis as any)._globalStore = _globalStore
