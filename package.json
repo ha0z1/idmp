@@ -62,26 +62,26 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.15.21",
-    "@types/react": "^19.1.5",
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-legacy": "^6.1.1",
     "@vitejs/plugin-react-swc": "^3.10.0",
-    "@vitest/coverage-istanbul": "^3.1.4",
+    "@vitest/coverage-istanbul": "^3.2.0",
     "immer": "^10.1.1",
     "jsdom": "^26.1.0",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.0",
+    "react-router-dom": "^7.6.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vite-node": "^3.1.4",
+    "vite-node": "^3.2.0",
     "vite-plugin-banner": "^0.8.1",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-html": "^3.2.2",
-    "vitest": "^3.1.4"
+    "vitest": "^3.2.0"
   },
   "engines": {
     "node": ">=18"
