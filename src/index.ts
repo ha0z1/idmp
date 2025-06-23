@@ -275,6 +275,9 @@ const idmp = <T>(
   let callStackLocation = ''
   const printLogs = (...msg: any[]) => {
     if (typeof window === 'undefined') return
+    try {
+      if (localStorage.idmp_debug === 'false') return
+    } catch {}
 
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
