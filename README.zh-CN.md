@@ -141,6 +141,15 @@ fetchData2().then(...) // will skip cache
 
 通过 flush 或者 flushAll 可以做一些工作，比如点击了保存按钮后自动刷新列表，这时候应该强行从服务器拿最新的数据渲染。
 
+## 禁用调试
+
+在开发环境中，调试信息会默认显示。大多数现代工程项目（如 React、Vue、Webpack、Vite）在生产环境中会自动将 process.env.NODE_ENV 设置为 production。
+
+在生产环境中，idmp 会自动移除调试逻辑，以减少代码体积并提升性能。
+
+如果你不希望在开发环境中看到调试信息，也可以手动通过控制台设置：
+localStorage.idmp_debug = false，以禁用调试信息显示。
+
 ## 在 React 中去重请求
 
 在 React 共用请求，可以使用 SWR 、 Provider 以及更为复杂的专业状态管理库来复用数据。但存在以下几种问题：
