@@ -74,7 +74,7 @@ describe('idmp', () => {
       throw new Error(`console.error:  ${msg.join(', ')}`)
     }
     try {
-      await idmp(key, async () => {}), await idmp(key, async () => {})
+      ;(await idmp(key, async () => {}), await idmp(key, async () => {}))
     } catch {
       expect(true).toBe(true)
     }

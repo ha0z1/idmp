@@ -142,6 +142,15 @@ fetchData2().then(...) // will skip cache
 
 You can do some works with flush or flushAll, for example, auto refresh list after clicking the save button, should fetch the latest data from server forcibly.
 
+## Disable debug logs
+
+In development mode, debug information is displayed by default. Most modern frameworks and build tools—such as React, Vue, Webpack, and Vite etc. will automatically set process.env.NODE_ENV to production in production builds.
+
+In production, idmp prunes debug logic to reduce bundle size and improve performance.
+
+If you prefer not to see debug information even in development, you can disable it manually by setting the following in the browser console:
+`localStorage.idmp_debug = false`.
+
 ## Deduplication in React
 
 In React, you can share requests using SWR, Provider and more complex state management libraries. But there are some problems:
