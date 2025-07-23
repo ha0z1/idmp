@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "3.4.3",
+  "version": "3.4.4",
   "description": "A lightweight TypeScript library for deduplicating and caching async function calls with automatic retries, designed for idempotent network requests in React and Node.js.",
   "keywords": [
     "deduplicate network requests",
@@ -62,27 +62,28 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.0.3",
+    "@types/node": "^24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-legacy": "^6.1.1",
-    "@vitejs/plugin-react-swc": "^3.10.2",
+    "@vitejs/plugin-legacy": "^7.1.0",
+    "@vitejs/plugin-react-swc": "^3.11.0",
     "@vitest/coverage-istanbul": "^3.2.4",
     "immer": "^10.1.1",
     "jsdom": "^26.1.0",
-    "prettier": "^3.6.0",
-    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.0",
+    "react-router-dom": "^7.7.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5",
+    "vite": "^7.0.5",
     "vite-node": "^3.2.4",
     "vite-plugin-banner": "^0.8.1",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-html": "^3.2.2",
     "vitest": "^3.2.4"
   },
+  "packageManager": "pnpm@10.13.1",
   "engines": {
     "node": ">=18"
   }
