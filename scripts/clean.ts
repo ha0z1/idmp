@@ -10,4 +10,5 @@ import fs from 'fs-extra'
   })
   fs.removeSync('./plugins/browser-storage/package.json')
   fs.removeSync('./plugins/node-fs/package.json')
+  fs.removeSync('./plugins/redis/package.json')
 })()

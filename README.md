@@ -78,6 +78,7 @@ The analogy to higher-order functions elegantly conveys that plugins can extend 
 - [Data Persistence with node-fs](plugins/node-fs/README.md) (Persist data to the file system)
 - [Data Persistence with localStorage](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
 - [Data Persistence with sessionStorage](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.md)
+- [Data Persistence with redis](https://github.com/ha0z1/idmp/blob/main/plugins/redis/README.md)
 - Data Persistence with indexedDB // TODO
 - Data Persistence with chrome-extension // TODO
 
