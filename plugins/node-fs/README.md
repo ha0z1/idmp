@@ -5,7 +5,7 @@
 ```typescript
 import idmp from 'idmp'
 import fsWrap, { cacheDir, getCachePath } from 'idmp/node-fs'
-const fsIdmp = fsWrap(idmp)
+const fsIdmp = fsWrap(idmp, 'xxx') // xxx: Recommended to a UUID in the global namespace to avoid conflicts, one per project is enough.
 
 await fsIdmp(
   'localFileSystemCache',
