@@ -22,12 +22,25 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
         build: {
           sourcemap: false,
           // target: "chrome51",
-          target: 'es6',
+          target: 'node14',
           lib: {
             formats: ['es'],
             entry: 'src/index.ts',
             name: 'idmp',
             fileName: 'index',
+          },
+          rollupOptions: {
+            external: [
+              'fs',
+              'path',
+              'os',
+              'buffer',
+              'stream',
+              'url',
+              'util',
+              'crypto',
+              /^node:.*/, // 关键：确保 "node:xxx" 被完全 external
+            ],
           },
         },
       },
@@ -46,34 +59,6 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           formats: ['es'],
           fileName: () => 'index.js',
         },
-      },
-    }),
-
-    // browser
-    buildFile({
-      build: {
-        minify: true,
-        lib: {
-          formats: ['umd'],
-          fileName: () => 'index.browser.umd.js',
-        },
-      },
-      define: {
-        'process.env.NODE_ENV': JSON.stringify('production'),
-      },
-    }),
-
-    // browser esm
-    buildFile({
-      build: {
-        minify: true,
-        lib: {
-          formats: ['es'],
-          fileName: () => 'index.browser.esm.js',
-        },
-      },
-      define: {
-        'process.env.NODE_ENV': JSON.stringify('production'),
       },
     }),
 
