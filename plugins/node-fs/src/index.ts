@@ -1,22 +1,31 @@
+import { createHash } from 'crypto'
 import fs from 'fs-extra'
 import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
 import os from 'node:os'
 import path from 'node:path'
 import serialize from 'serialize-javascript'
+import { fileURLToPath } from 'url'
+
+// 当前文件的完整路径（绝对路径）
+const __filename = fileURLToPath(import.meta.url)
+const md5 = (data: string) => createHash('md5').update(data).digest('hex')
 
 const deSerialize = <T = any>(data: string) =>
   new Function(`return ${data}`)() as T
+
+const prefix = md5(__filename)
 
 const udf = undefined
 const encode = encodeURIComponent
 // const cacheDir = path.resolve(process.env.HOME ?? '/tmp', '.idmp')
 const cacheDir = path.resolve(os.tmpdir(), 'idmp')
 const getCachePath = (globalKey: string) =>
-  path.resolve(cacheDir, 'v1/node', encode(globalKey))
+  path.resolve(cacheDir, 'v1/node', prefix, encode(globalKey))
 
 const setData = async <T = any>(key: string, data: T, maxAge: number) => {
   if (!key) return
   const cachePath = getCachePath(key)
+
   fs.ensureFileSync(cachePath)
   fs.outputFileSync(
     cachePath,
@@ -50,7 +59,7 @@ const getData = async <T = any>(key: string) => {
 
 // type NonVoid<T> = T extends void ? never : T
 
-const fsIdmpWrap = (_idmp: Idmp, namespace = '') => {
+const fsIdmpWrap = (_idmp: Idmp, namespace: string) => {
   const newIdmp = <T>(
     globalKey: string,
     promiseFunc: IdmpPromise<T>,
