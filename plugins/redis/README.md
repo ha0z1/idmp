@@ -21,6 +21,25 @@ await redisIdmp(
 
 ```
 
+## Options
+
+```typescript
+declare const redisIdmpWrap: (
+  _idmp: Idmp,
+  namespace: string,
+  options: RedisIdmpOptions,
+) => {
+  <T>(
+    globalKey: string,
+    promiseFunc: IdmpPromise<T>,
+    options?: IdmpOptions,
+  ): Promise<any>
+  flush(globalKey: string): Promise<void>
+  flushAll(): Promise<void>
+  quit(): Promise<void>
+}
+```
+
 ## Notice
 
 - Data persistence only supports string type `globalKey` and data structures that can be serialized by [serialize-javascript](https://www.npmjs.com/package/serialize-javascript)

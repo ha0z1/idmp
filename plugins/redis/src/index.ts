@@ -65,7 +65,7 @@ const redisIdmpWrap = (
   }
 
   const deleteKeysByPrefix = async (prefix: string) => {
-    const client = createClient()
+    const client = createClient({ url: options.url })
     await client.connect()
 
     let cursor = '0'
@@ -119,6 +119,12 @@ const redisIdmpWrap = (
     _idmp.flushAll()
     await deleteKeysByPrefix(cachePrefix)
   }
+  newIdmp.quit = async () => {
+    if (client.isOpen) {
+      await client.quit()
+    }
+  }
+
   return newIdmp
 }
 
