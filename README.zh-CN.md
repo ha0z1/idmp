@@ -78,6 +78,7 @@ export const getInfoByIdIdmp = (id: string) =>
 - [使用 node-fs 进行数据持久化](plugins/node-fs/README.md)（将数据持久化到文件系统）
 - [使用 localStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.zh-CN.md)
 - [使用 sessionStorage 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/browser-storage/README.zh-CN.md)
+- [使用 redis 进行数据持久化](https://github.com/ha0z1/idmp/blob/main/plugins/redis/README.md)
 - 使用 indexedDB 进行数据持久化 // TODO
 - 使用 chrome-extension 实现数据持久化 // TODO
 
