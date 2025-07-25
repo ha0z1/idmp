@@ -83,6 +83,7 @@ const enum K {
   resolvedData,
   rejectionError,
   cachedPromiseFunc,
+  timerId,
   _originalErrorStack,
 }
 
@@ -92,6 +93,7 @@ const _7days = 604800000
 const noop = () => {}
 const UNDEFINED = undefined
 const $timeout = setTimeout
+const $clearTimeout = clearTimeout
 
 const getMax = (a: number, b: number): number => {
   return a > b ? a : b
@@ -169,6 +171,7 @@ let _globalStore: Record<
     any | undefined, // [K.resolvedData]: any | undefined
     any | undefined, // [K.rejectionError]: any | undefined
     any, // [K.cachedPromiseFunc]: any
+    number | undefined, // [K.timerId]: number | undefined
     string, // [K._originalErrorStack]: string
   ]
 > = {}
@@ -206,13 +209,19 @@ const getOptions = (options?: IdmpOptions) => {
  */
 const flush = (globalKey: IdmpGlobalKey) => {
   if (!globalKey) return
-  delete _globalStore[globalKey]
+  const cache = _globalStore[globalKey]
+  if (!cache) return
+  cache[K.timerId] && $clearTimeout(cache[K.timerId])
+  ;(_globalStore[globalKey] as any) = UNDEFINED
 }
 
 /**
  * Clears all cached results
  */
 const flushAll = () => {
+  for (let key of Object.keys(_globalStore)) {
+    flush(key)
+  }
   _globalStore = {}
 }
 
@@ -322,9 +331,9 @@ const idmp = <T>(
     cache[K.pendingList] = []
 
     if (!isFiniteParamMaxAge) {
-      $timeout(() => {
+      cache[K.timerId] = $timeout(() => {
         flush(globalKey)
-      }, maxAge)
+      }, maxAge) as unknown as number
     }
   }
 
