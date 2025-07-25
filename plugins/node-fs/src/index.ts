@@ -1,6 +1,6 @@
-import { createHash } from 'crypto'
 import fs from 'fs-extra'
 import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
+import { createHash } from 'node:crypto'
 import os from 'node:os'
 import path from 'node:path'
 import serialize from 'serialize-javascript'
@@ -59,7 +59,14 @@ const getData = async <T = any>(key: string) => {
 
 // type NonVoid<T> = T extends void ? never : T
 
-const fsIdmpWrap = (_idmp: Idmp, namespace: string) => {
+interface IExtraOptions {
+  useMemoryCache?: boolean // 默认不常驻内存，避免 node 脚本进程无法退出
+}
+const fsIdmpWrap = (
+  _idmp: Idmp,
+  namespace: string,
+  extraOptions?: IExtraOptions,
+) => {
   const newIdmp = <T>(
     globalKey: string,
     promiseFunc: IdmpPromise<T>,
@@ -67,6 +74,7 @@ const fsIdmpWrap = (_idmp: Idmp, namespace: string) => {
   ) => {
     globalKey = `${namespace}_${globalKey}`
     const finalOptions = getOptions(options)
+    const { useMemoryCache } = extraOptions || {}
     return _idmp(
       globalKey,
       async () => {
@@ -83,7 +91,10 @@ const fsIdmpWrap = (_idmp: Idmp, namespace: string) => {
         }
         return memoryData
       },
-      options,
+      {
+        ...options,
+        maxAge: useMemoryCache ? finalOptions.maxAge : 200, // 默认不使用内存缓存，则设置一个较短的 maxAge，防止一些命令行程序无法退出，但能避免短时间重复请求消耗大量 IO
+      },
     )
   }
   newIdmp.flush = (globalKey: string) => {
@@ -98,4 +109,4 @@ const fsIdmpWrap = (_idmp: Idmp, namespace: string) => {
 }
 
 export default fsIdmpWrap
-export { cacheDir, getCachePath }
+export { cacheDir, getCachePath, type IExtraOptions }

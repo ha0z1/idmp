@@ -3,7 +3,7 @@ import { build, mergeConfig, type InlineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import banner from 'vite-plugin-banner'
 import dts from 'vite-plugin-dts'
-import { version } from '../package.json'
+import { version } from '../../../package.json'
 
 type DeepPartial<T> = T extends object
   ? {
@@ -31,6 +31,8 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           },
           rollupOptions: {
             external: [
+              'idmp',
+              'serialize-javascript',
               'fs',
               'path',
               'os',

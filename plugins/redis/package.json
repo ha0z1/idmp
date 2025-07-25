@@ -1,0 +1,26 @@
+{
+  "name": "idmp-redis",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "_dev": "vite",
+    "build": "tsc && pnpm vite-node scripts/build.ts",
+    "dev": "pnpm vite-node scripts/build.ts"
+  },
+  "dependencies": {
+    "idmp": "workspace:*",
+    "redis": "^5.6.1",
+    "serialize-javascript": "^6.0.2"
+  },
+  "devDependencies": {
+    "@types/serialize-javascript": "^5.0.4"
+  }
+}
