@@ -108,6 +108,9 @@ describe('idmp', () => {
     idmp.flush('')
     idmp.flush(0)
     idmp.flush(key)
+    idmp.flush(key)
+    idmp.flush('aaaa')
+    idmp.flush('aaaa')
 
     const data3 = await getData()
     expect(data3).not.toBe(data1)
