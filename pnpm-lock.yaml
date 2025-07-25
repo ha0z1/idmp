@@ -85,8 +85,8 @@ importers:
   demo:
     dependencies:
       idmp:
-        specifier: 3.6.2
-        version: 3.6.2
+        specifier: 3.6.3
+        version: 3.6.3
 
   plugins/browser-storage:
     dependencies:
@@ -1617,8 +1617,8 @@ packages:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
-  idmp@3.6.2:
-    resolution: {integrity: sha512-lzORooo41oKsudarNUwXWJQaVdYg9VPKmgYv6Y3hjodkAvmM/af9rMFujeItUBTkabHZFaGTxSQgWk5du6JCKA==}
+  idmp@3.6.3:
+    resolution: {integrity: sha512-XNM94idiL7SsSsqlzjv8JkHva4CEsXMTLmg1uIIPFYfflbGrRDhQWG2FpTgozP53px2oqHMjkwQOXOdxfy5/Sw==}
 
   immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
@@ -1815,8 +1815,8 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nwsapi@2.2.20:
-    resolution: {integrity: sha512-/ieB+mDe4MrrKMT8z+mQL8klXydZWGR5Dowt4RAGKbJ3kIGEx3X4ljUo+6V73IXtUPWgfOlU5B9MlGxFO5T+cA==}
+  nwsapi@2.2.21:
+    resolution: {integrity: sha512-o6nIY3qwiSXl7/LuOU0Dmuctd34Yay0yeuZRLFmDPrrdHpXKFndPj3hM+YEPVHYC5fx2otBx4Ilc/gyYSAUaIA==}
 
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
@@ -3938,7 +3938,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  idmp@3.6.2:
+  idmp@3.6.3:
     dependencies:
       fs-extra: 11.3.0
       redis: 5.6.1
@@ -4025,7 +4025,7 @@ snapshots:
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       is-potential-custom-element-name: 1.0.1
-      nwsapi: 2.2.20
+      nwsapi: 2.2.21
       parse5: 7.3.0
       rrweb-cssom: 0.8.0
       saxes: 6.0.0
@@ -4155,7 +4155,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nwsapi@2.2.20: {}
+  nwsapi@2.2.21: {}
 
   package-json-from-dist@1.0.1: {}
 
