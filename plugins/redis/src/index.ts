@@ -32,6 +32,11 @@ const redisIdmpWrap = (
     url: options.url,
   })
 
+  client.once('error', (err) => {
+    console.error('Redis Client Error', err)
+    process.exit(err.code === 'ECONNREFUSED' ? 1 : 0)
+  })
+
   const setData = async <T = any>(key: string, data: T, maxAge: number) => {
     if (!key) return
     if (!client.isOpen) {
@@ -94,7 +99,7 @@ const redisIdmpWrap = (
     globalKey = `${namespace}_${globalKey}`
     const finalOptions = getOptions(options)
     return _idmp(
-      null, // No need for a local key in this case
+      globalKey,
       async () => {
         const localData = await getData(globalKey)
 
@@ -107,6 +112,9 @@ const redisIdmpWrap = (
           setData(globalKey, memoryData, finalOptions.maxAge)
         }
         return memoryData
+      },
+      {
+        maxAge: 0, // 宏任务仍会在内存中优化
       },
     )
   }
