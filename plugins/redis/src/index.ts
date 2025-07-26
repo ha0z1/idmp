@@ -1,8 +1,8 @@
+import { createHash } from 'crypto'
 import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
-import { createHash } from 'node:crypto'
-import { fileURLToPath } from 'node:url'
 import { createClient } from 'redis'
 import serialize from 'serialize-javascript'
+import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const md5 = (data: string) => createHash('md5').update(data).digest('hex')
