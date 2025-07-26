@@ -33,6 +33,7 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
             external: [
               'idmp',
               'serialize-javascript',
+              'fs-extra',
               'fs',
               'path',
               'os',

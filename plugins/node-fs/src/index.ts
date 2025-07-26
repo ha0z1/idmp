@@ -1,8 +1,8 @@
+import { createHash } from 'crypto'
 import fs from 'fs-extra'
 import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
-import { createHash } from 'node:crypto'
-import os from 'node:os'
-import path from 'node:path'
+import os from 'os'
+import path from 'path'
 import serialize from 'serialize-javascript'
 import { fileURLToPath } from 'url'
 
