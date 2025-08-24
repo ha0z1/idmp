@@ -132,3 +132,14 @@ jobs:
           project: 'idmp'
           entrypoint: 'https://deno.land/std@0.188.0/http/file_server.ts'
           root: 'dist'
+
+      - name: Deploy to GitHub Pages
+        run: |
+          git reset --hard HEAD
+          git clean -xdf
+          pnpm install gh-pages idmp @types/serialize-javascript -Dw
+          pnpm run www
+          echo "idmp.js.org" > dist/CNAME
+          pnpm gh-pages -d dist -b gh-pages -m "Deploy version ${{ env.VERSION }}" -r "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
