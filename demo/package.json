@@ -1,6 +1,9 @@
 {
   "private": true,
   "dependencies": {
-    "idmp": "3.6.6"
+    "@tailwindcss/vite": "^4.1.12",
+    "idmp": "*",
+    "lucide-react": "^0.541.0",
+    "react-icons": "^5.5.0"
   }
 }

@@ -136,10 +136,11 @@ jobs:
       - name: Deploy to GitHub Pages
         run: |
           git reset --hard HEAD
-          git clean -xdf
-          pnpm install gh-pages idmp @types/serialize-javascript -Dw
+          git clean -ffdx
+          pnpm install gh-pages idmp @types/serialize-javascript lucide-react react-icons -Dw
           pnpm run www
           echo "idmp.js.org" > dist/CNAME
+          mv dist/index.html dist/404.html
           pnpm gh-pages -d dist -b gh-pages -m "Deploy version ${{ env.VERSION }}" -r "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
