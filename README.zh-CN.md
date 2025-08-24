@@ -11,7 +11,7 @@
 
 [English](README.md) | 简体中文
 
-- Demo <https://idmp.haozi.me>
+- Demo <https://idmp.js.org/>
 
 ## Breaking Changes
 
@@ -28,7 +28,7 @@
 import idmp from 'idmp'
 
 const getInfo = async () => {
-  const API = `https://idmp.haozi.me/api?/your-info`
+  const API = `https://idmp.js.org/api?/your-info`
   return await fetch(API).then((d) => d.text())
 }
 
@@ -48,7 +48,7 @@ for (let i = 0; i < 10; ++i) {
 
 ```typescript
 const getInfoById = async (id: string) => {
-  const API = `https://idmp.haozi.me/api?/your-info&id=${id}`
+  const API = `https://idmp.js.org/api?/your-info&id=${id}`
   return await fetch(API).then((d) => d.json())
 }
 
@@ -159,7 +159,7 @@ localStorage.idmp_debug = false，以禁用调试信息显示。
 2. Provider 数据共享: 需要一个中心化的数据管理。数据中心无法感知哪些模块会消费哪些数据，需要长期维护这些数据，而不敢及时删除
 3. Redux 等状态管理库:应该专注的是状态的变化和时序，而非共享数据。`idmp` 让你更关注于局部状态
 
-查看 [demo](https://idmp.haozi.me) 和[源码](https://github.com/ha0z1/idmp/tree/main/demo)
+查看 [demo](https://idmp.js.org/) 和[源码](https://github.com/ha0z1/idmp/tree/main/demo)
 
 这样当模块 A 或者模块 B 的代码删除后，是不需要维护他们的缓存的。
 

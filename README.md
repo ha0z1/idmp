@@ -11,7 +11,7 @@ An elegant, lightweight (~1KB gzipped) utility to deduplicate concurrent calls t
 
 English | [简体中文](README.zh-CN.md)
 
-- Demo <https://idmp.haozi.me>
+- Demo <https://idmp.js.org/>
 
 ## Breaking Changes
 
@@ -28,7 +28,7 @@ English | [简体中文](README.zh-CN.md)
 import idmp from 'idmp'
 
 const getInfo = async () => {
-  const API = `https://idmp.haozi.me/api?/your-info`
+  const API = `https://idmp.js.org/api?/your-info`
   return await fetch(API).then((d) => d.text())
 }
 
@@ -48,7 +48,7 @@ Check the network console, there will be only 1 network request, but 10 callback
 
 ```typescript
 const getInfoById = async (id: string) => {
-  const API = `https://idmp.haozi.me/api?/your-info&id=${id}`
+  const API = `https://idmp.js.org/api?/your-info&id=${id}`
   return await fetch(API).then((d) => d.json())
 }
 
@@ -160,7 +160,7 @@ In React, you can share requests using SWR, Provider and more complex state mana
 2. **Provider**: Needs centralized data management. The data center can't perceive which modules will consume the data, need to maintain the data for a long time, and dare not delete it in time
 3. **Redux**: Should focus on state changes and sequences, not data sharing. `idmp` lets you focus more on local state
 
-See [demo](https://idmp.haozi.me) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
+See [demo](https://idmp.js.org/) and [source code](https://github.com/ha0z1/idmp/tree/main/demo)
 
 So when module A or module B's code is deleted, there is no need to maintain their cache.
 
