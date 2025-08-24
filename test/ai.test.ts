@@ -1,6 +1,7 @@
 import { createDraft, finishDraft } from 'immer'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import idmp, { type IdmpOptions } from '../src/index'
+import idmp, { type IdmpOptions, getOptions } from '../src/index'
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const originConsoleError = console.error.bind(console)
@@ -345,5 +346,141 @@ describe('idmp', () => {
 
       expect(retryCount).toBe(maxRetry)
     })
+  })
+})
+
+// describe('idmp', () => {
+//   beforeEach(() => {
+//     vi.useFakeTimers()
+//     idmp.flushAll()
+//   })
+
+//   afterEach(() => {
+//     vi.useRealTimers()
+//     idmp.flushAll()
+//   })
+
+//   it('dedupes concurrent calls for the same key and resolves all with the same result', async () => {
+//     const spy = vi.fn().mockImplementation(
+//       () =>
+//         new Promise<number>((resolve) => {
+//           setTimeout(() => resolve(42), 10)
+//         }),
+//     )
+
+//     const p1 = idmp('k1', spy)
+//     const p2 = idmp('k1', spy)
+
+//     expect(spy).toHaveBeenCalledTimes(1)
+
+//     vi.advanceTimersByTime(10)
+
+//     await expect(p1).resolves.toBe(42)
+//     await expect(p2).resolves.toBe(42)
+
+//     const p3 = idmp('k1', spy, { maxAge: 3000 })
+//     expect(spy).toHaveBeenCalledTimes(1)
+//     await expect(p3).resolves.toBe(42)
+//   })
+
+//   it('does not auto-expire when maxAge is Infinity', async () => {
+//     const spy = vi.fn().mockResolvedValue({ a: 1 })
+
+//     const r1 = idmp('inf-key', spy, { maxAge: Infinity })
+//     await expect(r1).resolves.toEqual({ a: 1 })
+//     expect(spy).toHaveBeenCalledTimes(1)
+
+//     vi.advanceTimersByTime(24 * 60 * 60 * 1000)
+//     const r2 = idmp('inf-key', spy, { maxAge: Infinity })
+//     await expect(r2).resolves.toEqual({ a: 1 })
+//     expect(spy).toHaveBeenCalledTimes(1)
+
+//     idmp.flush('inf-key')
+//     const r3 = idmp('inf-key', spy, { maxAge: Infinity })
+//     await expect(r3).resolves.toEqual({ a: 1 })
+//     expect(spy).toHaveBeenCalledTimes(2)
+//   })
+
+//   it('flushAll clears all cached keys', async () => {
+//     const spyA = vi.fn().mockResolvedValue('A')
+//     const spyB = vi.fn().mockResolvedValue('B')
+
+//     await expect(idmp('A', spyA)).resolves.toBe('A')
+//     await expect(idmp('B', spyB)).resolves.toBe('B')
+//     expect(spyA).toHaveBeenCalledTimes(1)
+//     expect(spyB).toHaveBeenCalledTimes(1)
+
+//     await expect(idmp('A', spyA)).resolves.toBe('A')
+//     expect(spyA).toHaveBeenCalledTimes(1)
+
+//     idmp.flushAll()
+
+//     await expect(idmp('A', spyA)).resolves.toBe('A')
+//     await expect(idmp('B', spyB)).resolves.toBe('B')
+//     expect(spyA).toHaveBeenCalledTimes(2)
+//     expect(spyB).toHaveBeenCalledTimes(2)
+//   })
+
+//   it('aborts with AbortSignal and rejects all pending callers', async () => {
+//     const ac = new AbortController()
+
+//     const never = vi.fn().mockImplementation(() => new Promise(() => {}))
+
+//     const p1 = idmp('abort-key', never, { signal: ac.signal })
+//     const p2 = idmp('abort-key', never, { signal: ac.signal })
+
+//     ac.abort('bye')
+
+//     await expect(p1).rejects.toMatchObject({
+//       name: 'AbortError',
+//       message: 'bye',
+//     })
+//     await expect(p2).rejects.toMatchObject({
+//       name: 'AbortError',
+//       message: 'bye',
+//     })
+
+//     const ok = vi.fn().mockResolvedValue('ok')
+//     await expect(idmp('abort-key', ok)).resolves.toBe('ok')
+//     expect(ok).toHaveBeenCalledTimes(1)
+//   })
+
+//   it('makes resolved data readonly in non-production env', async () => {
+//     const p = idmp('ro-key', () => Promise.resolve({ a: 1 }))
+//     const res = await p
+//     expect(res.a).toBe(1)
+
+//     expect(() => {
+//       ;(res as any).a = 2
+//     }).toThrowError(/read-only/i)
+//   })
+
+//   it('makes options object readonly in non-production env (mutating after call throws)', async () => {
+//     const opts: IdmpOptions = { maxRetry: 1, maxAge: 10 }
+//     await expect(
+//       idmp('opts-key', () => Promise.resolve(1), opts),
+//     ).resolves.toBe(1)
+
+//     expect(() => {
+//       opts.maxRetry = 99
+//     }).toThrowError(/read-only/i)
+//   })
+
+//   it('bypasses cache & dedupe when globalKey is falsy', async () => {
+//     const spy = vi.fn().mockResolvedValue(7)
+//     const p1 = idmp(null, spy)
+//     const p2 = idmp(undefined, spy)
+//     await expect(p1).resolves.toBe(7)
+//     await expect(p2).resolves.toBe(7)
+
+//     expect(spy).toHaveBeenCalledTimes(2)
+//   })
+// })
+
+describe('getOptions', () => {
+  it('clamps maxAge into [0, 7days]', () => {
+    expect(getOptions({ maxAge: -1 }).maxAge).toBe(0)
+    expect(getOptions({ maxAge: 9999999999 }).maxAge).toBe(604800000)
+    expect(getOptions({ maxAge: 1234 }).maxAge).toBe(1234)
   })
 })

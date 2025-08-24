@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import './App.css'
 import Home from './pages/Home'
 import Storage from './pages/Storage'
 
@@ -12,6 +12,10 @@ const router = createBrowserRouter([
   {
     path: 'storage',
     element: <Storage />,
+  },
+  {
+    path: '*',
+    element: <Navigate to="/" replace />,
   },
 ])
 
