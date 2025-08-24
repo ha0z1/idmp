@@ -287,7 +287,7 @@ const idmp = <T>(
     try {
       if (localStorage.idmp_debug === 'false') return
     } catch {}
-
+    /* istanbul ignore else -- Fallback for envs without console.groupCollapsed */
     if (console.groupCollapsed) {
       console.groupCollapsed(...msg)
       console.log('globalKey:', globalKey)
