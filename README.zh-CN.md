@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/ha0z1/idmp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ha0z1/idmp/blob/main/src%2Findex.ts)
 [![contributors](https://img.shields.io/github/contributors/ha0z1/idmp)](https://github.com/ha0z1/idmp/graphs/contributors)
 [![LICENSE](https://img.shields.io/npm/l/idmp)](https://github.com/ha0z1/idmp/blob/main/LICENSE)
-[![Size](https://img.shields.io/bundlephobia/minzip/idmp.svg)](https://cdn.jsdelivr.net/npm/idmp/+esm)
+[![Size](https://img.shields.io/bundlejs/size/idmp.svg)](https://cdn.jsdelivr.net/npm/idmp/+esm)
 
 一个优雅地解决幂等(idempotent) 函数的重复和并发调用的小库，纯函数，Gzip 后不到 1 KB
 
