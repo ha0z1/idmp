@@ -1,7 +1,9 @@
 packages:
   - ./plugins/*
   - ./demo
+
 onlyBuiltDependencies:
   - '@swc/core'
+  - '@tailwindcss/oxide'
   - core-js
   - esbuild

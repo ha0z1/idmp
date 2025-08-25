@@ -11,7 +11,7 @@ An elegant, lightweight (~1KB gzipped) utility to deduplicate concurrent calls t
 
 English | [简体中文](README.zh-CN.md)
 
-- Demo <https://idmp.js.org/>
+- Demo <https://idmp.js.org>
 
 ## Breaking Changes
 
