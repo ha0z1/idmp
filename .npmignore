@@ -22,7 +22,9 @@ yarn.lock
 package-lock.json
 tsconfig.json
 vite.config.ts
+vite.config.mts
 vite.*.config.ts
+vite.*.config.mts
 vercel.json
 SECURITY.md
 index.html
