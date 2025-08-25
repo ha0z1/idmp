@@ -137,7 +137,7 @@ jobs:
         run: |
           git reset --hard HEAD
           git clean -ffdx
-          pnpm install gh-pages idmp @types/serialize-javascript lucide-react react-icons -Dw
+          pnpm install gh-pages idmp @types/serialize-javascript react-icons @tailwindcss/vite clsx lucide-react react-markdown react-syntax-highlighter remark-gfm -Dw
           pnpm run www
           echo "idmp.js.org" > dist/CNAME
           mv dist/index.html dist/404.html
