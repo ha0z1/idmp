@@ -2,6 +2,8 @@ import { Link as LinkIcon, Rocket, Turtle, Zap } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import README from '../../README.md?raw'
+import Markdown from '../components/Markdown'
 import Ribbon from '../components/Ribbon'
 import Item from '../Item'
 import ItemIdmp from '../ItemIdmp'
@@ -191,7 +193,11 @@ export default function IdmpDemoPage() {
               </li>
             ))}
           </ul>
-        ) : null}
+        ) : (
+          <article className="prose max-w-none">
+            <Markdown>{README.split('## Usage')?.[1]}</Markdown>
+          </article>
+        )}
       </main>
 
       <footer className="mx-auto max-w-6xl px-6 pt-8 pb-12 text-xs text-slate-500"></footer>
