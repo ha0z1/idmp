@@ -212,7 +212,7 @@ const flush = (globalKey: IdmpGlobalKey) => {
   const cache = _globalStore[globalKey]
   if (!cache) return
   cache[K.timerId] && $clearTimeout(cache[K.timerId])
-  ;(_globalStore[globalKey] as any) = UNDEFINED
+  ;(_globalStore[globalKey] as unknown) = UNDEFINED
 }
 
 /**
