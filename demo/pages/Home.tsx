@@ -81,7 +81,7 @@ export default function IdmpDemoPage() {
           <div>
             <a
               className="group mr-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
-              href="https://codesandbox.io/p/sandbox/sleepy-dust-phn8lp"
+              href="https://codesandbox.io/p/sandbox/sleepy-dust-phn8lp?file=%2Fsrc%2FApp.tsx%3A7%2C3"
               target="_blank"
             >
               <Rocket className="h-4 w-4 opacity-80 transition group-hover:opacity-100" />

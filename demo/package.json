@@ -4,14 +4,15 @@
     "lint": "cd .. && pnpm lint"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.12",
+    "@tailwindcss/vite": "^4.1.13",
     "clsx": "^2.1.1",
     "idmp": "*",
-    "lucide-react": "^0.541.0",
+    "lucide-react": "^0.544.0",
     "react-icons": "^5.5.0",
     "react-markdown": "^10.1.0",
-    "react-syntax-highlighter": "^15.6.3",
-    "remark-gfm": "^4.0.1"
+    "react-syntax-highlighter": "^15.6.6",
+    "remark-gfm": "^4.0.1",
+    "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
