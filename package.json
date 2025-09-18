@@ -93,7 +93,5 @@
     "vite-plugin-html": "^3.2.2",
     "vitest": "^3.2.4"
   },
-  "engines": {
-    "node": ">=18"
-  }
+  "packageManager": "pnpm@10.16.1"
 }
