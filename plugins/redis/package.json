@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "idmp": "workspace:*",
-    "redis": "^5.6.1",
-    "serialize-javascript": "^6.0.2"
+    "redis": "^5.8.3",
+    "serialize-javascript": "^7.0.0"
   },
   "devDependencies": {
     "@types/serialize-javascript": "^5.0.4"
