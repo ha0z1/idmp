@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "3.7.7",
+  "version": "3.8.0",
   "description": "A lightweight TypeScript library for deduplicating and caching async function calls with automatic retries, designed for idempotent network requests in React and Node.js.",
   "keywords": [
     "deduplicate network requests",
@@ -69,11 +69,11 @@
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.12",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.0.3",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-legacy": "^6.1.1",
-    "@vitejs/plugin-react-swc": "^3.10.2",
+    "@types/node": "^24.7.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@vitejs/plugin-legacy": "^7.2.1",
+    "@vitejs/plugin-react-swc": "^4.1.0",
     "@vitest/coverage-istanbul": "^3.2.4",
     "immer": "^10.1.1",
     "jsdom": "^26.1.0",
@@ -92,5 +92,5 @@
     "vite-plugin-html": "^3.2.2",
     "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@10.16.1"
+  "packageManager": "pnpm@10.18.2"
 }

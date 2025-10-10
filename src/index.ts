@@ -95,13 +95,8 @@ const UNDEFINED = undefined
 const $timeout = setTimeout
 const $clearTimeout = clearTimeout
 
-const getMax = (a: number, b: number): number => {
-  return a > b ? a : b
-}
-
-const getMin = (a: number, b: number): number => {
-  return a < b ? a : b
-}
+const getMax = (a: number, b: number): number => (a > b ? a : b)
+const getMin = (a: number, b: number): number => (a < b ? a : b)
 
 /**
  * Makes an object's properties read-only to prevent mutation
