@@ -75,7 +75,7 @@
     "@vitejs/plugin-legacy": "^7.2.1",
     "@vitejs/plugin-react-swc": "^4.2.2",
     "@vitest/coverage-istanbul": "^4.0.13",
-    "immer": "^10.2.0",
+    "immer": "^11.0.1",
     "jsdom": "^27.2.0",
     "prettier": "^3.6.2",
     "prettier-plugin-lint-md": "^1.0.1",
