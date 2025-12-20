@@ -8,6 +8,7 @@ import fs from 'fs-extra'
     packageManager: undefined,
     engines: undefined,
     pnpm: undefined,
+    publishConfig: undefined,
   })
   fs.removeSync('./plugins/browser-storage/package.json')
   fs.removeSync('./plugins/node-fs/package.json')

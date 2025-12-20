@@ -52,6 +52,14 @@ jobs:
       - name: Prepublish
         run: pnpm run prepublishOnly
 
+      - name: Verify NPM token
+        run: |
+          npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+          echo "Verifying npm auth..."
+          npm whoami --registry=https://registry.npmjs.org/
+        env:
+          NPM_TOKEN: ${{ secrets.IDMP_NPM_TOKEN }}
+
       - name: NPM Publish
         uses: JS-DevTools/npm-publish@v3
         with:
