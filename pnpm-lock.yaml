@@ -50,7 +50,7 @@ importers:
         version: 4.0.16(vitest@4.0.16(@types/node@25.0.3)(jiti@2.6.1)(jsdom@27.3.0)(lightningcss@1.30.2)(terser@5.44.1))
       immer:
         specifier: ^11.0.1
-        version: 11.0.1
+        version: 11.1.0
       jsdom:
         specifier: ^27.3.0
         version: 27.3.0
@@ -1891,8 +1891,8 @@ packages:
   idmp@3.8.0:
     resolution: {integrity: sha512-NR5yD36aP9dR2MZ3NJBew7ha4ALa6wzs4RQd03RbOc4ymyPr+oyuteNYiapwN9V07tw7eaFbuiGrA+1SwVMc1w==}
 
-  immer@11.0.1:
-    resolution: {integrity: sha512-naDCyggtcBWANtIrjQEajhhBEuL9b0Zg4zmlWK2CzS6xCWSE39/vvf4LqnMjUAWHBhot4m9MHCM/Z+mfWhUkiA==}
+  immer@11.1.0:
+    resolution: {integrity: sha512-dlzb07f5LDY+tzs+iLCSXV2yuhaYfezqyZQc+n6baLECWkOMEWxkECAOnXL0ba7lsA25fM9b2jtzpu/uxo1a7g==}
 
   import-lazy@4.0.0:
     resolution: {integrity: sha512-rKtvo6a868b5Hu3heneU+L4yEQ4jYKLtjpnPeUdK7h0yzXGmyBTypknlkCvHFBqfX9YlorEiMM6Dnq/5atfHkw==}
@@ -4923,7 +4923,7 @@ snapshots:
       redis: 5.10.0
       serialize-javascript: 7.0.2
 
-  immer@11.0.1: {}
+  immer@11.1.0: {}
 
   import-lazy@4.0.0: {}
 
