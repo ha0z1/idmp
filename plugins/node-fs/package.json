@@ -16,9 +16,9 @@
     "dev": "pnpm vite-node scripts/build.ts"
   },
   "dependencies": {
-    "fs-extra": "^11.3.0",
+    "fs-extra": "^11.3.3",
     "idmp": "workspace:*",
-    "serialize-javascript": "^6.0.2"
+    "serialize-javascript": "^7.0.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
