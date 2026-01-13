@@ -103,43 +103,88 @@ const getMin = (a: number, b: number): number => (a < b ? a : b)
  * @param obj - Object to make read-only
  * @param key - Property key to make read-only
  * @param value - Value to assign to the property
+ * @param visited - WeakSet to track visited objects and prevent circular references
+ * @returns true if successful, false otherwise
  */
-const defineReactive = (obj: any, key: string | symbol, value: any) => {
-  readonly(value)
-  Object.defineProperty(obj, key, {
-    get: () => value,
-    set: (newValue) => {
-      const msg = `[idmp error] The data is read-only, set ${key.toString()}=${JSON.stringify(
-        newValue,
-      )} is not allow`
-      console.error(`%c ${msg}`, 'font-weight: lighter; color: red')
-      throw new Error(msg)
-    },
-  })
+const defineReactive = (
+  obj: any,
+  key: string | symbol,
+  value: any,
+  visited: WeakSet<any>,
+): boolean => {
+  try {
+    Object.prototype.toString.call(value)
+    readonly(value, visited)
+
+    Object.defineProperty(obj, key, {
+      configurable: false,
+      enumerable: Object.getOwnPropertyDescriptor(obj, key)?.enumerable ?? true,
+      get: () => value,
+      set: (newValue) => {
+        const msg = `[idmp error] The data is read-only, set ${key.toString()}=${JSON.stringify(
+          newValue,
+        )} is not allow`
+        console.error(`%c ${msg}`, 'font-weight: lighter; color: red', newValue)
+        throw new Error(msg)
+      },
+    })
+    return true
+  } catch {
+    return false
+  }
 }
 
 /**
  * Recursively makes an object and its properties read-only
  * @param obj - Object to make read-only
- * @returns The read-only object
+ * @param visited - WeakSet to track visited objects and prevent circular references
+ * @returns The read-only object, or original object if readonly fails
  */
-const readonly = <T>(obj: T): T => {
-  if (obj == null || typeof obj !== 'object') return obj
+const readonly = <T>(obj: T, visited?: WeakSet<any>): T => {
+  try {
+    if (obj == null || typeof obj !== 'object') return obj
 
-  const protoType = Object.prototype.toString.call(obj)
-  if (!['[object Object]', '[object Array]'].includes(protoType)) return obj
+    const protoType = Object.prototype.toString.call(obj)
+    if (!['[object Object]', '[object Array]'].includes(protoType)) return obj
 
-  const isImmerDraft = (obj: any) => !!obj[Symbol.for('immer-state')]
-  if (isImmerDraft(obj)) return obj
+    const isImmerDraft = (obj: any) => !!obj[Symbol.for('immer-state')]
+    if (isImmerDraft(obj)) return obj
 
-  Object.keys(obj).forEach((key) => {
-    const configurable = Object.getOwnPropertyDescriptor(obj, key)?.configurable
-    if (configurable === UNDEFINED || configurable === true) {
-      defineReactive(obj, key, (obj as any)[key])
+    const proto = Object.getPrototypeOf(obj)
+    if (
+      proto !== Object.prototype &&
+      proto !== Array.prototype &&
+      proto !== null
+    ) {
+      return obj
     }
-  })
 
-  return obj
+    // Initialize visited set on first call
+    if (!visited) {
+      visited = new WeakSet()
+    }
+
+    // Check if object has already been processed to prevent circular references
+    if (visited.has(obj)) return obj
+
+    // Mark object as visited before processing
+    visited.add(obj)
+
+    Object.keys(obj).forEach((key) => {
+      try {
+        const descriptor = Object.getOwnPropertyDescriptor(obj, key)
+
+        if (!descriptor || descriptor.configurable === false) return
+        if (descriptor.get || descriptor.set) return
+
+        defineReactive(obj, key, (obj as any)[key], visited!)
+      } catch {}
+    })
+
+    return obj
+  } catch {
+    return obj
+  }
 }
 
 /**
@@ -499,7 +544,8 @@ idmp.flushAll = flushAll
  * Type definition for the idmp function including its methods
  */
 type Idmp = typeof idmp
-
+const _s = process.env.NODE_ENV !== 'production' ? _globalStore : UNDEFINED
+idmp._s = _s
 export default idmp
 export {
   getOptions,
