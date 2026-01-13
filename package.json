@@ -1,6 +1,6 @@
 {
   "name": "idmp",
-  "version": "3.8.2026",
+  "version": "3.9.0",
   "description": "A lightweight TypeScript library for deduplicating and caching async function calls with automatic retries, designed for idempotent network requests in React and Node.js.",
   "keywords": [
     "deduplicate network requests",
