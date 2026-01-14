@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["codecov", "haozi", "idmp", "immer", "typeof", "vitejs"]
+  "cSpell.words": ["codecov", "haozi", "idmp", "immer", "typeof", "vitejs"],
+  "chat.tools.terminal.autoApprove": {
+    "pnpm": true
+  }
 }
