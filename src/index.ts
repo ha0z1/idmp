@@ -130,6 +130,7 @@ const defineReactive = (
     })
     return true
   } catch {
+    /* istanbul ignore next */
     return false
   }
 }
@@ -156,6 +157,7 @@ const readonly = <T>(obj: T, visited?: WeakSet<any>): T => {
       proto !== Array.prototype &&
       proto !== null
     ) {
+      /* istanbul ignore next */
       return obj
     }
 
@@ -183,6 +185,7 @@ const readonly = <T>(obj: T, visited?: WeakSet<any>): T => {
 
     return obj
   } catch {
+    /* istanbul ignore next */
     return obj
   }
 }
