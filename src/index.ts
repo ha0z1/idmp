@@ -465,7 +465,7 @@ const idmp = <T>(
         }
       }
 
-      if (cache[K.resolvedData]) {
+      if (cache[K.status] === Status.RESOLVED) {
         if (process.env.NODE_ENV !== 'production') {
           printLogs(
             `%c[idmp debug] \`${globalKey?.toString()}\` from cache`,
