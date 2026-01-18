@@ -72,16 +72,16 @@ export default function IdmpDemoPage() {
         <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
       </div>
 
-      <header className="mx-auto max-w-6xl px-6 pb-4 pt-16 sm:pt-20">
+      <header className="mx-auto max-w-6xl px-6 pt-16 pb-4 sm:pt-20">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-balance bg-gradient-to-r from-cyan-300 via-white to-red-300 bg-clip-text text-3xl font-semibold tracking-tight text-transparent sm:text-4xl">
+          <h1 className="bg-gradient-to-r from-cyan-300 via-white to-red-300 bg-clip-text text-3xl font-semibold tracking-tight text-balance text-transparent sm:text-4xl">
             IDMP Parallel Requests Demo
           </h1>
 
           <div>
             <a
               className="group mr-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
-              href="https://codesandbox.io/p/sandbox/sleepy-dust-phn8lp"
+              href="https://codesandbox.io/p/sandbox/sleepy-dust-phn8lp?file=%2Fsrc%2FApp.tsx%3A7%2C3"
               target="_blank"
             >
               <Rocket className="h-4 w-4 opacity-80 transition group-hover:opacity-100" />
@@ -134,13 +134,13 @@ export default function IdmpDemoPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setMode('idmp')}
-                  className="group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 ring-emerald-500/30 transition hover:border-emerald-400/40 hover:bg-emerald-500/15 focus:outline-none focus:ring-2"
+                  className="group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 ring-emerald-500/30 transition hover:border-emerald-400/40 hover:bg-emerald-500/15 focus:ring-2 focus:outline-none"
                 >
                   <Zap className="h-4 w-4" /> Make {N} parallel requests
                 </button>
                 <button
                   onClick={() => setMode('normal')}
-                  className="group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-200 ring-red-500/30 transition hover:border-red-400/40 hover:bg-red-500/15 focus:outline-none focus:ring-2"
+                  className="group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-200 ring-red-500/30 transition hover:border-red-400/40 hover:bg-red-500/15 focus:ring-2 focus:outline-none"
                 >
                   <Turtle className="h-4 w-4" /> Make {N} parallel requests
                   (without IDMP)
@@ -181,7 +181,7 @@ export default function IdmpDemoPage() {
                       </span>
                       <span className="opacity-80">request id</span>
                     </div>
-                    <span className="text-[10px] uppercase tracking-wide text-slate-400">
+                    <span className="text-[10px] tracking-wide text-slate-400 uppercase">
                       #{i + 1}
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export default function IdmpDemoPage() {
         )}
       </main>
 
-      <footer className="mx-auto max-w-6xl px-6 pb-12 pt-8 text-xs text-slate-500"></footer>
+      <footer className="mx-auto max-w-6xl px-6 pt-8 pb-12 text-xs text-slate-500"></footer>
       <Ribbon />
     </div>
   )
