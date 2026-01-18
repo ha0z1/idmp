@@ -22,7 +22,7 @@ function CodeBlock({
         className={clsx(
           'rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5',
           'font-mono text-[13px] leading-relaxed text-cyan-200 shadow-inner',
-          'whitespace-pre-wrap break-words',
+          'break-words whitespace-pre-wrap',
         )}
         {...props}
       >
@@ -81,7 +81,7 @@ const mdComponents: Components = {
     <h1
       className={clsx(
         'bg-gradient-to-r from-cyan-300 via-white to-red-300 bg-clip-text text-transparent',
-        'mb-4 mt-8 text-3xl font-semibold tracking-tight sm:text-4xl',
+        'mt-8 mb-4 text-3xl font-semibold tracking-tight sm:text-4xl',
       )}
       {...props}
     />
@@ -89,17 +89,17 @@ const mdComponents: Components = {
   h2: ({ node, ...props }) => (
     <h2
       className={clsx(
-        'mb-3 mt-10 text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl',
+        'mt-10 mb-3 text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl',
         'relative',
       )}
       {...props}
     />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="mb-2 mt-8 text-xl font-semibold text-slate-100" {...props} />
+    <h3 className="mt-8 mb-2 text-xl font-semibold text-slate-100" {...props} />
   ),
   h4: ({ node, ...props }) => (
-    <h4 className="mb-2 mt-6 text-lg font-semibold text-slate-100" {...props} />
+    <h4 className="mt-6 mb-2 text-lg font-semibold text-slate-100" {...props} />
   ),
 
   // 段落/文本
@@ -150,7 +150,7 @@ const mdComponents: Components = {
   blockquote: ({ node, ...props }) => (
     <blockquote
       className={clsx(
-        'my-6 border-l-2 pl-4 italic text-slate-300',
+        'my-6 border-l-2 pl-4 text-slate-300 italic',
         'rounded-r-xl border-white/10 bg-white/[0.04] py-3',
         'shadow-[0_0_0_1px_rgba(255,255,255,0.04)]',
       )}
