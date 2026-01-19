@@ -40,9 +40,9 @@ export default function StoragePage() {
         <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-fuchsia-500/20 blur-3xl" />
       </div>
 
-      <header className="mx-auto max-w-5xl px-6 pb-2 pt-16 sm:pt-20">
+      <header className="mx-auto max-w-5xl px-6 pt-16 pb-2 sm:pt-20">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-balance bg-gradient-to-r from-cyan-300 via-white to-fuchsia-300 bg-clip-text text-3xl font-semibold tracking-tight text-transparent sm:text-4xl">
+          <h1 className="bg-gradient-to-r from-cyan-300 via-white to-fuchsia-300 bg-clip-text text-3xl font-semibold tracking-tight text-balance text-transparent sm:text-4xl">
             IDMP Storage Demo
           </h1>
           <Link
@@ -114,7 +114,7 @@ export default function StoragePage() {
                 <div className="h-32 w-full rounded bg-white/10" />
               </div>
             ) : (
-              <pre className="max-h-80 overflow-auto text-wrap rounded-lg bg-black/40 p-3 text-xs leading-relaxed text-slate-200">
+              <pre className="max-h-80 overflow-auto rounded-lg bg-black/40 p-3 text-xs leading-relaxed text-wrap text-slate-200">
                 {JSON.stringify(data, null, 2)}
               </pre>
             )}
@@ -134,7 +134,7 @@ export default function StoragePage() {
         </section>
       </main>
 
-      <footer className="mx-auto max-w-5xl px-6 pb-12 pt-8 text-xs text-slate-500">
+      <footer className="mx-auto max-w-5xl px-6 pt-8 pb-12 text-xs text-slate-500">
         <p>TailwindCSS + lucide-react · cohesive with the main demo page.</p>
       </footer>
     </div>
