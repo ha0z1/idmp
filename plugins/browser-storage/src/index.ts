@@ -5,7 +5,7 @@ const UNDEFINED = undefined
 type StorageType = 'localStorage' | 'sessionStorage'
 // type NonVoid<T> = T extends void ? never : T
 
-const PREFIX = '@idmp/v1/'
+const PREFIX = '@idmp/v4/'
 
 // Returns the full cache key used for storage
 const getCacheKey = (globalKey: string) => `${PREFIX}${globalKey}`

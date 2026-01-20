@@ -32,7 +32,7 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
           rollupOptions: {
             external: [
               'idmp',
-              'serialize-javascript',
+              'json-web3',
               'fs-extra',
               'fs',
               'path',
