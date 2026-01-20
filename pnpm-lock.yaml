@@ -54,6 +54,9 @@ importers:
       jsdom:
         specifier: ^27.4.0
         version: 27.4.0
+      json-web3:
+        specifier: ^1.2.0
+        version: 1.2.0
       npm-check-updates:
         specifier: ^19.3.1
         version: 19.3.1
@@ -2013,6 +2016,10 @@ packages:
 
   json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
+
+  json-web3@1.2.0:
+    resolution: {integrity: sha512-l5r/anNtSWkkQYPVrp+q6RLLCStF6slJQM476uZD203fdUW+mACgA5HPlsIazF/HHBNBItJNLtlKZDmH+Jalkw==}
+    engines: {node: '>=18'}
 
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
@@ -5055,6 +5062,8 @@ snapshots:
   jsesc@3.1.0: {}
 
   json-schema-traverse@1.0.0: {}
+
+  json-web3@1.2.0: {}
 
   json5@2.2.3: {}
 
