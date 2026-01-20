@@ -17,6 +17,7 @@
 
 > 以下是在最近的主要版本中引入的不兼容变更。如果您是从旧版本升级，请务必查看这些变更。
 
+- **v4.x**: node-fs/redis 持久化改为 `json-web3`，与 `serialize-javascript` 生成的缓存不兼容
 - **v3.x**: [不再暴露内部调试对象 `eport { _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455)
 - **v2.x**: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
 
