@@ -259,6 +259,7 @@ English | [简体中文](README.zh-CN.md)
 
 > The following breaking changes are introduced in recent major versions. Please review if you're upgrading from older versions.
 
+- **v4.x**: node-fs/redis persistence uses \`json-web3\`, cached data from \`serialize-javascript\` is not compatible
 - **v3.x**: [not export \`{ _globalStore as g }\`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455) any more
 - **v2.x**:: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
 
