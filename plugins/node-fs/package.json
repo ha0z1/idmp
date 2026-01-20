@@ -18,10 +18,9 @@
   "dependencies": {
     "fs-extra": "^11.3.3",
     "idmp": "workspace:*",
-    "serialize-javascript": "^7.0.2"
+    "json-web3": "^1.2.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/serialize-javascript": "^5.0.4"
+    "@types/fs-extra": "^11.0.4"
   }
 }
