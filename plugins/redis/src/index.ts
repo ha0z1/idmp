@@ -1,14 +1,16 @@
 import { createHash } from 'crypto'
-import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
+import {
+  getOptions,
+  type IdmpGlobalKey,
+  type IdmpOptions,
+  type IdmpPromise,
+} from 'idmp'
+import { parse_UNSAFE, stringify_UNSAFE } from 'json-web3'
 import { createClient } from 'redis'
-import serialize from 'serialize-javascript'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const md5 = (data: string) => createHash('md5').update(data).digest('hex')
-
-const deSerialize = <T = any>(data: string) =>
-  new Function(`return ${data}`)() as T
 
 const cachePrefix = `/idmp/v1/${md5(__filename)}`
 
@@ -22,9 +24,17 @@ const getCachePath = (globalKey: string) =>
 interface RedisIdmpOptions {
   url: string
 }
+type IdmpLike = (<T>(
+  globalKey: IdmpGlobalKey,
+  promiseFunc: IdmpPromise<T>,
+  options?: IdmpOptions,
+) => Promise<T>) & {
+  flush: (globalKey: IdmpGlobalKey) => void
+  flushAll: () => void
+}
 
 const redisIdmpWrap = (
-  _idmp: Idmp,
+  _idmp: IdmpLike,
   namespace: string,
   options: RedisIdmpOptions,
 ) => {
@@ -43,7 +53,7 @@ const redisIdmpWrap = (
       await client.connect()
     }
     const cachePath = getCachePath(key)
-    await client.set(cachePath, serialize(data), {
+    await client.set(cachePath, stringify_UNSAFE(data), {
       expiration: {
         type: 'EX',
         value: Math.floor(maxAge / 1000), // Redis EX is in seconds
@@ -61,7 +71,9 @@ const redisIdmpWrap = (
 
     let redisLocalData!: T | null
     try {
-      redisLocalData = deSerialize((await client.get(cachePath)) || 'undefined')
+      const rawData = await client.get(cachePath)
+      if (!rawData) return udf
+      redisLocalData = parse_UNSAFE(rawData) as T
     } catch {}
 
     if (redisLocalData === udf) return udf

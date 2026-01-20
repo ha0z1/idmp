@@ -42,5 +42,5 @@ declare const redisIdmpWrap: (
 
 ## Notice
 
-- Data persistence only supports string type `globalKey` and data structures that can be serialized by [serialize-javascript](https://www.npmjs.com/package/serialize-javascript)
+- Data persistence only supports string type `globalKey` and data structures that can be serialized by [json-web3](https://www.npmjs.com/package/json-web3)
 - If return value is `undefined` it will not be cached, you must return `null`

@@ -33,7 +33,7 @@ const buildFile = async (buildOptions: DeepPartial<InlineConfig>) => {
             external: [
               'idmp',
               'redis',
-              'serialize-javascript',
+              'json-web3',
               'fs',
               'path',
               'os',

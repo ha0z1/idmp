@@ -1,17 +1,21 @@
 import { createHash } from 'crypto'
 import fs from 'fs-extra'
-import { getOptions, type Idmp, type IdmpOptions, type IdmpPromise } from 'idmp'
+import {
+  getOptions,
+  type IdmpGlobalKey,
+  type IdmpOptions,
+  type IdmpPromise,
+} from 'idmp'
+import { parse_UNSAFE, stringify_UNSAFE } from 'json-web3'
 import os from 'os'
 import path from 'path'
-import serialize from 'serialize-javascript'
 import { fileURLToPath } from 'url'
 
 // 当前文件的完整路径（绝对路径）
 const __filename = fileURLToPath(import.meta.url)
 const md5 = (data: string) => createHash('md5').update(data).digest('hex')
 
-const deSerialize = <T = any>(data: string) =>
-  new Function(`return ${data}`)() as T
+const deSerialize = <T = any>(data: string) => parse_UNSAFE(data) as T
 
 const prefix = md5(__filename)
 
@@ -29,7 +33,7 @@ const setData = async <T = any>(key: string, data: T, maxAge: number) => {
   fs.ensureFileSync(cachePath)
   fs.outputFileSync(
     cachePath,
-    serialize({
+    stringify_UNSAFE({
       t: Date.now(),
       a: maxAge,
       d: data,
@@ -62,8 +66,16 @@ const getData = async <T = any>(key: string) => {
 interface IExtraOptions {
   useMemoryCache?: boolean // 默认不常驻内存，避免 node 脚本进程无法退出
 }
+type IdmpLike = (<T>(
+  globalKey: IdmpGlobalKey,
+  promiseFunc: IdmpPromise<T>,
+  options?: IdmpOptions,
+) => Promise<T>) & {
+  flush: (globalKey: IdmpGlobalKey) => void
+  flushAll: () => void
+}
 const fsIdmpWrap = (
-  _idmp: Idmp,
+  _idmp: IdmpLike,
   namespace: string,
   extraOptions?: IExtraOptions,
 ) => {
