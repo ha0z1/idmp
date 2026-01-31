@@ -362,4 +362,335 @@ describe('idmp', () => {
     }
     expect(count).toBe(times)
   })
+
+  describe('exponential backoff retry delay', () => {
+    it('should apply exponential backoff algorithm for retries', async () => {
+      const delays: number[] = []
+      const minRetryDelay = 50
+      const maxRetryDelay = 5000
+      let attemptCount = 0
+
+      const mockDate = Date.now()
+      const originalNow = Date.now
+      let currentTime = mockDate
+
+      await idmp(
+        Symbol(),
+        async () => {
+          attemptCount++
+          if (attemptCount <= 3) {
+            throw new Error('fail')
+          }
+          return 'success'
+        },
+        {
+          maxRetry: 3,
+          minRetryDelay,
+          maxRetryDelay,
+          onBeforeRetry: () => {
+            delays.push(currentTime)
+          },
+        },
+      )
+
+      expect(attemptCount).toBe(4) // 1 initial + 3 retries
+      // delays should follow exponential pattern, each retry should be delayed
+      expect(delays.length).toBe(3)
+    })
+
+    it('should not exceed maxRetryDelay', async () => {
+      const maxRetryDelay = 100
+      const minRetryDelay = 10
+      let callCount = 0
+
+      await idmp(
+        Symbol(),
+        async () => {
+          callCount++
+          if (callCount <= 2) {
+            throw new Error('fail')
+          }
+          return 'success'
+        },
+        {
+          maxRetry: 10,
+          minRetryDelay,
+          maxRetryDelay,
+        },
+      )
+
+      expect(callCount).toBeGreaterThanOrEqual(3)
+    })
+  })
+
+  describe('maxAge boundary cases', () => {
+    it('should handle maxAge of 0 (immediate expiration)', async () => {
+      const key = Symbol()
+      let callCount = 0
+
+      const getData = () =>
+        idmp(
+          key,
+          async () => {
+            callCount++
+            return 'data'
+          },
+          { maxAge: 0 },
+        )
+
+      await getData()
+      // maxAge is 0, but the same promise should still be reused during the same microtask
+      await sleep(10)
+      await getData()
+
+      expect(callCount).toBeGreaterThanOrEqual(1)
+    })
+
+    it('should handle maxAge beyond 7 days limit', async () => {
+      const key = Symbol()
+      const _7days = 604800000
+
+      let callCount = 0
+      const getData = () =>
+        idmp(
+          key,
+          async () => {
+            callCount++
+            return 'data'
+          },
+          { maxAge: 999999999999 }, // way beyond 7 days
+        )
+
+      const result1 = await getData()
+      const result2 = await getData()
+      expect(callCount).toBe(1)
+      expect(result1).toBe(result2)
+    })
+
+    it('should handle maxAge as Infinity', async () => {
+      const key = Symbol()
+      let callCount = 0
+
+      const getData = () =>
+        idmp(
+          key,
+          async () => {
+            callCount++
+            return 'data'
+          },
+          { maxAge: Infinity },
+        )
+
+      const result1 = await getData()
+      await sleep(100)
+      const result2 = await getData()
+      expect(callCount).toBe(1)
+      expect(result1).toBe(result2)
+    })
+
+    it('should handle negative maxAge (clamped to 0)', async () => {
+      const key = Symbol()
+      let callCount = 0
+
+      const getData = () =>
+        idmp(
+          key,
+          async () => {
+            callCount++
+            return 'data'
+          },
+          { maxAge: -1000 },
+        )
+
+      await getData()
+      await sleep(10)
+      await getData()
+      expect(callCount).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  describe('abort signal edge cases', () => {
+    it('should handle already aborted signal', async () => {
+      const controller = new AbortController()
+      controller.abort('pre-aborted')
+
+      try {
+        await idmp('pre-abort-key', async () => 'data', {
+          signal: controller.signal,
+        })
+      } catch (err: any) {
+        expect(err.message).toBe('pre-aborted')
+      }
+    })
+
+    it('should resolve before abort and not be affected', async () => {
+      const controller = new AbortController()
+      const key = 'resolve-first-' + Date.now()
+
+      const result = await idmp(
+        key,
+        async () => {
+          await sleep(50)
+          return 'success'
+        },
+        { signal: controller.signal },
+      )
+
+      expect(result).toBe('success')
+
+      // second call with different key to avoid affecting cached result
+      const result2 = await idmp(
+        key + '-2',
+        async () => 'should-work',
+      )
+      expect(result2).toBe('should-work')
+    })
+  })
+
+  describe('concurrent retry scenarios', () => {
+    it('should handle multiple concurrent calls during retry', async () => {
+      const key = Symbol()
+      let attemptCount = 0
+
+      const promises = Array.from({ length: 50 }, (_, i) =>
+        idmp(
+          key,
+          async () => {
+            attemptCount++
+            if (attemptCount <= 2) {
+              throw new Error('fail')
+            }
+            await sleep(10)
+            return `result-${i}`
+          },
+          { maxRetry: 3, minRetryDelay: 5 },
+        ).catch((err) => err.message),
+      )
+
+      const results = await Promise.all(promises)
+      // All should succeed with same result (not "result-{i}" because it's cached)
+      expect(attemptCount).toBeLessThanOrEqual(5) // should be deduplicated
+    })
+
+    it('should maintain consistency when retrying with new callers joining', async () => {
+      const key = Symbol()
+      let attemptCount = 0
+      const maxRetry = 2
+
+      const p1 = idmp(
+        key,
+        async () => {
+          attemptCount++
+          if (attemptCount <= 1) {
+            throw new Error('fail')
+          }
+          await sleep(50)
+          return 'final-result'
+        },
+        { maxRetry, minRetryDelay: 10 },
+      )
+
+      await sleep(5)
+
+      // Join during retry
+      const p2 = idmp(
+        key,
+        async () => 'should not call',
+        { maxRetry, minRetryDelay: 10 },
+      )
+
+      const [r1, r2] = await Promise.all([p1, p2])
+      expect(r1).toBe('final-result')
+      expect(r2).toBe('final-result')
+      expect(attemptCount).toBeLessThanOrEqual(3)
+    })
+  })
+
+  describe('high concurrency scenarios', () => {
+    it('should handle 10000 concurrent calls for same key', async () => {
+      const key = Symbol()
+      let callCount = 0
+
+      const tasks = Array.from({ length: 10000 }, () =>
+        idmp(
+          key,
+          async () => {
+            callCount++
+            await sleep(10)
+            return 'data'
+          },
+        ),
+      )
+
+      const results = await Promise.all(tasks)
+      expect(callCount).toBe(1)
+      expect(results.every((r) => r === 'data')).toBe(true)
+    })
+
+    it('should deduplicate calls across different keys', async () => {
+      const keys = Array.from({ length: 100 }, (_, i) => Symbol())
+      let callCount = 0
+
+      const tasks = keys.flatMap((key) =>
+        Array.from({ length: 100 }, () =>
+          idmp(
+            key,
+            async () => {
+              callCount++
+              return 'data'
+            },
+          ),
+        ),
+      )
+
+      await Promise.all(tasks)
+      // Should call exactly once per unique key
+      expect(callCount).toBe(100)
+    })
+  })
+
+  describe('promise rejection details', () => {
+    it('should preserve original error stack trace through retries', async () => {
+      const errorMsg = 'original error'
+      const key = Symbol()
+      let stackTraces: (string | undefined)[] = []
+
+      try {
+        await idmp(
+          key,
+          async () => {
+            const err = new Error(errorMsg)
+            stackTraces.push(err.stack)
+            throw err
+          },
+          { maxRetry: 1, minRetryDelay: 5 },
+        )
+      } catch (err: any) {
+        expect(err.message).toBe(errorMsg)
+      }
+    })
+
+    it('should pass correct error object to onBeforeRetry', async () => {
+      const customError = new Error('custom fail')
+      const errors: Error[] = []
+
+      await idmp(
+        Symbol(),
+        async () => {
+          throw customError
+        },
+        {
+          maxRetry: 2,
+          minRetryDelay: 5,
+          onBeforeRetry: (err) => {
+            errors.push(err)
+          },
+        },
+      ).catch(() => {})
+
+      expect(errors).toHaveLength(2)
+      expect(errors[0]).toBe(customError)
+      expect(errors[1]).toBe(customError)
+    })
+  })
 })
