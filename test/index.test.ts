@@ -539,10 +539,7 @@ describe('idmp', () => {
       expect(result).toBe('success')
 
       // second call with different key to avoid affecting cached result
-      const result2 = await idmp(
-        key + '-2',
-        async () => 'should-work',
-      )
+      const result2 = await idmp(key + '-2', async () => 'should-work')
       expect(result2).toBe('should-work')
     })
   })
@@ -593,11 +590,10 @@ describe('idmp', () => {
       await sleep(5)
 
       // Join during retry
-      const p2 = idmp(
-        key,
-        async () => 'should not call',
-        { maxRetry, minRetryDelay: 10 },
-      )
+      const p2 = idmp(key, async () => 'should not call', {
+        maxRetry,
+        minRetryDelay: 10,
+      })
 
       const [r1, r2] = await Promise.all([p1, p2])
       expect(r1).toBe('final-result')
@@ -612,14 +608,11 @@ describe('idmp', () => {
       let callCount = 0
 
       const tasks = Array.from({ length: 10000 }, () =>
-        idmp(
-          key,
-          async () => {
-            callCount++
-            await sleep(10)
-            return 'data'
-          },
-        ),
+        idmp(key, async () => {
+          callCount++
+          await sleep(10)
+          return 'data'
+        }),
       )
 
       const results = await Promise.all(tasks)
@@ -633,13 +626,10 @@ describe('idmp', () => {
 
       const tasks = keys.flatMap((key) =>
         Array.from({ length: 100 }, () =>
-          idmp(
-            key,
-            async () => {
-              callCount++
-              return 'data'
-            },
-          ),
+          idmp(key, async () => {
+            callCount++
+            return 'data'
+          }),
         ),
       )
 

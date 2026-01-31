@@ -1,5 +1,5 @@
-import storageWrap from '../plugins/browser-storage/src/index'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import storageWrap from '../plugins/browser-storage/src/index'
 import idmp from '../src/index'
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -89,10 +89,14 @@ describe('idmp/storage', () => {
     const flushableIdmp = storageWrap(idmp, 'localStorage')
 
     const getData = () =>
-      flushableIdmp('/api/test-flush', async () => {
-        callCount++
-        return 'data'
-      }, { maxAge: Infinity })
+      flushableIdmp(
+        '/api/test-flush',
+        async () => {
+          callCount++
+          return 'data'
+        },
+        { maxAge: Infinity },
+      )
 
     const result1 = await getData()
     expect(callCount).toBe(1)
@@ -133,10 +137,14 @@ describe('idmp/storage', () => {
     let callCount = 0
 
     const getData = () =>
-      expireIdmp('expire-key', async () => {
-        callCount++
-        return 'time-sensitive-data'
-      }, { maxAge: 100 })
+      expireIdmp(
+        'expire-key',
+        async () => {
+          callCount++
+          return 'time-sensitive-data'
+        },
+        { maxAge: 100 },
+      )
 
     const result1 = await getData()
     expect(callCount).toBe(1)
@@ -175,10 +183,14 @@ describe('idmp/storage', () => {
     let callCount = 0
 
     const getData = () =>
-      zeroAgeIdmp('zero-age', async () => {
-        callCount++
-        return 'data'
-      }, { maxAge: 0 })
+      zeroAgeIdmp(
+        'zero-age',
+        async () => {
+          callCount++
+          return 'data'
+        },
+        { maxAge: 0 },
+      )
 
     await getData()
     expect(callCount).toBe(1)

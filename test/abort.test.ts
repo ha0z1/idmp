@@ -84,12 +84,16 @@ describe('idmp abort', async () => {
   it('should resolve successfully if promise completes before abort', async () => {
     const controller = new AbortController()
 
-    const result = await idmp('resolve-before-abort', async () => {
-      await sleep(50)
-      return 'success'
-    }, {
-      signal: controller.signal,
-    })
+    const result = await idmp(
+      'resolve-before-abort',
+      async () => {
+        await sleep(50)
+        return 'success'
+      },
+      {
+        signal: controller.signal,
+      },
+    )
 
     expect(result).toBe('success')
 
@@ -102,18 +106,22 @@ describe('idmp abort', async () => {
     const controller = new AbortController()
     let attemptCount = 0
 
-    const promise = idmp('abort-during-retry', async () => {
-      attemptCount++
-      if (attemptCount <= 1) {
-        throw new Error('fail')
-      }
-      await sleep(200)
-      return 'success'
-    }, {
-      signal: controller.signal,
-      maxRetry: 5,
-      minRetryDelay: 50,
-    })
+    const promise = idmp(
+      'abort-during-retry',
+      async () => {
+        attemptCount++
+        if (attemptCount <= 1) {
+          throw new Error('fail')
+        }
+        await sleep(200)
+        return 'success'
+      },
+      {
+        signal: controller.signal,
+        maxRetry: 5,
+        minRetryDelay: 50,
+      },
+    )
 
     // Abort during retry phase
     setTimeout(() => {
@@ -138,13 +146,17 @@ describe('idmp abort', async () => {
     let callCount = 0
 
     const tasks = Array.from({ length: 100 }, () =>
-      idmp(key, async () => {
-        callCount++
-        await sleep(500)
-        return 'data'
-      }, {
-        signal: controller.signal,
-      }).catch((err) => err.message)
+      idmp(
+        key,
+        async () => {
+          callCount++
+          await sleep(500)
+          return 'data'
+        },
+        {
+          signal: controller.signal,
+        },
+      ).catch((err) => err.message),
     )
 
     // Abort after short delay
@@ -164,24 +176,28 @@ describe('idmp abort', async () => {
 
   it('should not leak abort listeners on successful completion', async () => {
     const controller = new AbortController()
-
-    await idmp('no-leak', async () => {
-      await sleep(50)
-      return 'success'
-    }, {
-      signal: controller.signal,
     const key = 'no-leak-' + Date.now()
 
-    await idmp(key, async () => {
-      await sleep(50)
-      return 'success'
-    }, {
-      signal: controller.signal,
-    })
+    await idmp(
+      key,
+      async () => {
+        await sleep(50)
+        return 'success'
+      },
+      {
+        signal: controller.signal,
+      },
+    )
 
     // This test validates that abort called after success doesn't cause errors
     // The signal has already been used for a completed promise
     expect(true).toBe(true)
+  })
+
+  it('should handle abort with different abort reasons', async () => {
+    const abortReasons = ['reason1', 'reason2', { code: 'CUSTOM' }]
+
+    for (const reason of abortReasons) {
       const controller = new AbortController()
 
       setTimeout(() => {
@@ -189,12 +205,16 @@ describe('idmp abort', async () => {
       }, 50)
 
       try {
-        await idmp(`abort-reason-${String(reason)}`, async () => {
-          await sleep(500)
-          return 'data'
-        }, {
-          signal: controller.signal,
-        })
+        await idmp(
+          `abort-reason-${String(reason)}`,
+          async () => {
+            await sleep(500)
+            return 'data'
+          },
+          {
+            signal: controller.signal,
+          },
+        )
       } catch (err: any) {
         if (typeof reason === 'string') {
           expect(err.message).toBe(reason)

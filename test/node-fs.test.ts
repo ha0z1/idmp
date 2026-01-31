@@ -140,22 +140,32 @@ describe('node-fs plugin', () => {
   it('should handle useMemoryCache option', async () => {
     const namespace = 'nodefs-memory'
     const fsIdmpWithMemory = fsWrap(idmp, namespace, { useMemoryCache: true })
-    const fsIdmpNoMemory = fsWrap(idmp, namespace + '-no-mem', { useMemoryCache: false })
+    const fsIdmpNoMemory = fsWrap(idmp, namespace + '-no-mem', {
+      useMemoryCache: false,
+    })
 
     let call1 = 0
     let call2 = 0
 
     // With memory cache
-    const result1 = await fsIdmpWithMemory('key', async () => {
-      call1++
-      return 'data1'
-    }, { maxAge: 1000 })
+    const result1 = await fsIdmpWithMemory(
+      'key',
+      async () => {
+        call1++
+        return 'data1'
+      },
+      { maxAge: 1000 },
+    )
 
     // Without memory cache (short maxAge)
-    const result2 = await fsIdmpNoMemory('key', async () => {
-      call2++
-      return 'data2'
-    }, { maxAge: 1000 })
+    const result2 = await fsIdmpNoMemory(
+      'key',
+      async () => {
+        call2++
+        return 'data2'
+      },
+      { maxAge: 1000 },
+    )
 
     expect(result1).toBe('data1')
     expect(result2).toBe('data2')
@@ -167,10 +177,14 @@ describe('node-fs plugin', () => {
 
     let calls = 0
     const getData = () =>
-      fsIdmp('flush-key', async () => {
-        calls++
-        return 'data'
-      }, { maxAge: Infinity })
+      fsIdmp(
+        'flush-key',
+        async () => {
+          calls++
+          return 'data'
+        },
+        { maxAge: Infinity },
+      )
 
     const result1 = await getData()
     expect(calls).toBe(1)
@@ -192,10 +206,14 @@ describe('node-fs plugin', () => {
 
     let totalCalls = 0
     const createGetter = (id: number) => () =>
-      fsIdmp(`key${id}`, async () => {
-        totalCalls++
-        return `data${id}`
-      }, { maxAge: Infinity })
+      fsIdmp(
+        `key${id}`,
+        async () => {
+          totalCalls++
+          return `data${id}`
+        },
+        { maxAge: Infinity },
+      )
 
     const getter1 = createGetter(1)
     const getter2 = createGetter(2)
@@ -232,13 +250,13 @@ describe('node-fs plugin', () => {
         calls++
         await sleep(10)
         return 'data'
-      })
+      }),
     )
 
     const results = await Promise.all(tasks)
 
     expect(calls).toBe(1) // should deduplicate
-    expect(results.every(r => r === 'data')).toBe(true)
+    expect(results.every((r) => r === 'data')).toBe(true)
   })
 
   it('should handle large data objects', async () => {
@@ -317,10 +335,14 @@ describe('node-fs plugin', () => {
 
     let calls = 0
     const getData = (maxAge: number) =>
-      fsIdmp('expire-test', async () => {
-        calls++
-        return `data-${calls}`
-      }, { maxAge })
+      fsIdmp(
+        'expire-test',
+        async () => {
+          calls++
+          return `data-${calls}`
+        },
+        { maxAge },
+      )
 
     const result1 = await getData(100)
     expect(result1).toBe('data-1')
@@ -336,7 +358,7 @@ describe('node-fs plugin', () => {
 
   it('should handle multiple namespaces independently', async () => {
     const namespaces = ['ns1', 'ns2', 'ns3']
-    const idmps = namespaces.map(ns => fsWrap(idmp, ns))
+    const idmps = namespaces.map((ns) => fsWrap(idmp, ns))
 
     let callCounts = [0, 0, 0]
 
@@ -344,7 +366,7 @@ describe('node-fs plugin', () => {
       fsIdmp('same-key', async () => {
         callCounts[i]++
         return `data-${i}`
-      })
+      }),
     )
 
     const results = await Promise.all(promises)
@@ -359,7 +381,7 @@ describe('node-fs plugin', () => {
       fsIdmp('same-key', async () => {
         callCounts[i]++
         return `data-${i}`
-      })
+      }),
     )
 
     const results2 = await Promise.all(promises2)
