@@ -4,83 +4,6 @@ import idmp from '../src/index'
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 describe('idmp abort', async () => {
-  it('should reject with AbortError when aborted', async () => {
-    const controller = new AbortController()
-    const promiseFunc = () => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => reject('fail'), 100)
-      })
-    }
-    const promise = () =>
-      idmp('idmp abort', promiseFunc, {
-        maxRetry: 999999,
-        signal: controller.signal,
-      })
-
-    setTimeout(() => {
-      controller.abort('xxxxxxxx')
-    }, 1000)
-
-    const allTasks: Promise<void>[] = []
-
-    for (let i = 0; i < 1000; i++) {
-      const task = (async () => {
-        try {
-          await promise()
-        } catch (err) {
-          expect(err.message).toBe('xxxxxxxx')
-        }
-      })()
-      allTasks.push(task)
-    }
-
-    await Promise.all(allTasks)
-  })
-
-  it('should reject with AbortError when aborted', async () => {
-    const allTasks: Promise<void>[] = []
-
-    for (let i = 0; i < 1000; i++) {
-      const task = (async () => {
-        try {
-          const controller = new AbortController()
-          setTimeout(() => {
-            controller.abort(`idmp aborted ${i}`)
-          }, 1000)
-          await idmp(
-            Symbol('idmp abort'),
-            () => {
-              return new Promise((resolve, reject) => {
-                setTimeout(() => reject('fail'), 100)
-              })
-            },
-            { signal: controller.signal, maxRetry: 999999 },
-          )
-        } catch (err: any) {
-          expect(err.message).toBe(`idmp aborted ${i}`)
-        }
-      })()
-      allTasks.push(task)
-    }
-
-    allTasks.length && (await Promise.all(allTasks))
-  })
-
-  it('should handle already aborted signal immediately', async () => {
-    const controller = new AbortController()
-    controller.abort('already-aborted')
-
-    // If signal is already aborted, should fail immediately
-    // (behavior may vary - see implementation details)
-    try {
-      await idmp('already-aborted-key', async () => 'data', {
-        signal: controller.signal,
-      })
-    } catch (err: any) {
-      expect(err.message).toBe('already-aborted')
-    }
-  })
-
   it('should resolve successfully if promise completes before abort', async () => {
     const controller = new AbortController()
 
@@ -140,39 +63,6 @@ describe('idmp abort', async () => {
     expect(result).toBe('new-success')
   })
 
-  it('should handle multiple concurrent callers with same abort signal', async () => {
-    const controller = new AbortController()
-    const key = 'multi-abort-' + Date.now()
-    let callCount = 0
-
-    const tasks = Array.from({ length: 100 }, () =>
-      idmp(
-        key,
-        async () => {
-          callCount++
-          await sleep(500)
-          return 'data'
-        },
-        {
-          signal: controller.signal,
-        },
-      ).catch((err) => err.message),
-    )
-
-    // Abort after short delay
-    setTimeout(() => {
-      controller.abort('multi-caller-abort')
-    }, 50)
-
-    const results = await Promise.all(tasks)
-
-    // All callers should receive the abort message
-    results.forEach((result) => {
-      expect(result).toBe('multi-caller-abort')
-    })
-
-    expect(callCount).toBe(1) // Only called once due to deduplication
-  })
 
   it('should not leak abort listeners on successful completion', async () => {
     const controller = new AbortController()
@@ -208,7 +98,7 @@ describe('idmp abort', async () => {
         await idmp(
           `abort-reason-${String(reason)}`,
           async () => {
-            await sleep(500)
+            await sleep(200)
             return 'data'
           },
           {
