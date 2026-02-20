@@ -18,7 +18,7 @@
   "dependencies": {
     "fs-extra": "^11.3.3",
     "idmp": "workspace:*",
-    "json-web3": "^1.2.0"
+    "json-web3": "^1.3.5"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4"
