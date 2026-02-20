@@ -1,10 +1,14 @@
 export default function Ribbon() {
   return (
-    <div className="fixed top-10 right-[-42px] z-50 w-[200px] rotate-45 shadow-lg">
+    <div className="fixed top-0 right-0 z-50">
       <a
         href="https://github.com/ha0z1/idmp"
         target="_blank"
-        className="block h-6 border border-white/30 bg-black text-center leading-6 font-medium text-slate-200 no-underline shadow-[0_0_10px_rgba(0,0,0,0.31)] transition hover:bg-slate-900"
+        className="block bg-black px-12 py-1 text-xs font-medium text-white transition-colors hover:bg-neutral-800"
+        style={{
+          transform: 'translate(29.29%, 100%) rotate(45deg)',
+          transformOrigin: 'top left',
+        }}
       >
         Fork me on GitHub
       </a>
