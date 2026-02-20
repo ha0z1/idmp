@@ -11,6 +11,6 @@ export default (props: IProps) => {
       setData(res)
     })
   }, [])
-  if (!data) return <>waiting server's data...</>
-  return <>{JSON.stringify(data)}</>
+  if (!data) return <span className="text-neutral-500">Loading...</span>
+  return <span className="text-neutral-900">{JSON.stringify(data)}</span>
 }
