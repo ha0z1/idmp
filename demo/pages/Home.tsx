@@ -1,10 +1,9 @@
-import { Link as LinkIcon, Rocket, Turtle, Zap } from 'lucide-react'
+import { Github, Languages } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
-import { FaGithub } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import README from '../../README.md?raw'
+import README_ZH from '../../README.zh-CN.md?raw'
 import Markdown from '../components/Markdown'
-import Ribbon from '../components/Ribbon'
 import Item from '../Item'
 import ItemIdmp from '../ItemIdmp'
 
@@ -34,7 +33,9 @@ const list = [
 
 export default function IdmpDemoPage() {
   type Mode = 'idmp' | 'normal' | ''
+  type Lang = 'en' | 'zh'
   const [mode, _setMode] = useState<Mode>('')
+  const [lang, setLang] = useState<Lang>('zh')
   const setMode = (m: Mode) => {
     _setMode('')
     setTimeout(() => _setMode(m))
@@ -42,166 +43,152 @@ export default function IdmpDemoPage() {
   const navigate = useNavigate()
   const N = list.length
 
+  const t = useMemo(() => {
+    if (lang === 'zh') {
+      return {
+        title: 'IDMP',
+        subtitle: '智能去重并发异步调用。一次请求，多次回调。',
+        description: (n: number) =>
+          `触发 ${n} 个相同 ID 的并发请求。使用 IDMP 时，只会发起 1 次网络调用，但所有 ${n} 个回调都会正确触发。`,
+        runWithIdmp: '使用 IDMP 运行',
+        runWithoutIdmp: '不使用 IDMP 运行',
+        storageDemo: '存储演示 →',
+        modeIdmp: 'IDMP（已去重和缓存）',
+        modeNormal: '普通（无去重）',
+        requestNum: '请求',
+        loading: '加载中...',
+        footer: 'IDMP · 轻量级 Promise 去重',
+      }
+    }
+    return {
+      title: 'IDMP',
+      subtitle:
+        'Intelligent deduplication of concurrent async calls. One request, multiple callbacks.',
+      description: (n: number) =>
+        `Trigger ${n} concurrent requests with the same ID. With IDMP, only 1 network call is made, but all ${n} callbacks fire correctly.`,
+      runWithIdmp: 'Run with IDMP',
+      runWithoutIdmp: 'Run without IDMP',
+      storageDemo: 'Storage Demo →',
+      modeIdmp: 'IDMP (deduped & cached)',
+      modeNormal: 'Normal (no dedupe)',
+      requestNum: 'Request',
+      loading: 'Loading...',
+      footer: 'IDMP · Lightweight promise deduplication',
+    }
+  }, [lang])
+
   const ModeBadge = useMemo(() => {
     if (!mode) return null
     const isIdmp = mode === 'idmp'
     return (
       <span
-        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${
+        className={`inline-flex items-center gap-2 border px-3 py-1 text-xs font-medium ${
           isIdmp
-            ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30'
-            : 'bg-red-500/10 text-red-400 ring-red-500/30'
+            ? 'border-black bg-black text-white'
+            : 'border-black bg-white text-black'
         }`}
       >
-        {isIdmp ? (
-          <Zap className="h-3.5 w-3.5" />
-        ) : (
-          <Turtle className="h-3.5 w-3.5" />
-        )}
-        {isIdmp ? 'IDMP (deduped & cached)' : 'Normal (no dedupe)'}
+        {isIdmp ? t.modeIdmp : t.modeNormal}
       </span>
     )
-  }, [mode])
+  }, [mode, t])
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-slate-950 text-slate-100">
-      {/* Ambient gradient background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,rgba(56,189,248,0.20),rgba(0,0,0,0))]" />
-        <div className="absolute inset-0 bg-[conic-gradient(from_210deg_at_40%_10%,rgba(168,85,247,0.15),transparent_40%)]" />
-        <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
-      </div>
+    <div className="relative min-h-screen w-full bg-white text-black">
+      <header className="mx-auto max-w-4xl px-8 pt-24 pb-8">
+        <div className="mb-16 flex items-start justify-between gap-8">
+          <div className="flex-1">
+            <h1 className="mb-4 text-5xl leading-tight font-light tracking-tight">
+              {t.title}
+            </h1>
+            <p className="max-w-xl text-lg leading-relaxed text-neutral-600">
+              {t.subtitle}
+            </p>
+          </div>
 
-      <header className="mx-auto max-w-6xl px-6 pt-16 pb-4 sm:pt-20">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="bg-gradient-to-r from-cyan-300 via-white to-red-300 bg-clip-text text-3xl font-semibold tracking-tight text-balance text-transparent sm:text-4xl">
-            IDMP Parallel Requests Demo
-          </h1>
-
-          <div>
-            <a
-              className="group mr-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
-              href="https://codesandbox.io/p/sandbox/sleepy-dust-phn8lp?file=%2Fsrc%2FApp.tsx%3A7%2C3"
-              target="_blank"
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+              className="inline-flex items-center gap-2 border border-neutral-300 px-4 py-2 text-sm transition-colors hover:border-black"
+              title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
             >
-              <Rocket className="h-4 w-4 opacity-80 transition group-hover:opacity-100" />
-              Quick Start
-            </a>
+              <Languages className="h-4 w-4" /> {lang === 'zh' ? 'EN' : '中文'}
+            </button>
             <a
-              className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:border-white/20 hover:bg-white/10"
               href="https://github.com/ha0z1/idmp"
               target="_blank"
+              className="inline-flex items-center gap-2 border border-black px-4 py-2 text-sm transition-colors hover:bg-black hover:text-white"
             >
-              <FaGithub className="h-4 w-4 opacity-80 transition group-hover:opacity-100" />
-              Source
+              <Github className="h-4 w-4" /> GitHub
             </a>
           </div>
         </div>
-        <p className="mt-3 max-w-2xl text-sm/6 text-slate-300">
-          This demo shows the difference between firing {N} concurrent requests
-          with and without using{' '}
-          <span className="font-medium text-cyan-300">idmp</span>. With{' '}
-          <span className="font-medium text-cyan-300">idmp</span> enabled, only
-          3 actual requests are sent (you can verify it in the network console).
-          <br />
-          You don’t need to refactor your previous coding style — you only need
-          to change a single line of code.
-        </p>
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-          <a
-            className="inline-flex items-center gap-1 hover:text-slate-200"
-            href="https://github.com/ha0z1/idmp/blob/main/demo/ItemIdmp.tsx#L10"
-            target="_blank"
-          >
-            <LinkIcon className="h-3.5 w-3.5" /> ItemIdmp.tsx
-          </a>
-          <span className="opacity-40">•</span>
-          <a
-            className="inline-flex items-center gap-1 hover:text-slate-200"
-            href="https://github.com/ha0z1/idmp/blob/main/demo/Item.tsx#L10"
-            target="_blank"
-          >
-            <LinkIcon className="h-3.5 w-3.5" /> Item.tsx
-          </a>
+
+        <div className="border-t border-neutral-200 pt-8">
+          <p className="mb-6 text-sm text-neutral-600">{t.description(N)}</p>
+
+          <div className="mb-8 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setMode('idmp')}
+              disabled={mode === 'idmp'}
+              className="border border-black bg-black px-6 py-2 text-sm text-white transition-colors hover:bg-neutral-800 disabled:cursor-default disabled:opacity-100"
+            >
+              {t.runWithIdmp}
+            </button>
+            <button
+              onClick={() => setMode('normal')}
+              disabled={mode === 'normal'}
+              className="border border-black bg-white px-6 py-2 text-sm text-black transition-colors hover:bg-neutral-100 disabled:cursor-default disabled:bg-black disabled:text-white"
+            >
+              {t.runWithoutIdmp}
+            </button>
+            <button
+              onClick={() => navigate('/storage')}
+              className="border border-neutral-300 bg-white px-6 py-2 text-sm text-black transition-colors hover:border-black"
+            >
+              {t.storageDemo}
+            </button>
+          </div>
+
+          {ModeBadge && <div className="mb-8">{ModeBadge}</div>}
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 pb-24">
-        {/* Control Panel */}
-        <div className="sticky top-0 z-10 -mx-6 mb-6 border-y border-white/5 bg-slate-950/80 backdrop-blur supports-[backdrop-filter]:bg-slate-950/60">
-          <div className="mx-auto max-w-6xl px-6 py-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setMode('idmp')}
-                  className="group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-200 ring-emerald-500/30 transition hover:border-emerald-400/40 hover:bg-emerald-500/15 focus:ring-2 focus:outline-none"
-                >
-                  <Zap className="h-4 w-4" /> Make {N} parallel requests
-                </button>
-                <button
-                  onClick={() => setMode('normal')}
-                  className="group inline-flex cursor-pointer items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-200 ring-red-500/30 transition hover:border-red-400/40 hover:bg-red-500/15 focus:ring-2 focus:outline-none"
-                >
-                  <Turtle className="h-4 w-4" /> Make {N} parallel requests
-                  (without IDMP)
-                </button>
-              </div>
-              <div className="flex items-center gap-2">
-                {ModeBadge}
-                <button
-                  onClick={() => navigate('/storage')}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm font-medium text-slate-200 transition hover:border-white/20 hover:bg-white/10"
-                >
-                  localStorage / sessionStorage
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Grid */}
+      <main className="mx-auto max-w-4xl px-8 pb-24">
         {mode ? (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((id, i) => (
-              <li key={`${id}-${i}`} className="group relative">
-                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur transition duration-300 hover:border-white/20 hover:bg-white/[0.06]">
-                  {/* Accent glow */}
-                  <div
-                    className="pointer-events-none absolute -inset-px -z-10 opacity-0 blur-2xl transition duration-500 group-hover:opacity-30"
-                    style={{
-                      background:
-                        'radial-gradient(60% 50% at 30% 0%, rgba(34,197,94,0.35), rgba(168,85,247,0.2) 35%, rgba(0,0,0,0) 70%)',
-                    }}
-                  />
-
-                  <div className="mb-3 flex items-center justify-between">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-slate-300">
-                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/80 to-red-500/80 text-[10px] font-semibold text-white shadow-inner">
-                        {id}
-                      </span>
-                      <span className="opacity-80">request id</span>
-                    </div>
-                    <span className="text-[10px] tracking-wide text-slate-400 uppercase">
-                      #{i + 1}
-                    </span>
-                  </div>
-
-                  <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-                    {mode === 'idmp' ? <ItemIdmp id={id} /> : <Item id={id} />}
-                  </div>
+              <li key={i} className="border border-neutral-200 p-4">
+                <div className="mb-3 flex items-center justify-between text-xs text-neutral-500">
+                  <span>
+                    {t.requestNum} #{i + 1}
+                  </span>
+                  <span className="font-mono">ID: {id}</span>
+                </div>
+                <div className="border border-neutral-100 bg-neutral-50 p-3 font-mono text-xs">
+                  {mode === 'idmp' ? <ItemIdmp id={id} /> : <Item id={id} />}
                 </div>
               </li>
             ))}
           </ul>
         ) : (
-          <article className="prose max-w-none">
-            <Markdown>{README.split('## Usage')?.[1]}</Markdown>
+          <article className="prose prose-neutral max-w-none">
+            <Markdown>
+              {(lang === 'zh' ? README_ZH : README).split('## Usage')?.[1] ||
+                (lang === 'zh' ? README_ZH : README).split('## 使用')?.[1]}
+            </Markdown>
           </article>
         )}
       </main>
 
-      <footer className="mx-auto max-w-6xl px-6 pt-8 pb-12 text-xs text-slate-500"></footer>
-      <Ribbon />
+      <footer className="mx-auto max-w-4xl border-t border-neutral-200 px-8 pt-8 pb-12">
+        <p className="text-xs text-neutral-500">
+          <a href="https://github.com/ha0z1/idmp" className="hover:text-black">
+            IDMP
+          </a>{' '}
+          · {t.footer}
+        </p>
+      </footer>
     </div>
   )
 }
