@@ -1,4 +1,4 @@
-import { Github, Languages } from 'lucide-react'
+import { GitFork, Languages } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import README from '../../README.md?raw'
@@ -119,7 +119,7 @@ export default function IdmpDemoPage() {
               target="_blank"
               className="inline-flex items-center gap-2 border border-black px-4 py-2 text-sm transition-colors hover:bg-black hover:text-white"
             >
-              <Github className="h-4 w-4" /> GitHub
+              <GitFork className="h-4 w-4" /> GitHub
             </a>
           </div>
         </div>
