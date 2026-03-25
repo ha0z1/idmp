@@ -29,18 +29,22 @@
   "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.node.cjs"
     },
     "./node-fs": {
+      "types": "./plugins/node-fs/dist/index.d.ts",
       "import": "./plugins/node-fs/dist/index.js",
       "require": "./plugins/node-fs/dist/index.node.cjs"
     },
     "./redis": {
+      "types": "./plugins/redis/dist/index.d.ts",
       "import": "./plugins/redis/dist/index.js",
       "require": "./plugins/redis/dist/index.node.cjs"
     },
     "./browser-storage": {
+      "types": "./plugins/browser-storage/dist/index.d.ts",
       "import": "./plugins/browser-storage/dist/index.js",
       "require": "./plugins/browser-storage/dist/index.node.cjs"
     }
