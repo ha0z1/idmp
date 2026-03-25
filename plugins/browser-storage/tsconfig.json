@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {},
+  "compilerOptions": {
+    "paths": {
+      "idmp": ["../../src/index.ts"]
+    }
+  },
   "include": ["src"]
 }
