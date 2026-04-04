@@ -21,6 +21,31 @@
 - **v3.x**: [不再暴露内部调试对象 `eport { _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455)
 - **v2.x**: 移除了 package.json 中的 ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) 字段
 
+## 安装
+
+```bash
+pnpm add idmp
+npm install idmp
+yarn add idmp
+bun add idmp
+```
+
+官方插件入口已经包含在同一个包中，所以安装 `idmp` 后即可直接导入 `idmp/browser-storage`、`idmp/node-fs` 或 `idmp/redis`。
+
+## AI Skill
+
+仓库内附带了一份 [AI Skill](.github/skills/idmp/SKILL.md)，可以让编码 AI 在写代码时自动了解并使用 `idmp`。在你的项目根目录运行下面的命令，即可通过 [`skills`](https://www.npmjs.com/package/skills) 工具安装：
+
+```bash
+npx skills add ha0z1/idmp --skill idmp
+```
+
+CLI 会引导你选择目标 agent 和安装方式。安装后，AI 在遇到异步去重、请求缓存、重试等场景时会自动调用该 skill。你也可以手动触发：
+
+```text
+/idmp wrap this fetcher with deduplication and retry
+```
+
 ## 使用
 
 ### 基础用法
@@ -102,12 +127,14 @@ type IdmpGlobalKey = string | number | symbol | false | null | undefined
 
 IdmpOptions:
 
-| Property        | Type       | Default      | Description                                                                                                                                                                              |
-| --------------- | ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `maxRetry`      | `number`   | `30`         | 最大重试次数                                                                                                                                                                             |
-| `minRetryDelay` | `number`   | `50`(毫秒)   | 最小重试间隔，默认 50 毫秒 ,内部实现了类指数退避的算法，会动态改变重试时间，避免对服务器造成 DDoS                                                                                        |
-| `maxAge`        | `number`   | `3000`(毫秒) | 最大缓存时间，默认 3000 毫秒，最大 7 天                                                                                                                                                  |
-| `onBeforeRetry` | `function` | -            | 在重试尝试之前执行的函数。该函数接收两个参数：err（任意类型）和 extra（一个对象，包含属性 globalKey（类型为 IdmpGlobalKey）和 retryCount（类型为 number））。返回值为 void（无返回值）。 |
+| Property        | Type          | Default      | Description                                                                                                                                                                              |
+| --------------- | ------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `maxRetry`      | `number`      | `30`         | 最大重试次数                                                                                                                                                                             |
+| `minRetryDelay` | `number`      | `50`(毫秒)   | 最小重试间隔，默认 50 毫秒 ,内部实现了类指数退避的算法，会动态改变重试时间，避免对服务器造成 DDoS                                                                                        |
+| `maxRetryDelay` | `number`      | `5000`(毫秒) | 最大重试间隔，默认 5000 毫秒，与 `minRetryDelay` 配合实现指数退避                                                                                                                        |
+| `maxAge`        | `number`      | `3000`(毫秒) | 最大缓存时间，默认 3000 毫秒，最大 7 天                                                                                                                                                  |
+| `signal`        | `AbortSignal` | -            | 用于中止所有共享该 key 的等待中的调用。中止后，所有 pending promise 会以 abort reason 拒绝                                                                                               |
+| `onBeforeRetry` | `function`    | -            | 在重试尝试之前执行的函数。该函数接收两个参数：err（任意类型）和 extra（一个对象，包含属性 globalKey（类型为 IdmpGlobalKey）和 retryCount（类型为 number））。返回值为 void（无返回值）。 |
 
 ## flush
 
