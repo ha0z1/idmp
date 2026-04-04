@@ -21,6 +21,41 @@ English | [简体中文](README.zh-CN.md)
 - **v3.x**: [not export `{ _globalStore as g }`](https://github.com/ha0z1/idmp/commit/78042ebfbfa9473914f7ea261f1d85d7148cd4f0#diff-a2a171449d862fe29692ce031981047d7ab755ae7f84c707aef80701b3ea0c80L455) any more
 - **v2.x**:: remove the ["type": "module"](https://github.com/ha0z1/idmp/pull/58/files#diff-74c8d3852e67511dbbe14b1feb1d05341e0eb9a2eb6d245dfde802817f229782) field in Package.json
 
+## Installation
+
+```bash
+pnpm add idmp
+npm install idmp
+yarn add idmp
+bun add idmp
+```
+
+The official plugin entry points are included in the same package, so after installing `idmp` you can import `idmp/browser-storage`, `idmp/node-fs`, or `idmp/redis` directly.
+
+## AI Skill
+
+This repository includes an [AI Skill](.github/skills/idmp/SKILL.md) that teaches coding agents how to install, configure, and use `idmp`. Run the install command for your tool in the root of your project:
+
+```bash
+# GitHub Copilot
+npx degit ha0z1/idmp/.github/skills/idmp .agents/skills/idmp
+
+# Claude Code
+npx degit ha0z1/idmp/.github/skills/idmp .claude/skills/idmp
+
+# Codex
+npx degit ha0z1/idmp/.github/skills/idmp .agents/skills/idmp
+
+# OpenClaw (clawhub)
+npx degit ha0z1/idmp/.github/skills/idmp skills/idmp
+```
+
+After installing, the agent will automatically apply the skill whenever it encounters async deduplication, request caching, retry, or related scenarios. You can also invoke it explicitly:
+
+```text
+/idmp wrap this fetcher with deduplication and retry
+```
+
 ## Usage
 
 ### Basic Usage
@@ -102,12 +137,14 @@ type IdmpGlobalKey = string | number | symbol | false | null | undefined
 
 IdmpOptions:
 
-| Property        | Type       | Default    | Description                                                                                                                                                                                                           |
-| --------------- | ---------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `maxRetry`      | `number`   | `30`       | Maximum number of retry attempts.                                                                                                                                                                                     |
-| `minRetryDelay` | `number`   | `50`(ms)   | Minimum retry interval in milliseconds. The default value is 50 ms.                                                                                                                                                   |
-| `maxAge`        | `number`   | `3000`(ms) | Maximum age in milliseconds. The maximum value is 604800000 ms (7 days).                                                                                                                                              |
-| `onBeforeRetry` | `function` | -          | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
+| Property        | Type          | Default    | Description                                                                                                                                                                                                           |
+| --------------- | ------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `maxRetry`      | `number`      | `30`       | Maximum number of retry attempts.                                                                                                                                                                                     |
+| `minRetryDelay` | `number`      | `50`(ms)   | Minimum retry interval in milliseconds. The default value is 50 ms.                                                                                                                                                   |
+| `maxRetryDelay` | `number`      | `5000`(ms) | Maximum retry interval in milliseconds. Combined with `minRetryDelay`, implements exponential backoff.                                                                                                                |
+| `maxAge`        | `number`      | `3000`(ms) | Maximum age in milliseconds. The maximum value is 604800000 ms (7 days).                                                                                                                                              |
+| `signal`        | `AbortSignal` | -          | An `AbortSignal` to abort all pending calls sharing this key. When aborted, every pending promise rejects with the abort reason.                                                                                      |
+| `onBeforeRetry` | `function`    | -          | Function to be executed before a retry attempt. Takes two parameters: `err` (any type) and `extra` (an object with properties `globalKey` of type `IdmpGlobalKey` and `retryCount` of type `number`). Returns `void`. |
 
 ## flush
 
