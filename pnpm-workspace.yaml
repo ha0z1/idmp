@@ -1,3 +1,6 @@
 packages:
   - ./plugins/*
   - ./demo
+allowBuilds:
+  '@swc/core': true
+  core-js: true
