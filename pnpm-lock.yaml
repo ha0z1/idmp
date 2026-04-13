@@ -59,16 +59,16 @@ importers:
         version: 20.0.0
       prettier:
         specifier: ^3.8.1
-        version: 3.8.1
+        version: 3.8.2
       prettier-plugin-lint-md:
         specifier: ^1.0.1
-        version: 1.0.1(prettier@3.8.1)
+        version: 1.0.1(prettier@3.8.2)
       prettier-plugin-organize-imports:
         specifier: ^4.3.0
-        version: 4.3.0(prettier@3.8.1)(typescript@6.0.2)
+        version: 4.3.0(prettier@3.8.2)(typescript@6.0.2)
       prettier-plugin-tailwindcss:
         specifier: ^0.7.2
-        version: 0.7.2(prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@6.0.2))(prettier@3.8.1)
+        version: 0.7.2(prettier-plugin-organize-imports@4.3.0(prettier@3.8.2)(typescript@6.0.2))(prettier@3.8.2)
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -2438,8 +2438,8 @@ packages:
       prettier-plugin-svelte:
         optional: true
 
-  prettier@3.8.1:
-    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
+  prettier@3.8.2:
+    resolution: {integrity: sha512-8c3mgTe0ASwWAJK+78dpviD+A8EqhndQPUBpNUIPt6+xWlIigCwfN01lWr9MAede4uqXGTEKeQWTvzb3vjia0Q==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -5662,25 +5662,25 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  prettier-plugin-lint-md@1.0.1(prettier@3.8.1):
+  prettier-plugin-lint-md@1.0.1(prettier@3.8.2):
     dependencies:
       '@lint-md/core': 2.0.0
-      prettier: 3.8.1
+      prettier: 3.8.2
     transitivePeerDependencies:
       - supports-color
 
-  prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@6.0.2):
+  prettier-plugin-organize-imports@4.3.0(prettier@3.8.2)(typescript@6.0.2):
     dependencies:
-      prettier: 3.8.1
+      prettier: 3.8.2
       typescript: 6.0.2
 
-  prettier-plugin-tailwindcss@0.7.2(prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@6.0.2))(prettier@3.8.1):
+  prettier-plugin-tailwindcss@0.7.2(prettier-plugin-organize-imports@4.3.0(prettier@3.8.2)(typescript@6.0.2))(prettier@3.8.2):
     dependencies:
-      prettier: 3.8.1
+      prettier: 3.8.2
     optionalDependencies:
-      prettier-plugin-organize-imports: 4.3.0(prettier@3.8.1)(typescript@6.0.2)
+      prettier-plugin-organize-imports: 4.3.0(prettier@3.8.2)(typescript@6.0.2)
 
-  prettier@3.8.1: {}
+  prettier@3.8.2: {}
 
   prismjs@1.30.0: {}
 
