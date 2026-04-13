@@ -56,7 +56,7 @@ importers:
         version: 29.0.2
       npm-check-updates:
         specifier: ^20.0.0
-        version: 20.0.0
+        version: 20.0.1
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
@@ -2308,8 +2308,8 @@ packages:
   node-releases@2.0.37:
     resolution: {integrity: sha512-1h5gKZCF+pO/o3Iqt5Jp7wc9rH3eJJ0+nh/CIoiRwjRxde/hAHyLPXYN4V3CqKAbiZPSeJFSWHmJsbkicta0Eg==}
 
-  npm-check-updates@20.0.0:
-    resolution: {integrity: sha512-qCs02x51irGf0okCttwv8lHEO2NxT903IJ2bKpG82kIzkm6pfT3CoWB5YIvqY/wi/DdnYRfI7eVfCYYymQgvCg==}
+  npm-check-updates@20.0.1:
+    resolution: {integrity: sha512-YuzpyL1Od5dJzpeETVh2H5o1I8tpi0zkf6v7k7rXwUDfiDliBX9dgVIb7FlEfp8Lu2RtECAv63ZHm/rqpIhYsw==}
     engines: {node: '>=20.0.0', npm: '>=8.12.1'}
     hasBin: true
 
@@ -5593,7 +5593,7 @@ snapshots:
 
   node-releases@2.0.37: {}
 
-  npm-check-updates@20.0.0: {}
+  npm-check-updates@20.0.1: {}
 
   nth-check@2.1.1:
     dependencies:
