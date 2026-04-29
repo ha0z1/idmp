@@ -85,6 +85,7 @@ const enum K {
   cachedPromiseFunc,
   timerId,
   _originalErrorStack,
+  attachedSignals,
 }
 
 // Constants
@@ -95,16 +96,35 @@ const UNDEFINED = undefined
 const $timeout = setTimeout
 const $clearTimeout = clearTimeout
 
+/**
+ * Best-effort timer.unref() so pending TTL flushes don't keep Node CLI
+ * processes alive. No-op in browsers (setTimeout returns a number, no .unref).
+ */
+const unrefTimer = (id: any): any => {
+  if (id && typeof (id as any).unref === 'function') {
+    try {
+      ;(id as any).unref()
+    } catch {}
+  }
+  return id
+}
+
 const getMax = (a: number, b: number): number => (a > b ? a : b)
 const getMin = (a: number, b: number): number => (a < b ? a : b)
 
 /**
+ * Module-level memo of objects that have already been frozen by readonly().
+ * Re-walking an already-frozen tree on every idmp() call burns time on
+ * Object.getOwnPropertyDescriptor + try/catch per key — the WeakSet lets
+ * us bail in O(1) on the hot path. WeakSet so nothing leaks.
+ *
+ * Only allocated in dev — the entire readonly path is a no-op in production.
+ */
+const _readonlyDone: WeakSet<object> | undefined =
+  process.env.NODE_ENV !== 'production' ? new WeakSet() : UNDEFINED
+
+/**
  * Makes an object's properties read-only to prevent mutation
- * @param obj - Object to make read-only
- * @param key - Property key to make read-only
- * @param value - Value to assign to the property
- * @param visited - WeakSet to track visited objects and prevent circular references
- * @returns true if successful, false otherwise
  */
 const defineReactive = (
   obj: any,
@@ -113,7 +133,6 @@ const defineReactive = (
   visited: WeakSet<any>,
 ): boolean => {
   try {
-    Object.prototype.toString.call(value)
     readonly(value, visited)
 
     Object.defineProperty(obj, key, {
@@ -136,14 +155,15 @@ const defineReactive = (
 }
 
 /**
- * Recursively makes an object and its properties read-only
- * @param obj - Object to make read-only
- * @param visited - WeakSet to track visited objects and prevent circular references
- * @returns The read-only object, or original object if readonly fails
+ * Recursively makes an object and its properties read-only.
+ * Idempotent: if the object was already processed, returns immediately.
  */
 const readonly = <T>(obj: T, visited?: WeakSet<any>): T => {
   try {
     if (obj == null || typeof obj !== 'object') return obj
+
+    // Already frozen by a prior idmp() call — skip the whole walk.
+    if (_readonlyDone && _readonlyDone.has(obj as any)) return obj
 
     const protoType = Object.prototype.toString.call(obj)
     if (!['[object Object]', '[object Array]'].includes(protoType)) return obj
@@ -182,6 +202,11 @@ const readonly = <T>(obj: T, visited?: WeakSet<any>): T => {
         defineReactive(obj, key, (obj as any)[key], visited!)
       } catch {}
     })
+
+    // Mark globally so subsequent idmp() calls with the same object skip
+    // the entire walk above. Safe even on partial failure — we only get
+    // here when the forEach pass completed.
+    _readonlyDone && _readonlyDone.add(obj as any)
 
     return obj
   } catch {
@@ -374,26 +399,26 @@ const idmp = <T>(
     cache[K.pendingList] = []
 
     if (!isFiniteParamMaxAge) {
-      cache[K.timerId] = $timeout(() => {
-        flush(globalKey)
-      }, maxAge) as unknown as number
+      cache[K.timerId] = unrefTimer(
+        $timeout(() => {
+          flush(globalKey)
+        }, maxAge),
+      ) as unknown as number
     }
   }
 
   /**
-   * Rejects all pending promises with the cached error
+   * Rejects all pending promises with the cached error.
+   * Retry-spawned dummy promises (added to pendingList by re-entered
+   * executePromise calls) have their own .catch(noop) attached at the
+   * call site, so it is safe to reject every entry here.
    */
   const doRejects = () => {
-    const len = cache[K.pendingList].length
-    let maxLen
-    maxLen = len - maxRetry
-
-    if (maxLen < 0 || !isFinite(len)) {
-      maxLen = getMax(1, cache[K.pendingList].length - 3)
-    }
-
-    for (let i = 0; i < maxLen; ++i) {
-      cache[K.pendingList][i][1](cache[K.rejectionError])
+    const list = cache[K.pendingList]
+    cache[K.pendingList] = []
+    const len = list.length
+    for (let i = 0; i < len; ++i) {
+      list[i][1](cache[K.rejectionError])
     }
     flush(globalKey)
   }
@@ -406,34 +431,47 @@ const idmp = <T>(
       !cache[K.cachedPromiseFunc] && (cache[K.cachedPromiseFunc] = promiseFunc)
 
       if (process.env.NODE_ENV !== 'production') {
-        try {
-          if (cache[K.retryCount] === 0) {
-            throw new Error()
-          }
-        } catch (err: any) {
-          const getCodeLine = (stack: string, offset = 0): string => {
-            if (typeof globalKey === 'symbol') return ''
-            try {
-              let arr = (stack as any)
-                .split('\n')
-                .filter((o: string) => o.includes(':'))
+        // Stack capture has two roles:
+        //   1. seed `_originalErrorStack` once per cache (first caller),
+        //   2. detect "same key reused at a different call site" (subsequent callers).
+        // Retries don't need capture — the call site doesn't change between
+        // attempts. For symbol keys getCodeLine bails out, so we skip the
+        // entire block and avoid paying for Error.stack at all.
+        //
+        // We also skip recapture when the original stack matches verbatim
+        // (the common case: 1000 concurrent calls from the same place all
+        // produce identical stacks). Replacing `throw new Error() / catch`
+        // with `new Error().stack` removes the unwind cost.
+        if (
+          cache[K.retryCount] === 0 &&
+          typeof globalKey !== 'symbol'
+        ) {
+          const stack = new Error().stack || ''
+          const baseStack = cache[K._originalErrorStack]
 
+          if (!baseStack) {
+            cache[K._originalErrorStack] = stack
+          }
+
+          // callStackLocation is only consulted by printLogs() in browsers.
+          // Compute lazily — most call paths never read it.
+          const getCodeLine = (s: string, offset = 0): string => {
+            try {
+              const arr = s.split('\n').filter((o: string) => o.includes(':'))
               let idx = Infinity
-              $0: for (let key of [
+              $0: for (const key of [
                 'idmp/src/index.ts',
                 'idmp/',
                 'idmp\\',
                 'idmp',
               ]) {
-                let _idx = arr.length - 1
-                $1: for (; _idx >= 0; --_idx) {
+                for (let _idx = arr.length - 1; _idx >= 0; --_idx) {
                   if (arr[_idx].indexOf(key) > -1) {
                     idx = _idx
                     break $0
                   }
                 }
               }
-
               const line = arr[idx + offset + 1] || ''
               if (line.includes('idmp')) return line
               /* istanbul ignore next */
@@ -444,25 +482,32 @@ const idmp = <T>(
             }
           }
 
-          callStackLocation = getCodeLine(err.stack, 1).split(' ').pop() || ''
-          !cache[K._originalErrorStack] &&
-            (cache[K._originalErrorStack] = err.stack)
+          callStackLocation = getCodeLine(stack, 1).split(' ').pop() || ''
 
-          if (cache[K._originalErrorStack] !== err.stack) {
-            const line1 = getCodeLine(cache[K._originalErrorStack])
-            const line2 = getCodeLine(err.stack)
+          // Skip the divergence check unless the new stack actually differs
+          // from the baseline — saves the parse cost on the hot dedup path.
+          if (baseStack && baseStack !== stack) {
+            const line1 = getCodeLine(baseStack)
+            const line2 = getCodeLine(stack)
 
             if (line1 && line2 && line1 !== line2) {
               console.error(
-                `[idmp warn] the same key \`${globalKey.toString()}\` may be used multiple times in different places\n(It may be a misjudgment and can be ignored):\nsee https://github.com/ha0z1/idmp?tab=readme-ov-file#implementation \n${[
-                  `1.${line1} ${cache[K._originalErrorStack]}`,
+                `[idmp warn] the same key \`${globalKey!.toString()}\` may be used multiple times in different places\n(It may be a misjudgment and can be ignored):\nsee https://github.com/ha0z1/idmp?tab=readme-ov-file#implementation \n${[
+                  `1.${line1} ${baseStack}`,
                   '------------',
-                  `2.${line2} ${err.stack}`,
+                  `2.${line2} ${stack}`,
                 ].join('\n')}`,
               )
             }
           }
         }
+      }
+
+      // Cache was already aborted by an earlier signal — reject this caller
+      // immediately without scheduling more work.
+      if (cache[K.status] === Status.ABORTED) {
+        reject(cache[K.rejectionError])
+        return
       }
 
       if (cache[K.status] === Status.RESOLVED) {
@@ -477,16 +522,46 @@ const idmp = <T>(
       }
 
       if (signal) {
-        if (signal.aborted) return
+        if (signal.aborted) {
+          // Signal already fired — addEventListener('abort') would never run.
+          // Drive the abort path manually.
+          if (cache[K.status] !== Status.ABORTED) {
+            cache[K.status] = Status.ABORTED
+            cache[K.rejectionError] = new DOMException(
+              signal.reason,
+              'AbortError',
+            )
+            // Push first so this caller is rejected by doRejects.
+            cache[K.pendingList].push([resolve, reject])
+            doRejects()
+          } else {
+            reject(cache[K.rejectionError])
+          }
+          return
+        }
 
-        signal.addEventListener('abort', () => {
-          reset()
-          cache[K.rejectionError] = new DOMException(
-            signal.reason,
-            'AbortError',
+        // Attach exactly one listener per (cache, signal) pair. Without this
+        // dedup, N concurrent callers would attach N listeners that each
+        // re-fire doRejects/flush after abort — wasteful and racy.
+        if (!cache[K.attachedSignals]) {
+          cache[K.attachedSignals] = new Set()
+        }
+        if (!cache[K.attachedSignals]!.has(signal)) {
+          cache[K.attachedSignals]!.add(signal)
+          signal.addEventListener(
+            'abort',
+            () => {
+              if (cache[K.status] === Status.ABORTED) return
+              cache[K.status] = Status.ABORTED
+              cache[K.rejectionError] = new DOMException(
+                signal.reason,
+                'AbortError',
+              )
+              doRejects()
+            },
+            { once: true },
           )
-          doRejects()
-        })
+        }
       }
 
       if (cache[K.status] === Status.UNSENT) {
@@ -495,6 +570,9 @@ const idmp = <T>(
 
         cache[K.cachedPromiseFunc]()
           .then((data: T) => {
+            // Bail if the cache was aborted while the promise was in flight —
+            // pendingList has already been settled by doRejects.
+            if (cache[K.status] === Status.ABORTED) return
             if (process.env.NODE_ENV !== 'production') {
               cache[K.resolvedData] = readonly<T>(data)
             } else {
@@ -504,6 +582,8 @@ const idmp = <T>(
             cache[K.status] = Status.RESOLVED
           })
           .catch((err: any) => {
+            // Same bail — abort wins over retry.
+            if (cache[K.status] === Status.ABORTED) return
             cache[K.status] = Status.REJECTED
             cache[K.rejectionError] = err
             ++cache[K.retryCount]
@@ -522,7 +602,16 @@ const idmp = <T>(
                 minRetryDelay * 2 ** (cache[K.retryCount] - 1),
               )
 
-              $timeout(executePromise, delay)
+              // The Promise returned by executePromise() during retry has no
+              // external awaiter — its (resolve, reject) get pushed into
+              // pendingList and settled when the cache resolves/rejects.
+              // Attach noop catch so a rejected dummy doesn't surface as an
+              // unhandledRejection.
+              unrefTimer(
+                $timeout(() => {
+                  executePromise().catch(noop)
+                }, delay),
+              )
             }
           })
       } else if (cache[K.status] === Status.OPENING) {

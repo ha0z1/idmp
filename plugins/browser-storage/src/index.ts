@@ -21,13 +21,24 @@ const initStorage = (storageType: StorageType) => {
   } catch {}
 
   /**
-   * Remove a cached item by key
-   * @param key - Global cache key
+   * Remove a cached item by raw global key (without storage prefix).
+   * @param key - Global cache key (raw, will be prefixed internally)
    */
   const remove = (key: string) => {
     if (!key) return
     try {
       const cacheKey = getCacheKey(key)
+      storage.removeItem(cacheKey)
+    } catch {}
+  }
+
+  /**
+   * Remove a cached item by its already-prefixed storage key.
+   * Used by `clear()` while iterating storage keys (which already include
+   * the PREFIX) — calling `remove()` would double-prefix and silently fail.
+   */
+  const removeByCacheKey = (cacheKey: string) => {
+    try {
       storage.removeItem(cacheKey)
     } catch {}
   }
@@ -49,7 +60,9 @@ const initStorage = (storageType: StorageType) => {
       const { t, a: maxAge, d: data } = localData
 
       if (Date.now() - t > maxAge) {
-        remove(cacheKey)
+        // `cacheKey` is already prefixed — go through removeByCacheKey
+        // instead of remove() to avoid double-prefixing.
+        removeByCacheKey(cacheKey)
         return
       }
       return data as T
@@ -85,7 +98,8 @@ const initStorage = (storageType: StorageType) => {
       for (let i = storage.length - 1; i >= 0; i--) {
         const key = storage.key(i)
         if (key && key.startsWith(PREFIX)) {
-          remove(key)
+          // `key` from `storage.key()` is already prefixed.
+          removeByCacheKey(key)
         }
       }
     } catch {}
