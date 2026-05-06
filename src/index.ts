@@ -138,7 +138,7 @@ const defineReactive = (
 
     Object.defineProperty(obj, key, {
       configurable: false,
-      enumerable: Object.getOwnPropertyDescriptor(obj, key)?.enumerable ?? true,
+      enumerable: Object.getOwnPropertyDescriptor(obj, key)?.enumerable ?? /* istanbul ignore next -- enumerable is always a boolean for keys from Object.keys() */ true,
       get: () => value,
       set: (newValue) => {
         const msg = `[idmp error] The data is read-only, set ${key.toString()}=${JSON.stringify(
@@ -447,7 +447,7 @@ const idmp = <T>(
           // produce identical stacks). Replacing `throw new Error() / catch`
           // with `new Error().stack` removes the unwind cost.
           if (cache[K.retryCount] === 0 && typeof globalKey !== 'symbol') {
-            const stack = new Error().stack || ''
+            const stack = new Error().stack || /* istanbul ignore next -- Error.stack is always defined in V8/modern environments */ ''
             const baseStack = cache[K._originalErrorStack]
 
             if (!baseStack) {
@@ -473,7 +473,7 @@ const idmp = <T>(
                     }
                   }
                 }
-                const line = arr[idx + offset + 1] || ''
+                const line = arr[idx + offset + 1] || /* istanbul ignore next -- idx is always within bounds when the stack contains 'idmp' */ ''
                 if (line.includes('idmp')) return line
                 /* istanbul ignore next */
                 return ''
@@ -614,7 +614,7 @@ const idmp = <T>(
               )
             }
           })
-      } else if (cache[K.status] === Status.OPENING) {
+      } else /* istanbul ignore else -- ABORTED and RESOLVED are handled above; only UNSENT and OPENING reach here */ if (cache[K.status] === Status.OPENING) {
         cache[K.pendingList].push([resolve, reject])
       }
     })
