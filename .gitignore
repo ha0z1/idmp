@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 yarn.lock
 package-lock.json
 coverage
+
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
