@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import react from '@vitejs/plugin-react-swc'
+import path from 'path'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
@@ -7,6 +8,32 @@ export default defineConfig(({ mode }) => {
   return {
     publicDir: false,
     plugins: [react(), dts()],
+    resolve: {
+      alias: [
+        {
+          find: /^idmp$/,
+          replacement: path.resolve(__dirname, './src/index.ts'),
+        },
+        {
+          find: /^idmp\/browser-storage$/,
+          replacement: path.resolve(
+            __dirname,
+            './plugins/browser-storage/src/index.ts',
+          ),
+        },
+        {
+          find: /^idmp\/node-fs$/,
+          replacement: path.resolve(
+            __dirname,
+            './plugins/node-fs/src/index.ts',
+          ),
+        },
+        {
+          find: /^idmp\/redis$/,
+          replacement: path.resolve(__dirname, './plugins/redis/src/index.ts'),
+        },
+      ],
+    },
     build: {
       minify: !false,
       esbuild:

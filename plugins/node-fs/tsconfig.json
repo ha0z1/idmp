@@ -1,9 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "paths": {
-      "idmp": ["../../src/index.ts"]
-    }
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src"]
 }

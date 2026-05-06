@@ -26,11 +26,13 @@ const cacheDir = path.resolve(os.tmpdir(), 'idmp')
 const getCachePath = (globalKey: string) =>
   path.resolve(cacheDir, 'v4/node', prefix, encode(globalKey))
 
-const setData = async <T = any>(key: string, data: T, maxAge: number) => {
+// Synchronous I/O — no `async` decoration; that was previously misleading
+// since every call inside was *Sync. fs-extra's outputFileSync creates
+// missing parent dirs, so the prior ensureFileSync was redundant.
+const setData = <T = any>(key: string, data: T, maxAge: number) => {
+  /* istanbul ignore if -- wrapper never passes empty key */
   if (!key) return
   const cachePath = getCachePath(key)
-
-  fs.ensureFileSync(cachePath)
   fs.outputFileSync(
     cachePath,
     stringify_UNSAFE({
@@ -41,7 +43,8 @@ const setData = async <T = any>(key: string, data: T, maxAge: number) => {
   )
 }
 
-const getData = async <T = any>(key: string) => {
+const getData = <T = any>(key: string) => {
+  /* istanbul ignore if -- wrapper never passes empty key */
   if (!key) return udf
   const cachePath = getCachePath(key)
 
@@ -55,7 +58,9 @@ const getData = async <T = any>(key: string) => {
   const { t, a: maxAge, d: data } = localData
 
   if (Date.now() - t > maxAge) {
-    fs.removeSync(cachePath)
+    try {
+      fs.removeSync(cachePath)
+    } catch {}
     return udf
   }
   return data as T
@@ -79,6 +84,15 @@ const fsIdmpWrap = (
   namespace: string,
   extraOptions?: IExtraOptions,
 ) => {
+  // Per-namespace dir so flushAll() does not wipe other wrappers' caches
+  // sharing the same os.tmpdir()/idmp root.
+  const namespaceDir = path.resolve(
+    cacheDir,
+    'v4/node',
+    prefix,
+    encode(namespace),
+  )
+
   const newIdmp = <T>(
     globalKey: string,
     promiseFunc: IdmpPromise<T>,
@@ -90,7 +104,7 @@ const fsIdmpWrap = (
     return _idmp(
       globalKey,
       async () => {
-        const localData = await getData(globalKey)
+        const localData = getData(globalKey)
         if (localData !== udf) {
           // console.log('from localData')
           return localData
@@ -98,8 +112,14 @@ const fsIdmpWrap = (
 
         const memoryData = await promiseFunc()
         if (memoryData !== udf) {
-          // console.log('from memoryData')s a
-          setData(globalKey, memoryData, finalOptions.maxAge) // no need wait
+          // Synchronous setData — wrap to swallow IO failures so callers
+          // don't get a derailed result on disk write errors.
+          try {
+            setData(globalKey, memoryData, finalOptions.maxAge)
+          } catch (err) {
+            /* istanbul ignore next */
+            console.error('[idmp/node-fs] setData failed', err)
+          }
         }
         return memoryData
       },
@@ -110,12 +130,18 @@ const fsIdmpWrap = (
     )
   }
   newIdmp.flush = (globalKey: string) => {
-    _idmp.flush(globalKey)
-    fs.removeSync(getCachePath(globalKey))
+    const ns = `${namespace}_${globalKey}`
+    _idmp.flush(ns)
+    try {
+      fs.removeSync(getCachePath(ns))
+    } catch {}
   }
   newIdmp.flushAll = () => {
     _idmp.flushAll()
-    fs.removeSync(cacheDir)
+    // Only remove THIS wrapper's namespace dir — not the entire shared root.
+    try {
+      fs.removeSync(namespaceDir)
+    } catch {}
   }
   return newIdmp
 }

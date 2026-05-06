@@ -16,8 +16,30 @@ const cachePrefix = `/idmp/v4/${md5(__filename)}`
 
 const udf = undefined
 const encode = encodeURIComponent
-const getCachePath = (globalKey: string) =>
-  `${cachePrefix}/${encode(globalKey)}`
+
+/**
+ * Build a redis key from (namespace, globalKey).
+ *
+ * Each part is `encodeURIComponent`-encoded individually, then joined with
+ * `:` (colon). encodeURIComponent leaves `_` untouched — so the previous
+ * `${namespace}_${globalKey}` join was ambiguous:
+ *   ('user',  '_admin_x')
+ *   ('user_', 'admin_x')
+ * both produced `user__admin_x` and would clobber each other.
+ *
+ * encodeURIComponent escapes `:` to `%3A`, so a literal `:` is the unique
+ * separator regardless of what the user puts in either part.
+ */
+const getCachePath = (namespace: string, globalKey: string) =>
+  `${cachePrefix}/${encode(namespace)}:${encode(globalKey)}`
+
+/**
+ * Prefix used by SCAN+DEL inside flushAll to scope deletion to the calling
+ * wrapper's namespace. Mirrors the structure of getCachePath up to the
+ * separator so that prefix matching is exact.
+ */
+const getNamespacePrefix = (namespace: string) =>
+  `${cachePrefix}/${encode(namespace)}:`
 
 // type NonVoid<T> = T extends void ? never : T
 
@@ -42,17 +64,39 @@ const redisIdmpWrap = (
     url: options.url,
   })
 
-  client.once('error', (err) => {
-    console.error('Redis Client Error', err)
-    process.exit(err.code === 'ECONNREFUSED' ? 1 : 0)
+  // Library code must NOT call process.exit — that would tear down the host
+  // application. Surface errors to the user instead and let them decide.
+  // Use `on` (not `once`) so we don't silently swallow subsequent errors and
+  // turn them into unhandled events.
+  client.on('error', (err: any) => {
+    /* istanbul ignore next */
+    console.error('[idmp/redis] Redis Client Error', err)
   })
 
-  const setData = async <T = any>(key: string, data: T, maxAge: number) => {
-    if (!key) return
-    if (!client.isOpen) {
-      await client.connect()
+  // Single-flight connect: concurrent getData/setData calls must NOT call
+  // client.connect() in parallel — redis v5 throws "Socket already opened".
+  let connectPromise: Promise<unknown> | null = null
+  const ensureConnected = () => {
+    if (client.isOpen) return Promise.resolve()
+    if (!connectPromise) {
+      connectPromise = client.connect().catch((err: any) => {
+        // Reset so the next call can retry.
+        connectPromise = null
+        throw err
+      })
     }
-    const cachePath = getCachePath(key)
+    return connectPromise
+  }
+
+  const setData = async <T = any>(
+    ns: string,
+    key: string,
+    data: T,
+    maxAge: number,
+  ) => {
+    if (!key) return
+    await ensureConnected()
+    const cachePath = getCachePath(ns, key)
     await client.set(cachePath, stringify_UNSAFE(data), {
       expiration: {
         type: 'EX',
@@ -61,13 +105,11 @@ const redisIdmpWrap = (
     })
   }
 
-  const getData = async <T = any>(key: string) => {
+  const getData = async <T = any>(ns: string, key: string) => {
     if (!key) return udf
-    if (!client.isOpen) {
-      await client.connect()
-    }
+    await ensureConnected()
 
-    const cachePath = getCachePath(key)
+    const cachePath = getCachePath(ns, key)
 
     let redisLocalData!: T | null
     try {
@@ -81,9 +123,12 @@ const redisIdmpWrap = (
     return redisLocalData
   }
 
+  // Namespaced flushAll — only delete keys belonging to this wrapper instance.
+  // The previous implementation used `cachePrefix` (file-md5 only), which
+  // would also wipe other namespaces sharing the same redis instance.
+  const namespacePrefix = getNamespacePrefix(namespace)
   const deleteKeysByPrefix = async (prefix: string) => {
-    const client = createClient({ url: options.url })
-    await client.connect()
+    await ensureConnected()
 
     let cursor = '0'
     const pattern = `${prefix}*`
@@ -99,21 +144,26 @@ const redisIdmpWrap = (
         await client.del(keys)
       }
     } while (cursor !== '0')
-
-    await client.quit()
   }
+
+  // Build the in-memory dedup key for the underlying idmp instance.
+  // Use \x00 (NUL) as separator — JS strings rarely contain a literal NUL,
+  // and even if they do, the separator never appears in `namespace` because
+  // a NUL there would be equally separator-like in both halves. The point
+  // is to avoid the `_`-collision the public redis path also suffered from.
+  const idmpKeyOf = (globalKey: string) => `${namespace}\x00${globalKey}`
 
   const newIdmp = <T>(
     globalKey: string,
     promiseFunc: IdmpPromise<T>,
     options?: IdmpOptions,
   ) => {
-    globalKey = `${namespace}_${globalKey}`
+    const idmpKey = idmpKeyOf(globalKey)
     const finalOptions = getOptions(options)
     return _idmp(
-      globalKey,
+      idmpKey,
       async () => {
-        const localData = await getData(globalKey)
+        const localData = await getData(namespace, globalKey)
 
         if (localData !== udf) {
           return localData
@@ -121,7 +171,13 @@ const redisIdmpWrap = (
 
         const memoryData = await promiseFunc()
         if (memoryData !== udf) {
-          setData(globalKey, memoryData, finalOptions.maxAge)
+          // Don't await — but DO catch so a write failure doesn't surface as
+          // an unhandledRejection (and crash Node 22+ by default).
+          setData(namespace, globalKey, memoryData, finalOptions.maxAge).catch(
+            /* istanbul ignore next */ (err) => {
+              console.error('[idmp/redis] setData failed', err)
+            },
+          )
         }
         return memoryData
       },
@@ -132,12 +188,13 @@ const redisIdmpWrap = (
   }
 
   newIdmp.flush = async (globalKey: string) => {
-    _idmp.flush(globalKey)
-    await client?.del(getCachePath(globalKey))
+    _idmp.flush(idmpKeyOf(globalKey))
+    await ensureConnected()
+    await client.del(getCachePath(namespace, globalKey))
   }
   newIdmp.flushAll = async () => {
     _idmp.flushAll()
-    await deleteKeysByPrefix(cachePrefix)
+    await deleteKeysByPrefix(namespacePrefix)
   }
   newIdmp.quit = async () => {
     if (client.isOpen) {
