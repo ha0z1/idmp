@@ -194,10 +194,10 @@ describe('getMin cap branch (line 113)', () => {
 
 describe('production mode — _s assignment (line 639)', () => {
   it('_s is undefined when module is loaded with NODE_ENV=production', async () => {
-    vi.resetModules()
     const saved = process.env.NODE_ENV
-    process.env.NODE_ENV = 'production'
     try {
+      vi.resetModules()
+      process.env.NODE_ENV = 'production'
       // Dynamic import after resetModules re-evaluates the module,
       // so the ternary on line 639 takes the UNDEFINED branch
       const mod = await import('../src/index')
