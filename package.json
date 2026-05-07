@@ -58,6 +58,7 @@
     "coverage": "pnpm run build && vitest run --coverage",
     "dev": "tsc && pnpm run lint && vite & pnpm run -r dev",
     "lint": "prettier . --write",
+    "ncu": "npm-check-updates -u --deep", 
     "prepublishOnly": "pnpm run build && vite-node scripts/clean.ts",
     "publish:alpha": "pnpm publish --no-git-checks --registry https://registry.npmjs.org --tag alpha",
     "test": "vitest run",
