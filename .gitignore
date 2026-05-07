@@ -30,3 +30,5 @@ coverage
 
 .claude/scheduled_tasks.lock
 .claude/settings.local.json
+
+.intent-engine
