@@ -28,10 +28,12 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 24
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        run: |
+          corepack enable
+          corepack prepare --activate
 
       - name: Install dependencies
         run: pnpm install

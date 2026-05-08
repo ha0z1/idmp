@@ -20,11 +20,9 @@ const STRIP_FIELDS = [
   'scripts',
   'type',
   'packageManager',
-  // engines & publishConfig are intentionally KEPT now — stripping them
-  // hid the supported Node range from npm and disabled provenance.
-  // 'engines',
+  'engines',
   'pnpm',
-  // 'publishConfig',
+  'publishConfig',
 ] as const
 
 const stripPackageJson = (srcPath: string, destPath: string) => {
