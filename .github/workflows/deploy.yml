@@ -129,7 +129,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Deno Deploy Classic was sunset on 2026-07-20; this fails until the
+      # project is migrated at https://console.deno.com. Non-blocking so the
+      # GitHub Pages deploy below still runs.
       - name: Upload to Deno Deploy
+        continue-on-error: true
         uses: denoland/deployctl@v1
         with:
           project: 'idmp'
@@ -142,7 +146,7 @@ jobs:
           git clean -ffdx
           pnpm install gh-pages idmp @types/serialize-javascript react-icons @tailwindcss/vite clsx lucide-react react-markdown react-syntax-highlighter refractor remark-gfm tailwindcss -Dw
           pnpm run www
-          mv dist/index.html dist/404.html
+          cp dist/index.html dist/404.html
           pnpm gh-pages -d dist -b gh-pages -m "Deploy version ${{ env.VERSION }}" -r "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
