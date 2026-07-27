@@ -52,20 +52,13 @@ jobs:
       - name: Prepublish
         run: pnpm run prepublishOnly
 
-      - name: Verify NPM token
-        run: |
-          npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-          echo "Verifying npm auth..."
-          npm whoami --registry=https://registry.npmjs.org/
-        env:
-          NPM_TOKEN: ${{ secrets.IDMP_NPM_TOKEN }}
-
+      # Auth via npm Trusted Publishing (OIDC) — no token required.
+      # Requires npm >= 11.5.1 and the trusted publisher configured on
+      # npmjs.com for this repo + workflow file.
       - name: NPM Publish
-        uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.IDMP_NPM_TOKEN }}
-          provenance: true
-          access: public
+        run: |
+          npm install -g npm@latest
+          npm publish --ignore-scripts
 
       - name: Configure Git user identity
         run: |
