@@ -4,5 +4,8 @@ packages:
 allowBuilds:
   '@swc/core': true
   core-js: true
+  esbuild: true
+overrides:
+  refractor: ^4.9.0
 minimumReleaseAgeExclude:
   - npm-check-updates@23.0.0
