@@ -58,7 +58,13 @@ jobs:
       - name: NPM Publish
         run: |
           npm install -g npm@latest
-          npm publish --ignore-scripts
+          PKG=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "$PKG@$VERSION" version >/dev/null 2>&1; then
+            echo "$PKG@$VERSION already published, skipping."
+          else
+            npm publish --ignore-scripts
+          fi
 
       - name: Configure Git user identity
         run: |
