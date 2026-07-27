@@ -153,6 +153,10 @@ jobs:
           pnpm install gh-pages idmp @types/serialize-javascript react-icons @tailwindcss/vite clsx lucide-react react-markdown react-syntax-highlighter refractor remark-gfm tailwindcss -Dw
           pnpm run www
           cp dist/index.html dist/404.html
+          # Static entry per SPA route so deep links return 200 instead of
+          # falling back to 404.html (keep in sync with demo/App.tsx routes).
+          mkdir -p dist/storage
+          cp dist/index.html dist/storage/index.html
           pnpm gh-pages -d dist -b gh-pages -m "Deploy version ${{ env.VERSION }}" -r "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
