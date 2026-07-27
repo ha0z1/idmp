@@ -16,7 +16,7 @@
     "dev": "pnpm vite-node scripts/build.ts"
   },
   "dependencies": {
-    "fs-extra": "^11.3.5",
+    "fs-extra": "^11.4.0",
     "idmp": "workspace:*",
     "json-web3": "^1.3.5"
   },

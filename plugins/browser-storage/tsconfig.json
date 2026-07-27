@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
       "idmp": ["../../dist/index.d.ts"]

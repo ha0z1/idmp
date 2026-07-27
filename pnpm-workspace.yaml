@@ -4,3 +4,5 @@ packages:
 allowBuilds:
   '@swc/core': true
   core-js: true
+minimumReleaseAgeExclude:
+  - npm-check-updates@23.0.0
