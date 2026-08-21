@@ -52,17 +52,18 @@ jobs:
       - name: Prepublish
         run: pnpm run prepublishOnly
 
-      # Auth via npm Trusted Publishing (OIDC) — no token required.
-      # Requires npm >= 11.5.1 and the trusted publisher configured on
-      # npmjs.com for this repo + workflow file.
       - name: NPM Publish
+        env:
+          NPM_TOKEN: ${{ secrets.IDMP_NPM_TOKEN }}
         run: |
           npm install -g npm@latest
           PKG=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
           if npm view "$PKG@$VERSION" version >/dev/null 2>&1; then
             echo "$PKG@$VERSION already published, skipping."
-          else
+          elif ! npm publish --ignore-scripts; then
+            npm config set //registry.npmjs.org/:_authToken="$NPM_TOKEN"
+            npm whoami --registry=https://registry.npmjs.org/
             npm publish --ignore-scripts
           fi
 
