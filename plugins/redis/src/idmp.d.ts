@@ -1,5 +1,5 @@
 declare module 'idmp' {
-  export { default, getOptions, idmp } from '../../../dist/index'
+  export { default, getOptions } from '../../../dist/index'
   export type {
     Idmp,
     IdmpGlobalKey,

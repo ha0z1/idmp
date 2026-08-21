@@ -641,7 +641,6 @@ idmp._s = _s
 export default idmp
 export {
   getOptions,
-  idmp,
   type Idmp,
   type IdmpGlobalKey,
   type IdmpOptions,
